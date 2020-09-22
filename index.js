@@ -1251,7 +1251,6 @@ document.addEventListener('DOMContentLoaded', () => {
 	//
 	// LogIn to an Account
 	loginBtn.addEventListener('click', () => {
-		user = Store.getUser(loginConfirmAccount.firstChild.id); //delete later
 		// 
 		logIn = true;
 		today = new Date();
@@ -2877,6 +2876,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			const el = e.target.parentElement.parentElement.firstElementChild.nextElementSibling;
 			let range = document.createRange();
 			let sel = window.getSelection();
+			console.log(el.textContent.length);
 			range.setStart(el.childNodes[0], el.textContent.length);
 			range.collapse(true);
 			sel.removeAllRanges();
@@ -2890,6 +2890,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			addIconPrimary.disabled = true;
 			moreOptionsBtn.disabled = true;
 			rDayArrow.disabled = true;
+			lDayArrow.disabled = true;
 			dayModeView.disabled = true;
 			weekModeView.disabled = true;
 			monthModeView.disabled = true;
@@ -2900,6 +2901,16 @@ document.addEventListener('DOMContentLoaded', () => {
 			UI.addClass(el.parentElement, 'editable');
 			//
 			searchForm.disabled = true;
+			// 
+			e.target.parentElement.parentElement.firstElementChild.nextElementSibling.addEventListener('keydown', (evt) => {
+				// 
+				if (evt.keyCode === 13) {
+					// 
+					evt.preventDefault();
+					// 
+				}
+				// 
+			});
 			//
 		}
 		//
@@ -3081,6 +3092,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				addIconPrimary.disabled = false;
 				moreOptionsBtn.disabled = false;
 				rDayArrow.disabled = false;
+				lDayArrow.disabled = false;
 				dayModeView.disabled = false;
 				weekModeView.disabled = false;
 				monthModeView.disabled = false;
