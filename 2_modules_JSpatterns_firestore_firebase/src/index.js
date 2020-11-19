@@ -25,14 +25,41 @@ import UserCtrl from './js/UserCtrl';
 import DnDCtrl from './js/DnDCtrl';
 
 // App Controller
-const AppCtrl = (function(DnDCtrl) {
+const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl) {
     // Load event listeners
     const loadEventListeners = function() {
         // Load UI selectors
         const UISelectors = UICtrl.getSelectors();
         // UI event listeners
-        // Add user
-        document.querySelector(UISelectors.addUserBtn).addEventListener('click', UICtrl.createAddMode);
+        document.querySelector('body').addEventListener('click', e => {
+            // Add user
+            if (`#${e.target.id}` === UISelectors.addUserBtn) {
+                UICtrl.createAddMode();
+                // 
+                setTimeout(() => {
+                    document.querySelector(UISelectors.loginMainDiv).classList.add('move-y-up');
+                    document.querySelector(UISelectors.loginAddMode).classList.add('move-y-zero');
+                    // 
+                    document.querySelector(UISelectors.username).select();
+                    document.querySelector(UISelectors.email).removeAttribute('tabindex');
+                    document.querySelector(UISelectors.password).removeAttribute('tabindex');
+                }, 100)
+                // Validate username, email & password
+                Array.from(document.querySelectorAll('input')).forEach(input => input.addEventListener('keyup', DataCtrl.validate));
+            }
+            // Show/Hide password
+            if (`.${e.target.className}` === UISelectors.showHidePass) {
+                UICtrl.showHidePass(e.target, document.querySelector(UISelectors.password));
+            }
+            // Go Back from Add Account Screen
+            if (`#${e.target.id}` === UISelectors.addBackBtn) {
+                document.querySelector(UISelectors.loginMainDiv).classList.remove('move-y-up');
+                document.querySelector(UISelectors.loginAddMode).classList.remove('move-y-zero');
+                setTimeout(() => {
+                    document.querySelector(UISelectors.loginAddMode).remove();
+                }, 100)
+            }
+        });
     }
 
 	return {
@@ -44,7 +71,7 @@ const AppCtrl = (function(DnDCtrl) {
 		}
 	}
 
-})(DnDCtrl);
+})(UICtrl, UserCtrl, DataCtrl, DnDCtrl);
 
 
 
