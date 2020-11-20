@@ -9,7 +9,11 @@ const UICtrl = (function() {
         email: '#email',
         password: '#password',
         showHidePass: '.show-password',
-        addBackBtn: '#login-add-back-btn'
+        addBackBtn: '#login-add-back-btn',
+        addCreateBtn: '#login-add-create-btn',
+        addAccountForm: '#add-account-form',
+        loginConfirmMode: '.login-add-confirm-message',
+        confirmUser: '#confirm-username'
     }
 
     const createHeading = function(cssClass, headingTitle) {
@@ -18,6 +22,16 @@ const UICtrl = (function() {
         heading.textContent = headingTitle;
 
         return heading;
+    }
+
+    const createPara = function(spanID, pText) {
+        let p = document.createElement('p');
+        p.className = 'lead text-center';
+        p.innerHTML = `
+            Account for user <span id="${spanID}" class="stand-out"></span> has been ${pText}
+        `;
+
+        return p;
     }
 
     const createForm = function(formID) {
@@ -110,13 +124,28 @@ const UICtrl = (function() {
         div.appendChild(createHeading('welcome-heading', 'Create an Account'));
         div.appendChild(createForm('add-account-form'));
         div.lastElementChild.appendChild(createInputGroup('add-username', 'fa-user-edit', 'text', 'username'));
-        div.lastElementChild.appendChild(createInputGroup('add-email', 'fa-envelope', 'email', 'email'));
+        div.lastElementChild.appendChild(createInputGroup('add-email', 'fa-envelope', 'text', 'email'));
         div.lastElementChild.appendChild(createInputGroup('add-password', 'fa-key', 'password', 'password'));
         div.lastElementChild.appendChild(createShowHidePassword('create-account-show-password-wrapper'));
         div.lastElementChild.appendChild(createBtnGroup(createBtn('login-add-back-btn', 'button', 'Go Back', 'fa-chevron-left'), createBtn('login-add-create-btn', 'submit', 'Create', 'fa-chevron-right', false)));
+
+        div.querySelector(UISelectors.addCreateBtn).setAttribute('disabled', true);
         // append add div to dom
         loginMainDiv.after(div);
         console.log('appended');
+    }
+
+    const confirmMode = function() {
+        // 
+        const loginAddMode = document.querySelector(UISelectors.loginAddMode);
+        // 
+        let div = document.createElement('div');
+        div.className = `login-add-confirm-message px-4 pt-3 pb-4`;
+        div.appendChild(createHeading('welcome-heading', 'Account Created'));
+        div.appendChild(createPara('confirm-username', 'created'));
+        // 
+        loginAddMode.after(div);
+        console.log('appended confirm mode');
     }
 
     return {
@@ -124,7 +153,8 @@ const UICtrl = (function() {
             return UISelectors;
         },
         createAddMode: addMode,
-        showHidePass
+        showHidePass,
+        createConfirmMode: confirmMode
     }
 
 })();

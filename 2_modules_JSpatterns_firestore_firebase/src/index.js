@@ -26,14 +26,15 @@ import DnDCtrl from './js/DnDCtrl';
 
 // App Controller
 const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl) {
+    // Load UI selectors
+    const UISelectors = UICtrl.getSelectors();
     // Load event listeners
     const loadEventListeners = function() {
-        // Load UI selectors
-        const UISelectors = UICtrl.getSelectors();
         // UI event listeners
         document.querySelector('body').addEventListener('click', e => {
             // Add user
             if (`#${e.target.id}` === UISelectors.addUserBtn) {
+                // Create add user mode
                 UICtrl.createAddMode();
                 // 
                 setTimeout(() => {
@@ -45,7 +46,47 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl) {
                     document.querySelector(UISelectors.password).removeAttribute('tabindex');
                 }, 100)
                 // Validate username, email & password
-                Array.from(document.querySelectorAll('input')).forEach(input => input.addEventListener('keyup', DataCtrl.validate));
+                Array.from(document.querySelectorAll('input')).forEach(input => input.addEventListener('keyup', e => {
+                    DataCtrl.validate(e.target);
+                    enableDisableCreateBtn();
+                }));
+                // Add new account - submit event
+                document.querySelector(UISelectors.addAccountForm).addEventListener('submit', e => {
+                    e.preventDefault();
+                    // Create user instance
+                    const user = UserCtrl.addUser({
+                        name: document.querySelector(UISelectors.username).value,
+                        email: document.querySelector(UISelectors.email).value,
+                        password: document.querySelector(UISelectors.password).value
+                    });
+                    // Store user in LS
+
+                    // Create confirm user mode
+                    UICtrl.createConfirmMode();
+                    document.querySelector(UISelectors.confirmUser).textContent = user.data.name;
+                    // 
+                    setTimeout(() => {
+                        document.querySelector(UISelectors.loginAddMode).classList.remove('move-y-zero'); 
+                        document.querySelector(UISelectors.loginAddMode).classList.add('move-y-up');
+                        document.querySelector(UISelectors.loginConfirmMode).classList.add('move-y-zero');
+                    }, 100)
+                    // 
+                    setTimeout(() => {
+                        // first load user accounts !!!!!!!!!!!!!!!!!!!!
+
+                        // 
+                        document.querySelector(UISelectors.loginAddMode).classList.remove('move-y-up');
+                        document.querySelector(UISelectors.loginConfirmMode).classList.remove('move-y-zero');
+                        document.querySelector(UISelectors.loginMainDiv).classList.remove('move-y-up');
+                        // 
+                        document.querySelector(UISelectors.loginAddMode).remove();
+                        document.querySelector(UISelectors.loginConfirmMode).remove();
+                        // render login Accounts !!!!!!!!!!!!!!!!!!!!!!!
+
+                    }, 2000)
+                    
+
+                })
             }
             // Show/Hide password
             if (`.${e.target.className}` === UISelectors.showHidePass) {
@@ -59,7 +100,18 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl) {
                     document.querySelector(UISelectors.loginAddMode).remove();
                 }, 100)
             }
+            
         });
+    }
+
+    const enableDisableCreateBtn = function() {
+        if (document.querySelector(UISelectors.username).classList.contains('valid') &&
+            document.querySelector(UISelectors.email).classList.contains('valid') &&
+            document.querySelector(UISelectors.password).classList.contains('valid')) {
+            document.querySelector(UISelectors.addCreateBtn).disabled = false;
+        } else {
+            document.querySelector(UISelectors.addCreateBtn).disabled = true;
+        }
     }
 
 	return {

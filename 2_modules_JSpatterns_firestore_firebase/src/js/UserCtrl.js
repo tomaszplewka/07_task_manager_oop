@@ -1,17 +1,17 @@
 // User Controller
 const UserCtrl = (function() {
 
-    const User = function(userName, password, email, avatar = 'avatar-1', theme = 'theme-1', toast = 'toast-change-1') {
+    const User = function(data) {
         this.data = {
-			name: userName,
-			password: password,
-			email: email
+			name: data.name,
+			password: data.password,
+			email: data.email
 		};
 		//
 		this.options = {
-			avatar: avatar,
-			theme: theme,
-			toast: toast
+			avatar: data.avatar,
+			theme: data.theme,
+			toast: data.toast
 		};
 		//
 		this.tasks = {};
@@ -19,7 +19,18 @@ const UserCtrl = (function() {
     }
 
     return {
+		addUser: function(data) {
+			const newUser = new User({
+				name: data.name,
+				email: data.email,
+				password: data.password,
+				avatar: 'avatar-1',
+				theme: 'theme-1',
+				toast: 'toast-change-1'
+			});
 
+			return newUser;
+		}
     }
 
 })();
