@@ -30,23 +30,10 @@ import StoreCtrl from './js/StoreCtrl';
 import DataCtrl from './js/DataCtrl';
 import UserCtrl from './js/UserCtrl';
 import DnDCtrl from './js/DnDCtrl';
+import FirebaseCtrl from './js/FirebaseCtrl';
 
 // App Controller
-const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl) {
-    // Initialize firebase app
-    // Your web app's Firebase configuration
-    const firebaseConfig = {
-        apiKey: "AIzaSyDY2r7ZlWb-rX_7jFgHGWMZkG_4tvZqt-Q",
-        authDomain: "task-manager-666.firebaseapp.com",
-        databaseURL: "https://task-manager-666.firebaseio.com",
-        projectId: "task-manager-666",
-        storageBucket: "task-manager-666.appspot.com",
-        messagingSenderId: "910844977293",
-        appId: "1:910844977293:web:eb5e3eb94f653c4ec282c4"
-    };
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-
+const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
     // Load UI selectors
     const UISelectors = UICtrl.getSelectors();
     // Load event listeners
@@ -169,6 +156,8 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl) {
 	return {
 		init: function() {
             console.log('Initializing App...');
+
+            FirebaseCtrl.firebaseInit();
             
             // Load user accounts
 
@@ -185,7 +174,7 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl) {
 		}
 	}
 
-})(UICtrl, UserCtrl, DataCtrl, DnDCtrl);
+})(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl);
 
 
 

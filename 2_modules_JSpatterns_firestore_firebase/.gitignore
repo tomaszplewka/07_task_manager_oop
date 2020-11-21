@@ -12,3 +12,6 @@ npm-debug.log*
 # Misc
 functions/node_modules
 public/
+
+# Firebase config
+src/js/FirebaseCtrl.js
