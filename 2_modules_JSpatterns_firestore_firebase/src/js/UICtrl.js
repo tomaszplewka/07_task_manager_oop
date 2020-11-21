@@ -13,7 +13,12 @@ const UICtrl = (function() {
         addCreateBtn: '#login-add-create-btn',
         addAccountForm: '#add-account-form',
         loginConfirmMode: '.login-add-confirm-message',
-        confirmUser: '#confirm-username'
+        confirmUser: '#confirm-username',
+        loginAccounts: '.login-accounts',
+        removeUserBtn: '#login-remove-btn',
+        loginRemoveMode: '.login-remove-choose',
+        loginRemoveAccounts: '.login-remove-accounts',
+        removeBackBtn: '#login-remove-back-btn'
     }
 
     const createHeading = function(cssClass, headingTitle) {
@@ -32,6 +37,28 @@ const UICtrl = (function() {
         `;
 
         return p;
+    }
+
+    const createUl = function(ulClass) {
+        let ul = document.createElement('ul');
+        ul.className = `list-group ${ulClass} mx-auto w-100 mt-4`;
+
+        return ul;
+    }
+
+    const createLi = function(className, liId) {
+        let li = document.createElement('li');
+		li.className = className;
+        li.id = liId !== undefined ? liId : '';
+        
+		return li;
+    }
+
+    const createIcon = function(className) {
+        const icon = document.createElement('i');
+        icon.className = className;
+        
+		return icon;
     }
 
     const createForm = function(formID) {
@@ -75,11 +102,10 @@ const UICtrl = (function() {
         return div;
     }
 
-    const createBtnGroup = function(btnOne, btnTwo) {
+    const createBtnGroup = function(...btns) {
         let div = document.createElement('div');
-        div.className = 'btn-group d-flex pt-2';
-        div.appendChild(btnOne);
-        div.appendChild(btnTwo);
+        div.className = 'btn-group d-flex pt-3';
+        btns.forEach(btn => div.appendChild(btn));
         
         return div;
     }
@@ -116,7 +142,6 @@ const UICtrl = (function() {
     }
 
     const addMode = function() {
-        // 
         const loginMainDiv = document.querySelector(UISelectors.loginMainDiv);
         // create add div
         let div = document.createElement('div');
@@ -136,9 +161,8 @@ const UICtrl = (function() {
     }
 
     const confirmMode = function() {
-        // 
         const loginAddMode = document.querySelector(UISelectors.loginAddMode);
-        // 
+        // Create confirmation div
         let div = document.createElement('div');
         div.className = `login-add-confirm-message px-4 pt-3 pb-4`;
         div.appendChild(createHeading('welcome-heading', 'Account Created'));
@@ -148,13 +172,65 @@ const UICtrl = (function() {
         console.log('appended confirm mode');
     }
 
+    const removeMode = function() {
+        const loginMainDiv = document.querySelector(UISelectors.loginMainDiv);
+        // Create remove div
+        let div = document.createElement('div');
+        div.className = `login-remove-choose px-4 pt-3 pb-4`;
+        div.appendChild(createHeading('welcome-heading', 'Remove an Account'));
+        div.appendChild(createUl('login-remove-accounts'));
+        div.appendChild(createBtnGroup(createBtn('login-remove-back-btn', 'button', 'Go Back', 'fa-chevron-left')));
+        // 
+        loginMainDiv.after(div);
+        console.log('appended remove mode');
+    }
+
+    const renderLoginAccounts = function(accNum, accArr, listSelector) {
+        if (accNum) {
+			accArr.forEach((account) => {
+				let li = createLi(
+					'list-group-item list-group-item-action d-flex justify-content-between align-items-center py-2',
+					account
+				);
+				li.appendChild(createIcon('fas fa-user show'));
+				li.appendChild(createIcon('fas fa-user-times hide'));
+				li.appendChild(document.createTextNode(account));
+				li.appendChild(createIcon('fas fa-chevron-right show'));
+				li.appendChild(createIcon('fas fa-times hide'));
+				document.querySelector(listSelector).appendChild(li);
+			});
+		} else {
+			let li = createLi('list-group-item py-2');
+			li.appendChild(document.createTextNode(`No accounts in the database`));
+			document.querySelector(listSelector).appendChild(li);
+        }
+    }
+
+    const renderListElements = function(listStart, listEnd) {
+        Array.from(document.querySelector(listStart).children).forEach((li) => {
+			Array.from(li.children).forEach((i) => {
+				if (i.classList.contains('show')) {
+                    i.classList.remove('show');
+                    i.classList.add('hide');
+				} else {
+                    i.classList.remove('hide');
+                    i.classList.add('show');
+				}
+			});
+			document.querySelector(listEnd).appendChild(li);
+		});
+    }
+
     return {
         getSelectors: function() {
             return UISelectors;
         },
         createAddMode: addMode,
+        createConfirmMode: confirmMode,
+        createRemoveMode: removeMode,
         showHidePass,
-        createConfirmMode: confirmMode
+        renderLoginAccounts,
+        renderListElements
     }
 
 })();

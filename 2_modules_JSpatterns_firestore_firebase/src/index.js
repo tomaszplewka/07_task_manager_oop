@@ -17,6 +17,13 @@
 // import default_export, { regular_function } from './script'
 // export { regular_function, default_export as default }
 
+// firebase
+import firebase from "firebase/app";
+// Add the Firebase products that you want to use
+import "firebase/auth";
+import "firebase/firestore";
+import "firebase/functions";
+
 import './css/style.css';
 import UICtrl from './js/UICtrl';
 import StoreCtrl from './js/StoreCtrl';
@@ -26,6 +33,20 @@ import DnDCtrl from './js/DnDCtrl';
 
 // App Controller
 const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl) {
+    // Initialize firebase app
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyDY2r7ZlWb-rX_7jFgHGWMZkG_4tvZqt-Q",
+        authDomain: "task-manager-666.firebaseapp.com",
+        databaseURL: "https://task-manager-666.firebaseio.com",
+        projectId: "task-manager-666",
+        storageBucket: "task-manager-666.appspot.com",
+        messagingSenderId: "910844977293",
+        appId: "1:910844977293:web:eb5e3eb94f653c4ec282c4"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
     // Load UI selectors
     const UISelectors = UICtrl.getSelectors();
     // Load event listeners
@@ -50,6 +71,15 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl) {
                     DataCtrl.validate(e.target);
                     enableDisableCreateBtn();
                 }));
+                // Go Back from Add Account Screen
+                document.querySelector(UISelectors.addBackBtn).addEventListener('click', () => {
+                    document.querySelector(UISelectors.loginMainDiv).classList.remove('move-y-up');
+                    document.querySelector(UISelectors.loginAddMode).classList.remove('move-y-zero');
+                    setTimeout(() => {
+                        document.querySelector(UISelectors.loginAddMode).remove();
+                    }, 100)
+                    console.log('back');
+                })
                 // Add new account - submit event
                 document.querySelector(UISelectors.addAccountForm).addEventListener('submit', e => {
                     e.preventDefault();
@@ -59,7 +89,7 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl) {
                         email: document.querySelector(UISelectors.email).value,
                         password: document.querySelector(UISelectors.password).value
                     });
-                    // Store user in LS
+                    // Store user in Firebase/Firestore
 
                     // Create confirm user mode
                     UICtrl.createConfirmMode();
@@ -81,8 +111,9 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl) {
                         // 
                         document.querySelector(UISelectors.loginAddMode).remove();
                         document.querySelector(UISelectors.loginConfirmMode).remove();
-                        // render login Accounts !!!!!!!!!!!!!!!!!!!!!!!
-
+                        // render login accounts
+                        document.querySelector(UISelectors.loginAccounts).innerHTML = '';
+                        UICtrl.renderLoginAccounts(1, [user.data.name], UISelectors.loginAccounts) // change that later
                     }, 2000)
                     
 
@@ -92,15 +123,36 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl) {
             if (`.${e.target.className}` === UISelectors.showHidePass) {
                 UICtrl.showHidePass(e.target, document.querySelector(UISelectors.password));
             }
-            // Go Back from Add Account Screen
-            if (`#${e.target.id}` === UISelectors.addBackBtn) {
-                document.querySelector(UISelectors.loginMainDiv).classList.remove('move-y-up');
-                document.querySelector(UISelectors.loginAddMode).classList.remove('move-y-zero');
+            // Remove user
+            if (`#${e.target.id}` === UISelectors.removeUserBtn) {
+                UICtrl.createRemoveMode();
+                // 
                 setTimeout(() => {
-                    document.querySelector(UISelectors.loginAddMode).remove();
-                }, 100)
+                    // render list elements
+                    UICtrl.renderListElements(UISelectors.loginAccounts, UISelectors.loginRemoveAccounts);
+                    // 
+                    document.querySelector(UISelectors.loginMainDiv).classList.add('move-y-up');
+                    document.querySelector(UISelectors.loginRemoveMode).classList.add('move-y-zero');
+                }, 100);
+                // Go Back from Remove Account Screen
+                document.querySelector(UISelectors.removeBackBtn).addEventListener('click', () => {
+                    setTimeout(() => {
+                        // render list elements
+                        UICtrl.renderListElements(UISelectors.loginRemoveAccounts, UISelectors.loginAccounts);
+                        // 
+                        document.querySelector(UISelectors.loginMainDiv).classList.remove('move-y-up');
+                        document.querySelector(UISelectors.loginRemoveMode).classList.remove('move-y-zero');
+                        // 
+                        document.querySelector(UISelectors.loginRemoveMode).remove();
+                    }, 100);
+                });
+                // Remove account screen
+                document.querySelector(UISelectors.loginRemoveAccounts).addEventListener('click', e => {
+                    //
+                    
+                    //
+                });
             }
-            
         });
     }
 
@@ -118,6 +170,16 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl) {
 		init: function() {
             console.log('Initializing App...');
             
+            // Load user accounts
+
+            // If no accounts, disable remove btn
+            if (!1) {
+                document.querySelector(UISelectors.removeUserBtn).disabled = true;
+            } else {
+                document.querySelector(UISelectors.removeUserBtn).disabled = false;
+            }
+            // Render login accounts
+            UICtrl.renderLoginAccounts(0, [], UISelectors.loginAccounts) // change that later
             // Load event listeners
             loadEventListeners();
 		}
@@ -131,3 +193,13 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl) {
 
 // Initialize App
 AppCtrl.init();
+
+const button = document.querySelector('.call');
+button.addEventListener('click', () => {
+// get function reference
+  const sayHello = firebase.functions().httpsCallable('sayHello');
+  // call the function and pass data
+  sayHello({ name: 'Tomoko' }).then(result => {
+    console.log(result.data);
+  });
+});
