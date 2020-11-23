@@ -390,7 +390,6 @@ div.lead {
 	z-index: 100;
 	display: flex;
 	justify-content: center;
-	display: none;
 }
 
 .over {
@@ -616,6 +615,10 @@ span:focus.invalid {
 .add .form-control:focus {
 	border-color: var(--theme1-row-hover-color);
 	box-shadow: 0 0 0 .2rem var(--theme1-row-hover-color);
+}
+
+p.invalid {
+	color: #ff5252;
 }
 
 /* Animations */

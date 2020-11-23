@@ -19,8 +19,11 @@ const DataCtrl = (function() {
         }
     }
 
+    const dateFormat = (date, format) => { dateFns.format(date, format) };
+
     return {
-        validate
+        validate,
+        dateFormat
     }
 
 })();

@@ -18,11 +18,11 @@
 // export { regular_function, default_export as default }
 
 // firebase
-import firebase from "firebase/app";
-// Add the Firebase products that you want to use
-import "firebase/auth";
-import "firebase/firestore";
-import "firebase/functions";
+// import firebase from "firebase/app";
+// // Add the Firebase products that you want to use
+// import "firebase/auth";
+// import "firebase/firestore";
+// import "firebase/functions";
 
 import './css/style.css';
 import UICtrl from './js/UICtrl';
@@ -31,6 +31,10 @@ import DataCtrl from './js/DataCtrl';
 import UserCtrl from './js/UserCtrl';
 import DnDCtrl from './js/DnDCtrl';
 import FirebaseCtrl from './js/FirebaseCtrl';
+// 
+import { format } from 'date-fns';
+import 'bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 // App Controller
 const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
@@ -70,40 +74,58 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                 // Add new account - submit event
                 document.querySelector(UISelectors.addAccountForm).addEventListener('submit', e => {
                     e.preventDefault();
-                    // Create user instance
-                    const user = UserCtrl.addUser({
+                    // Creat and store new user in Firebase
+                    const user = {
                         name: document.querySelector(UISelectors.username).value,
-                        email: document.querySelector(UISelectors.email).value,
-                        password: document.querySelector(UISelectors.password).value
-                    });
-                    // Store user in Firebase/Firestore
-
+                        avatar: 'avatar-1',
+                        theme: 'theme-1',
+                        toast: 'toast-change-1'
+                    }
+                    FirebaseCtrl.signUp(document.querySelector(UISelectors.email).value, document.querySelector(UISelectors.password).value, user)
+                        .then(() => {
+                            console.log('i am here!!!');
+                        });
+                    // at this point user is created and logged in
+                    // 
                     // Create confirm user mode
                     UICtrl.createConfirmMode();
-                    document.querySelector(UISelectors.confirmUser).textContent = user.data.name;
+                    document.querySelector(UISelectors.confirmUser).textContent = user.name;
                     // 
                     setTimeout(() => {
                         document.querySelector(UISelectors.loginAddMode).classList.remove('move-y-zero'); 
                         document.querySelector(UISelectors.loginAddMode).classList.add('move-y-up');
                         document.querySelector(UISelectors.loginConfirmMode).classList.add('move-y-zero');
+                        console.log(new Date());
                     }, 100)
                     // 
                     setTimeout(() => {
-                        // first load user accounts !!!!!!!!!!!!!!!!!!!!
-
-                        // 
-                        document.querySelector(UISelectors.loginAddMode).classList.remove('move-y-up');
                         document.querySelector(UISelectors.loginConfirmMode).classList.remove('move-y-zero');
-                        document.querySelector(UISelectors.loginMainDiv).classList.remove('move-y-up');
+                        // Show login loader
+                        UICtrl.createLoginLoader();
+                        document.querySelector(UISelectors.loginLoader).style.height = document.querySelector(UISelectors.loginConfirmMode).offsetHeight + 'px';
                         // 
                         document.querySelector(UISelectors.loginAddMode).remove();
                         document.querySelector(UISelectors.loginConfirmMode).remove();
-                        // render login accounts
+                        // Clear login accounts
                         document.querySelector(UISelectors.loginAccounts).innerHTML = '';
-                        UICtrl.renderLoginAccounts(1, [user.data.name], UISelectors.loginAccounts) // change that later
-                    }, 2000)
-                    
+                        // console.log(new Date());
+                        // 
+                        setTimeout(() => {
+                            document.querySelector(UISelectors.loginWrapper).classList.add('roll-up');
+                            // console.log(new Date());
+                            // Adjust main app screen
+                            document.querySelector(UISelectors.welcomeHeader).textContent = user.name;
+                            // Get user's tasks
 
+                            // user.tasks = Store.getUser(user.data.name).tasks;
+                            const today = new Date();
+                            document.querySelector(UISelectors.leadTodayDate).textContent = format(today, "do 'of' MMMM yyyy");
+                            // 
+                            setTimeout(() => {
+                                document.querySelector(UISelectors.loginWrapper).remove();
+                            }, 500);
+                        }, 2000);
+                    }, 1500)
                 })
             }
             // Show/Hide password
@@ -153,11 +175,32 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
         }
     }
 
+    const setUI = function(user) {
+        if (user) {
+            document.querySelector(UISelectors.loginWrapper).style.display = 'none';
+            document.querySelector(UISelectors.mainNavbar).style.display = 'block';
+            document.querySelector(UISelectors.mainBody).style.display = 'block';
+        } else {
+            document.querySelector(UISelectors.loginWrapper).style.display = 'block';
+            document.querySelector(UISelectors.mainNavbar).style.display = 'none';
+            document.querySelector(UISelectors.mainBody).style.display = 'none';
+        }
+    }
+
+    const renderDayModeCalendar = function() {
+        // start from here
+    }
+
 	return {
 		init: function() {
             console.log('Initializing App...');
 
+            // Initialize firebase app
             FirebaseCtrl.firebaseInit();
+            // test firebase
+            FirebaseCtrl.test();
+            // Change of auth status
+            FirebaseCtrl.authStatus(setUI); // here you need to add a function to render UI
             
             // Load user accounts
 
@@ -183,12 +226,7 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
 // Initialize App
 AppCtrl.init();
 
-const button = document.querySelector('.call');
-button.addEventListener('click', () => {
-// get function reference
-  const sayHello = firebase.functions().httpsCallable('sayHello');
-  // call the function and pass data
-  sayHello({ name: 'Tomoko' }).then(result => {
-    console.log(result.data);
-  });
-});
+// const dateFormat = function(date, format) { format(date, format) };
+
+// console.log(dateFormat(new Date(), 'Do of MMMM YYYY'));
+// console.log(format(new Date(), "do 'of' MMMM yyyy"));

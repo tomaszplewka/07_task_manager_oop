@@ -18,7 +18,13 @@ const UICtrl = (function() {
         removeUserBtn: '#login-remove-btn',
         loginRemoveMode: '.login-remove-choose',
         loginRemoveAccounts: '.login-remove-accounts',
-        removeBackBtn: '#login-remove-back-btn'
+        removeBackBtn: '#login-remove-back-btn',
+        loginLoader: '#login-loader',
+        loginWrapper: '.login-wrapper',
+        welcomeHeader: '#welcome-header',
+        leadTodayDate: '#lead-today-date',
+        mainNavbar: '#main-navbar',
+        mainBody: '#main-body'
     }
 
     const createHeading = function(cssClass, headingTitle) {
@@ -35,6 +41,13 @@ const UICtrl = (function() {
         p.innerHTML = `
             Account for user <span id="${spanID}" class="stand-out"></span> has been ${pText}
         `;
+
+        return p;
+    }
+
+    const createErrMsg = function() {
+        let p = document.createElement('p');
+        p.className = 'lead text-center invalid hide';
 
         return p;
     }
@@ -152,6 +165,7 @@ const UICtrl = (function() {
         div.lastElementChild.appendChild(createInputGroup('add-email', 'fa-envelope', 'text', 'email'));
         div.lastElementChild.appendChild(createInputGroup('add-password', 'fa-key', 'password', 'password'));
         div.lastElementChild.appendChild(createShowHidePassword('create-account-show-password-wrapper'));
+        div.lastElementChild.appendChild(createErrMsg());
         div.lastElementChild.appendChild(createBtnGroup(createBtn('login-add-back-btn', 'button', 'Go Back', 'fa-chevron-left'), createBtn('login-add-create-btn', 'submit', 'Create', 'fa-chevron-right', false)));
 
         div.querySelector(UISelectors.addCreateBtn).setAttribute('disabled', true);
@@ -183,6 +197,28 @@ const UICtrl = (function() {
         // 
         loginMainDiv.after(div);
         console.log('appended remove mode');
+    }
+
+    const loginLoader = function() {
+        const loginMainDiv = document.querySelector(UISelectors.loginMainDiv);
+        let div = document.createElement('div');
+        div.setAttribute('id', 'login-loader');
+        div.innerHTML = `
+            <div class="loadingio-spinner-double-ring-qvrskz4wwq">
+                    <div class="ldio-voeg20dzl7">
+                        <div></div>
+                        <div></div>
+                        <div>
+                            <div></div>
+                        </div>
+                        <div>
+                            <div></div>
+                        </div>
+                    </div>
+                </div>
+        `;
+        loginMainDiv.after(div);
+        console.log('login loader');
     }
 
     const renderLoginAccounts = function(accNum, accArr, listSelector) {
@@ -228,6 +264,7 @@ const UICtrl = (function() {
         createAddMode: addMode,
         createConfirmMode: confirmMode,
         createRemoveMode: removeMode,
+        createLoginLoader: loginLoader,
         showHidePass,
         renderLoginAccounts,
         renderListElements

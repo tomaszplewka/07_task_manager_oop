@@ -6,17 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Manager</title>
     <link rel="shortcut icon" type="image/x-icon" href="assets/favicon.ico">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
-        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous"> -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css"
         integrity="sha512-xA6Hp6oezhjd6LiLZynuukm80f8BoZ3OpcEYaqKoCV3HKQDrYjDE1Gu8ocxgxoXmwmSzM4iqPvCsOkQNiu41GA=="
         crossorigin="anonymous" />
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
     <!-- <link rel="stylesheet" href="style.css"> -->
 </head>
 
 <body>
-    <div class="login-wrapper">
+    <div class="login-wrapper" style="display: none;">
         <h1 class="display-3 mb-4 mx-2 brand-header">
             <i class="fas fa-tasks"></i>
             Task Manager
@@ -164,7 +164,7 @@
             </div> -->
         </div>
     </div>
-    <div class="container">
+    <div class="container" id="main-navbar" style="display: none;">
         <nav class="navbar navbar-expand-lg p-3">
             <a class="navbar-brand" href="#" tabindex="-1">
                 <i class="fas fa-tasks"></i>
@@ -191,7 +191,7 @@
             </div>
         </nav>
     </div>
-    <div class="container">
+    <div class="container" id="main-body" style="display: none;">
         <div class="row">
             <div class="col col-sm-12">
                 <h1 class="text-center main-header pt-5 pb-3 px-3">Hello <span id="welcome-header"></span>!<br>How are
@@ -472,8 +472,8 @@
             <small class="text-muted">NOTE: Tasks older than 30 days will be automatically deleted from the system!</small>
         </div>
     </div> -->
-    <script src="http://cdn.date-fns.org/v1.9.0/date_fns.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    <!-- <script src="http://cdn.date-fns.org/v1.9.0/date_fns.min.js"></script> -->
+    <!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
         integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
         crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
@@ -481,7 +481,7 @@
         crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
         integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
-        crossorigin="anonymous"></script>
+        crossorigin="anonymous"></script> -->
     <script src="assets/bundle.js"></script>
 </body>
 
