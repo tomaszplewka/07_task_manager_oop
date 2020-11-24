@@ -1,3 +1,6 @@
+import { format } from 'date-fns';
+
+
 // UI Controller
 const UICtrl = (function() {
 
@@ -38,7 +41,13 @@ const UICtrl = (function() {
         taskTabs: '#task-tabs',
         dayModeContent: '#day-mode-content',
         tableBody: '#table-body',
-        tableHead: '#table-head'
+        tableHead: '#table-head',
+        tasks: '.tasks',
+        listItem: '.list-group-item',
+        logInConfirmBtn: '#login-confirm-login-btn',
+        logInConfirmBackBtn: '#login-confirm-back-btn',
+        logInConfirmAccount: '.login-confirm-account',
+        logInConfirmMode: '.login-confirm'
     }
 
     const createHeading = function(cssClass, headingTitle) {
@@ -97,20 +106,26 @@ const UICtrl = (function() {
         return form;
     }
 
-    const createInputGroup = function(inputClass, iconClass, inputType, inputID) {
+    const createInputGroup = function(inputClass, iconClass, inputType, inputID, placeholder, prepend = true) {
         let div = document.createElement('div');
         div.className = `input-group form-group mb-0 ${inputClass}`;
-
-        let html = `
-        <div class="input-group-prepend">
-            <span class="input-group-text" id="">
-                <i class="fas ${iconClass}"></i>
-            </span>
-        </div>
-        <input type="${inputType}" class="form-control text-center" id="${inputID}" name="${inputID}"
-            placeholder="${inputID}" tabindex="-1">
-        `;
-
+        let html = '';
+        if (prepend) {
+            html = `
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="">
+                    <i class="fas ${iconClass}"></i>
+                </span>
+            </div>
+            <input type="${inputType}" class="form-control text-center" id="${inputID}" name="${inputID}"
+                placeholder="${placeholder}" tabindex="-1">
+            `;
+        } else {
+            html = `
+            <input type="${inputType}" class="form-control text-center" id="${inputID}" name="${inputID}"
+                placeholder="${placeholder}" tabindex="-1">
+            `;
+        }
         div.innerHTML = html;
 
         return div;
@@ -131,7 +146,7 @@ const UICtrl = (function() {
 
     const createBtnGroup = function(...btns) {
         let div = document.createElement('div');
-        div.className = 'btn-group d-flex pt-3';
+        div.className = 'btn-group d-flex pt-4';
         btns.forEach(btn => div.appendChild(btn));
         
         return div;
@@ -175,9 +190,9 @@ const UICtrl = (function() {
         div.className = `login-add-mode px-4 pt-3 pb-4`;
         div.appendChild(createHeading('welcome-heading', 'Create an Account'));
         div.appendChild(createForm('add-account-form'));
-        div.lastElementChild.appendChild(createInputGroup('add-username', 'fa-user-edit', 'text', 'username'));
-        div.lastElementChild.appendChild(createInputGroup('add-email', 'fa-envelope', 'text', 'email'));
-        div.lastElementChild.appendChild(createInputGroup('add-password', 'fa-key', 'password', 'password'));
+        div.lastElementChild.appendChild(createInputGroup('add-username', 'fa-user-edit', 'text', 'username', 'username'));
+        div.lastElementChild.appendChild(createInputGroup('add-email', 'fa-envelope', 'text', 'email', 'email'));
+        div.lastElementChild.appendChild(createInputGroup('add-password', 'fa-key', 'password', 'password', 'password'));
         div.lastElementChild.appendChild(createShowHidePassword('create-account-show-password-wrapper'));
         div.lastElementChild.appendChild(createErrMsg());
         div.lastElementChild.appendChild(createBtnGroup(createBtn('login-add-back-btn', 'button', 'Go Back', 'fa-chevron-left'), createBtn('login-add-create-btn', 'submit', 'Create', 'fa-chevron-right', false)));
@@ -213,6 +228,27 @@ const UICtrl = (function() {
         console.log('appended remove mode');
     }
 
+    const logInMode = function(id) {
+        const loginMainDiv = document.querySelector(UISelectors.loginMainDiv);
+        // Create log in div
+        let div = document.createElement('div');
+        div.className = `login-confirm px-4 pt-3 pb-4`;
+        div.appendChild(createHeading('welcome-heading', 'Log In'));
+        div.appendChild(createUl('login-confirm-account')); 
+        div.appendChild(createForm('login-form'));
+        div.lastElementChild.appendChild(createInputGroup('login-password', 'fa-key', 'password', 'password', 'password', false));
+        div.lastElementChild.appendChild(createShowHidePassword('login-show-password-wrapper'));
+        div.lastElementChild.appendChild(createErrMsg());
+        div.lastElementChild.appendChild(createBtnGroup(createBtn('login-confirm-back-btn', 'button', 'Go Back', 'fa-chevron-left'), createBtn('login-confirm-login-btn', 'submit', 'Log In', 'fa-chevron-right', false)));
+
+        div.querySelector(UISelectors.logInConfirmBtn).setAttribute('disabled', true);
+        // append add div to dom
+        loginMainDiv.after(div);
+        // 
+        document.querySelector(UISelectors.logInConfirmAccount).appendChild(renderLiAccount(id,  'mb-n4'));
+        console.log('login mode');
+    }
+
     const loginLoader = function() {
         const loginMainDiv = document.querySelector(UISelectors.loginMainDiv);
         let div = document.createElement('div');
@@ -235,20 +271,25 @@ const UICtrl = (function() {
         console.log('login loader');
     }
 
+    const renderLiAccount = function(liID, liClass = '') {
+        let li = createLi(
+            `list-group-item list-group-item-action d-flex justify-content-between align-items-center py-2 ${liClass}`,
+            liID
+        );
+        li.appendChild(createIcon('fas fa-user show'));
+        li.appendChild(createIcon('fas fa-user-times hide'));
+        li.appendChild(document.createTextNode(liID));
+        li.appendChild(createIcon('fas fa-chevron-right show'));
+        li.appendChild(createIcon('fas fa-times hide'));
+
+        return li;
+    }
+
     const renderLoginAccounts = function(accNum, accArr, listSelector) {
         if (accNum) {
 			accArr.forEach((account) => {
                 const accountObj = account.data();
-				let li = createLi(
-					'list-group-item list-group-item-action d-flex justify-content-between align-items-center py-2',
-					accountObj.name
-				);
-				li.appendChild(createIcon('fas fa-user show'));
-				li.appendChild(createIcon('fas fa-user-times hide'));
-				li.appendChild(document.createTextNode(accountObj.name));
-				li.appendChild(createIcon('fas fa-chevron-right show'));
-				li.appendChild(createIcon('fas fa-times hide'));
-				document.querySelector(listSelector).appendChild(li);
+				document.querySelector(listSelector).appendChild(renderLiAccount(accountObj.name));
 			});
 		} else {
 			let li = createLi('list-group-item py-2');
@@ -283,6 +324,52 @@ const UICtrl = (function() {
 		document.querySelector(UISelectors.tableBody).setAttribute('class', 'day-mode');
     }
 
+    const displayTasks = function(tasks, currToday, enableDnD) {
+        if (tasks) {
+            tasks.some(task => {
+                console.log(task.data());
+                console.log(format(new Date(), "d'-'MMM'-'yyyy"));
+                console.log(task.data()[format(currToday, "d'-'MMM'-'yyyy")]);
+                if (task.data()[format(currToday, "d'-'MMM'-'yyyy")]) {
+                    task.data()[format(currToday, "d'-'MMM'-'yyyy")].forEach((task, index) => {
+                        console.log(task);
+                        generateDayTemplate(task, index, enableDnD);
+                    })
+                    // 
+                    // 
+                    return true;
+                }
+            })
+        }
+    }
+
+    const generateDayTemplate = function(task, index, enableDnD) {
+        let list = document.querySelector(UISelectors.tasks);
+        let li = createLi('list-group-item d-flex justify-content-between align-items-center', `task${index}`);
+        // 
+        let divIconComplete = document.createElement('div');
+		divIconComplete.className = 'd-flex justify-content-between align-items-center';
+		divIconComplete.appendChild(createIcon('far fa-circle uncompleted'));
+		divIconComplete.appendChild(createIcon('far fa-check-circle completed hide'));
+        li.appendChild(divIconComplete);
+        // 
+        let divText = document.createElement('div');
+		divText.className = 'lead';
+		divText.appendChild(document.createTextNode(task));
+        li.appendChild(divText);
+        // 
+        let divIcon = document.createElement('div');
+		divIcon.className = 'd-flex justify-content-between align-items-center';
+		divIcon.appendChild(createIcon('fas fa-edit mr-1 edit'));
+		divIcon.appendChild(createIcon('fas fa-keyboard mr-2 fa-2x ongoing-edit text-danger hide'));
+		divIcon.appendChild(createIcon('far fa-trash-alt delete'));
+        li.appendChild(divIcon);
+        // 
+        enableDnD(li);
+		//
+		list.appendChild(li);
+    }
+
     return {
         getSelectors: function() {
             return UISelectors;
@@ -291,11 +378,13 @@ const UICtrl = (function() {
         createConfirmMode: confirmMode,
         createRemoveMode: removeMode,
         createLoginLoader: loginLoader,
+        createLogInMode: logInMode,
         showHidePass,
         renderLoginAccounts,
         renderListElements,
         setTableBodyHead,
-        renderTableUI
+        renderTableUI,
+        displayTasks
     }
 
 })();

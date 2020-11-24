@@ -112,6 +112,8 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                         // 
                         setTimeout(() => {
                             document.querySelector(UISelectors.loginWrapper).classList.add('roll-up');
+                            // 
+                            document.querySelector('body').style.overflow = 'auto';
                             // console.log(new Date());
                             // Adjust main app screen
                             document.querySelector(UISelectors.welcomeHeader).textContent = user.name;
@@ -129,6 +131,46 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                     }, 1500)
                 })
             }
+            // Log in
+            console.log(document.querySelector(UISelectors.loginAccounts).contains(e.target));
+            console.log(e.target.tagName);
+            if (document.querySelector(UISelectors.loginAccounts).contains(e.target)) {
+                let id = '';
+                if (e.target.tagName.toLowerCase() === 'i') {
+                    id = e.target.parentElement.id;
+                } else if(e.target.tagName.toLowerCase() === 'li') {
+                    id = e.target.id;
+                }
+                // 
+                UICtrl.createLogInMode(id);
+                // 
+                setTimeout(() => {
+                    document.querySelector(UISelectors.loginMainDiv).classList.add('move-x-left');
+                    document.querySelector(UISelectors.logInConfirmMode).classList.add('move-x-zero');
+                    document.querySelector(UISelectors.password).select();
+                }, 100)
+                // Check Password
+                let pass = document.querySelector(UISelectors.password);
+                let logInBtn = document.querySelector(UISelectors.logInConfirmBtn);
+                pass.addEventListener('keyup', () => {
+                    // Get user's password
+                    // user = Store.getUser(loginConfirmAccount.firstChild.id);
+                    // Adjust UI
+                    // if (pass.value === user.data.password) {
+                    //     UI.addClass(loginPassword, 'valid');
+                    //     UI.removeClass(loginPassword, 'invalid');
+                    //     logInBtn.disabled = false;
+                    // } else {
+                    //     UI.addClass(loginPassword, 'invalid');
+                    //     UI.removeClass(loginPassword, 'valid');
+                    //     logInBtn.disabled = true;
+                    // }
+                });
+                // LogIn to an Account
+                logInBtn.addEventListener('click', () => {
+
+                });
+            }
             // Log out
             if (`#${e.target.id}` === UISelectors.logOut) {
                 console.log('tutaj jestem');
@@ -137,6 +179,7 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                 // UICtrl.logOut();
                 // 
                 document.querySelector(UISelectors.loginWrapper).classList.remove('roll-up');
+                document.querySelector('body').style.overflow = 'hidden';
                 // 
                 setTimeout(() => {
                     // console.log(new Date());
@@ -214,7 +257,7 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
 
     
 
-    const renderDayModeCalendar = function(currToday) {
+    const renderDayModeCalendar = function(currToday, tasks) {
         // adjust UI
         document.querySelector(UISelectors.monthModeWrapper).setAttribute('style', 'display: none !important');
 		document.querySelector(UISelectors.weekModeWrapper).setAttribute('style', 'display: none !important');
@@ -234,7 +277,8 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
         // 
         UICtrl.renderTableUI();
         // 
-        
+        console.log('renderDayMode');
+        UICtrl.displayTasks(tasks, currToday, DnDCtrl.enableDnD);
     }
 
 	return {
@@ -246,7 +290,13 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
             // test firebase
             FirebaseCtrl.test();
             // Adjust UI on user status change
-            FirebaseCtrl.authStatus(setUI, UICtrl.renderLoginAccounts, UISelectors.loginAccounts, renderDayModeCalendar, new Date());
+            FirebaseCtrl.authStatus({
+                setUI,
+                renderLoginAccounts: UICtrl.renderLoginAccounts,
+                uiListSelector: UISelectors.loginAccounts,
+                renderDayModeCalendar,
+                currToday: new Date()
+            });
             // If no accounts, disable remove btn
             if (!1) {
                 document.querySelector(UISelectors.removeUserBtn).disabled = true;
