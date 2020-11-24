@@ -44,7 +44,7 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
     const loadEventListeners = function() {
         // UI event listeners
         document.querySelector('body').addEventListener('click', e => {
-            // Add user
+            // Add user - sign up & log in
             if (`#${e.target.id}` === UISelectors.addUserBtn) {
                 // Create add user mode
                 UICtrl.createAddMode();
@@ -122,11 +122,36 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                             document.querySelector(UISelectors.leadTodayDate).textContent = format(today, "do 'of' MMMM yyyy");
                             // 
                             setTimeout(() => {
-                                document.querySelector(UISelectors.loginWrapper).remove();
+                                // document.querySelector(UISelectors.loginWrapper).remove();
+                                document.querySelector(UISelectors.loginLoader).remove();
                             }, 500);
                         }, 2000);
                     }, 1500)
                 })
+            }
+            // Log out
+            if (`#${e.target.id}` === UISelectors.logOut) {
+                console.log('tutaj jestem');
+                FirebaseCtrl.logOut();
+                // 
+                // UICtrl.logOut();
+                // 
+                document.querySelector(UISelectors.loginWrapper).classList.remove('roll-up');
+                // 
+                setTimeout(() => {
+                    // console.log(new Date());
+                    // Reset main app screen
+                    document.querySelector(UISelectors.welcomeHeader).textContent = '';
+                    document.querySelector(UISelectors.leadTodayDate).textContent = '';
+                    // Get user's tasks
+                    
+                    // Show login loader
+                    UICtrl.createLoginLoader();
+                    // 
+                    setTimeout(() => {
+                        document.querySelector(UISelectors.loginLoader).remove();
+                    }, 1500);
+                }, 400);
             }
             // Show/Hide password
             if (`.${e.target.className}` === UISelectors.showHidePass) {
@@ -181,14 +206,35 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
             document.querySelector(UISelectors.mainNavbar).style.display = 'block';
             document.querySelector(UISelectors.mainBody).style.display = 'block';
         } else {
-            document.querySelector(UISelectors.loginWrapper).style.display = 'block';
+            document.querySelector(UISelectors.loginWrapper).style.display = 'flex';
             document.querySelector(UISelectors.mainNavbar).style.display = 'none';
             document.querySelector(UISelectors.mainBody).style.display = 'none';
         }
     }
 
-    const renderDayModeCalendar = function() {
-        // start from here
+    
+
+    const renderDayModeCalendar = function(currToday) {
+        // adjust UI
+        document.querySelector(UISelectors.monthModeWrapper).setAttribute('style', 'display: none !important');
+		document.querySelector(UISelectors.weekModeWrapper).setAttribute('style', 'display: none !important');
+		document.querySelector(UISelectors.dayModeWrapper).setAttribute('style', 'display: flex !important');
+		document.querySelector(UISelectors.lMonthArrow).parentElement.style.display = 'none';
+		document.querySelector(UISelectors.rMonthArrow).parentElement.style.display = 'none';
+		document.querySelector(UISelectors.lWeekArrow).parentElement.style.display = 'none';
+		document.querySelector(UISelectors.rWeekArrow).parentElement.style.display = 'none';
+		document.querySelector(UISelectors.lDayArrow).parentElement.style.display = 'flex';
+        document.querySelector(UISelectors.rDayArrow).parentElement.style.display = 'flex';
+        // 
+        document.querySelector(UISelectors.taskTabs).classList.remove('hide');
+        // 
+        document.querySelector(UISelectors.dayModeContent).textContent = `
+            ${format(currToday, "d MMMM yyyy, EEEE")}
+        `;
+        // 
+        UICtrl.renderTableUI();
+        // 
+        
     }
 
 	return {
@@ -199,11 +245,8 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
             FirebaseCtrl.firebaseInit();
             // test firebase
             FirebaseCtrl.test();
-            // Change of auth status
-            FirebaseCtrl.authStatus(setUI); // here you need to add a function to render UI
-            
-            // Load user accounts
-
+            // Adjust UI on user status change
+            FirebaseCtrl.authStatus(setUI, UICtrl.renderLoginAccounts, UISelectors.loginAccounts, renderDayModeCalendar, new Date());
             // If no accounts, disable remove btn
             if (!1) {
                 document.querySelector(UISelectors.removeUserBtn).disabled = true;
@@ -211,7 +254,7 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                 document.querySelector(UISelectors.removeUserBtn).disabled = false;
             }
             // Render login accounts
-            UICtrl.renderLoginAccounts(0, [], UISelectors.loginAccounts) // change that later
+            // UICtrl.renderLoginAccounts(0, [], UISelectors.loginAccounts) // change that later
             // Load event listeners
             loadEventListeners();
 		}

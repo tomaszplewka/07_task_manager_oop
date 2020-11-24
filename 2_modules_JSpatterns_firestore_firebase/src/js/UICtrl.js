@@ -24,7 +24,21 @@ const UICtrl = (function() {
         welcomeHeader: '#welcome-header',
         leadTodayDate: '#lead-today-date',
         mainNavbar: '#main-navbar',
-        mainBody: '#main-body'
+        mainBody: '#main-body',
+        logOut: '#log-out',
+        monthModeWrapper: '.month-mode-wrapper',
+        weekModeWrapper: '.week-mode-wrapper',
+        dayModeWrapper: '.day-mode-wrapper',
+        lMonthArrow: '#l-month-arrow',
+        rMonthArrow: '#r-month-arrow',
+        lWeekArrow: '#l-week-arrow',
+        rWeekArrow: '#r-week-arrow',
+        lDayArrow: '#l-day-arrow',
+        rDayArrow: '#r-day-arrow',
+        taskTabs: '#task-tabs',
+        dayModeContent: '#day-mode-content',
+        tableBody: '#table-body',
+        tableHead: '#table-head'
     }
 
     const createHeading = function(cssClass, headingTitle) {
@@ -224,13 +238,14 @@ const UICtrl = (function() {
     const renderLoginAccounts = function(accNum, accArr, listSelector) {
         if (accNum) {
 			accArr.forEach((account) => {
+                const accountObj = account.data();
 				let li = createLi(
 					'list-group-item list-group-item-action d-flex justify-content-between align-items-center py-2',
-					account
+					accountObj.name
 				);
 				li.appendChild(createIcon('fas fa-user show'));
 				li.appendChild(createIcon('fas fa-user-times hide'));
-				li.appendChild(document.createTextNode(account));
+				li.appendChild(document.createTextNode(accountObj.name));
 				li.appendChild(createIcon('fas fa-chevron-right show'));
 				li.appendChild(createIcon('fas fa-times hide'));
 				document.querySelector(listSelector).appendChild(li);
@@ -257,6 +272,17 @@ const UICtrl = (function() {
 		});
     }
 
+    const setTableBodyHead = function(body = '', head = '') {
+		document.querySelector(UISelectors.tableBody).innerHTML = body;
+		document.querySelector(UISelectors.tableHead).innerHTML = head;
+	}
+
+    const renderTableUI = function() {
+        setTableBodyHead();
+        document.querySelector(UISelectors.tableBody).append(createUl('tasks text-light p-3'));
+		document.querySelector(UISelectors.tableBody).setAttribute('class', 'day-mode');
+    }
+
     return {
         getSelectors: function() {
             return UISelectors;
@@ -267,7 +293,9 @@ const UICtrl = (function() {
         createLoginLoader: loginLoader,
         showHidePass,
         renderLoginAccounts,
-        renderListElements
+        renderListElements,
+        setTableBodyHead,
+        renderTableUI
     }
 
 })();
