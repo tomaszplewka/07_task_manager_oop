@@ -19,11 +19,72 @@ const DataCtrl = (function() {
         }
     }
 
-    const dateFormat = (date, format) => { dateFns.format(date, format) };
+    // const dateFormat = (date, format) => { dateFns.format(date, format) };
+
+    const displayLogInFormat = function(email, password, error) {
+        if (email === '' && password === '') {
+            
+        }
+    }
+
+    const errorHandling = function(errorCode) {
+        switch (errorCode) {
+            case "auth/email-already-in-use":
+            case "auth/account-exists-with-different-credential":
+                return {
+                    msg: "Email already used. Go to login page.",
+                    email: 1,
+                    pass: null
+                };
+            case "auth/wrong-password":
+                return {
+                    msg: "Wrong email/password combination.",
+                    email: null,
+                    pass: 1
+                };
+            case "auth/user-not-found":
+                return {
+                    msg: "No user found with this email.",
+                    email: 1,
+                    pass: null
+                };
+            case "auth/user-disabled":
+                return {
+                    msg: "User disabled.",
+                    email: 1,
+                    pass: 1
+                };
+            case "auth/operation-not-allowed":
+                return {
+                    msg: "Server error, please try again later.",
+                    email: 1,
+                    pass: 1
+                };
+            case "auth/invalid-email":
+                return {
+                    msg: "Email address is invalid.",
+                    email: 1,
+                    pass: null
+                };
+            case "auth/user-not-found":
+                return {
+                    msg: "No account found with this email.",
+                    email: 1,
+                    pass: null
+                };
+            default:
+                return {
+                    msg: "Login failed. Please try again.",
+                    email: 1,
+                    pass: 1
+                };
+            }
+    }
 
     return {
         validate,
-        dateFormat
+        displayLogInFormat,
+        errorHandling
     }
 
 })();

@@ -47,7 +47,9 @@ const UICtrl = (function() {
         logInConfirmBtn: '#login-confirm-login-btn',
         logInConfirmBackBtn: '#login-confirm-back-btn',
         logInConfirmAccount: '.login-confirm-account',
-        logInConfirmMode: '.login-confirm'
+        logInConfirmMode: '.login-confirm',
+        logInForm: '#login-form',
+        errorPara: '.error'
     }
 
     const createHeading = function(cssClass, headingTitle) {
@@ -70,7 +72,7 @@ const UICtrl = (function() {
 
     const createErrMsg = function() {
         let p = document.createElement('p');
-        p.className = 'lead text-center invalid hide';
+        p.className = 'lead text-center error invalid hide mb-0';
 
         return p;
     }
@@ -118,12 +120,12 @@ const UICtrl = (function() {
                 </span>
             </div>
             <input type="${inputType}" class="form-control text-center" id="${inputID}" name="${inputID}"
-                placeholder="${placeholder}" tabindex="-1">
+                placeholder="${placeholder}" ${prepend ? 'tabindex="-1"' : ''}>
             `;
         } else {
             html = `
             <input type="${inputType}" class="form-control text-center" id="${inputID}" name="${inputID}"
-                placeholder="${placeholder}" tabindex="-1">
+                placeholder="${placeholder}" ${prepend ? 'tabindex="-1"' : ''}>
             `;
         }
         div.innerHTML = html;
@@ -236,12 +238,13 @@ const UICtrl = (function() {
         div.appendChild(createHeading('welcome-heading', 'Log In'));
         div.appendChild(createUl('login-confirm-account')); 
         div.appendChild(createForm('login-form'));
+        div.lastElementChild.appendChild(createInputGroup('login-email', 'fa-key', 'text', 'email', 'email', false));
         div.lastElementChild.appendChild(createInputGroup('login-password', 'fa-key', 'password', 'password', 'password', false));
         div.lastElementChild.appendChild(createShowHidePassword('login-show-password-wrapper'));
         div.lastElementChild.appendChild(createErrMsg());
         div.lastElementChild.appendChild(createBtnGroup(createBtn('login-confirm-back-btn', 'button', 'Go Back', 'fa-chevron-left'), createBtn('login-confirm-login-btn', 'submit', 'Log In', 'fa-chevron-right', false)));
 
-        div.querySelector(UISelectors.logInConfirmBtn).setAttribute('disabled', true);
+        // div.querySelector(UISelectors.logInConfirmBtn).setAttribute('disabled', true);
         // append add div to dom
         loginMainDiv.after(div);
         // 
@@ -295,6 +298,7 @@ const UICtrl = (function() {
 			let li = createLi('list-group-item py-2');
 			li.appendChild(document.createTextNode(`No accounts in the database`));
 			document.querySelector(listSelector).appendChild(li);
+			document.querySelector(listSelector).classList.add('empty');
         }
     }
 

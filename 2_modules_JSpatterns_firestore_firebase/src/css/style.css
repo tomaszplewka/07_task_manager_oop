@@ -612,6 +612,7 @@ span:focus.invalid {
 .add-email .form-control:focus,
 .add-password .form-control:focus,
 #password.form-control:focus,
+#email.form-control:focus,
 .add .form-control:focus {
 	border-color: var(--theme1-row-hover-color);
 	box-shadow: 0 0 0 .2rem var(--theme1-row-hover-color);

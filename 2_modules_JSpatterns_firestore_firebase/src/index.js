@@ -104,6 +104,7 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                         UICtrl.createLoginLoader();
                         document.querySelector(UISelectors.loginLoader).style.height = document.querySelector(UISelectors.loginConfirmMode).offsetHeight + 'px';
                         // 
+                        document.querySelector(UISelectors.loginMainDiv).classList.remove('move-y-up');
                         document.querySelector(UISelectors.loginAddMode).remove();
                         document.querySelector(UISelectors.loginConfirmMode).remove();
                         // Clear login accounts
@@ -134,7 +135,7 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
             // Log in
             console.log(document.querySelector(UISelectors.loginAccounts).contains(e.target));
             console.log(e.target.tagName);
-            if (document.querySelector(UISelectors.loginAccounts).contains(e.target)) {
+            if (document.querySelector(UISelectors.loginAccounts).contains(e.target) && !document.querySelector(UISelectors.loginAccounts).classList.contains('empty')) {
                 let id = '';
                 if (e.target.tagName.toLowerCase() === 'i') {
                     id = e.target.parentElement.id;
@@ -147,54 +148,115 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                 setTimeout(() => {
                     document.querySelector(UISelectors.loginMainDiv).classList.add('move-x-left');
                     document.querySelector(UISelectors.logInConfirmMode).classList.add('move-x-zero');
-                    document.querySelector(UISelectors.password).select();
+                    document.querySelector(UISelectors.email).select();
                 }, 100)
-                // Check Password
-                let pass = document.querySelector(UISelectors.password);
-                let logInBtn = document.querySelector(UISelectors.logInConfirmBtn);
-                pass.addEventListener('keyup', () => {
-                    // Get user's password
-                    // user = Store.getUser(loginConfirmAccount.firstChild.id);
-                    // Adjust UI
-                    // if (pass.value === user.data.password) {
-                    //     UI.addClass(loginPassword, 'valid');
-                    //     UI.removeClass(loginPassword, 'invalid');
-                    //     logInBtn.disabled = false;
-                    // } else {
-                    //     UI.addClass(loginPassword, 'invalid');
-                    //     UI.removeClass(loginPassword, 'valid');
-                    //     logInBtn.disabled = true;
-                    // }
-                });
                 // LogIn to an Account
-                logInBtn.addEventListener('click', () => {
+                document.querySelector(UISelectors.logInForm).addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    console.log('tutaj tutaj tutaj');
+                    // 
+                    const emailValue = document.querySelector(UISelectors.email);
+                    const passValue = document.querySelector(UISelectors.password);
+                    const errorPara = document.querySelector(UISelectors.errorPara);
+                    FirebaseCtrl.logIn(emailValue.value, passValue.value)
+                        .then(credentials => {
+                            console.log(credentials.user);
+                            // Adjust UI
+                            document.querySelector(UISelectors.logInConfirmMode).remove();
+                            // Show login loader
+                            UICtrl.createLoginLoader();
+                            document.querySelector(UISelectors.loginLoader).style.height = document.querySelector(UISelectors.loginMainDiv).offsetHeight + 'px';
+                            // 
+                            document.querySelector(UISelectors.loginMainDiv).classList.remove('move-y-up');
 
+                            // setTimeout(() => {
+                            //     document.querySelector(UISelectors.loginWrapper).classList.add('roll-up');
+                            //     // 
+                            //     document.querySelector('body').style.overflow = 'auto';
+                            //     // console.log(new Date());
+
+                            //     // Adjust main app screen
+                            //     // document.querySelector(UISelectors.welcomeHeader).textContent = user.name;
+                            //     // Get user's tasks
+
+                            //     // user.tasks = Store.getUser(user.data.name).tasks;
+                            //     // const today = new Date();
+                            //     // document.querySelector(UISelectors.leadTodayDate).textContent = format(today, "do 'of' MMMM yyyy");
+                            //     // 
+                            //     // setTimeout(() => {
+                            //     //     // document.querySelector(UISelectors.loginWrapper).remove();
+                            //     //     document.querySelector(UISelectors.loginLoader).remove();
+                            //     // }, 500);
+                            // }, 2000);
+                        })
+                        .catch(error => {
+                            console.log(error);
+                            console.log('w error jestem');
+                            const { msg, email, pass } = DataCtrl.errorHandling(error.code);
+                            switch (error) {
+                                case emailValue.value === '' && passValue.value === '':
+                                    errorPara.innerHTML = "No email and password provided.";
+                                case email === 1 && pass === 1:
+                                    errorPara.innerHTML = msg;
+                                    errorPara.classList.remove('hide');
+                                    emailValue.classList.add('invalid');
+                                    passValue.classList.add('invalid');
+                                    setTimeout(() => {
+                                        errorPara.classList.add('hide');
+                                        emailValue.classList.remove('invalid');
+                                        passValue.classList.remove('invalid');
+                                    }, 3000);
+                                    break;
+                                case email === 1:
+                                    errorPara.innerHTML = msg;
+                                    errorPara.classList.remove('hide');
+                                    emailValue.classList.add('invalid');
+                                    setTimeout(() => {
+                                        errorPara.classList.add('hide');
+                                        emailValue.classList.remove('invalid');
+                                    }, 3000);
+                                    break;
+                                case pass === 1:
+                                    errorPara.innerHTML = msg;
+                                    errorPara.classList.remove('hide');
+                                    passValue.classList.add('invalid');
+                                    setTimeout(() => {
+                                        errorPara.classList.add('hide');
+                                        passValue.classList.remove('invalid');
+                                    }, 3000);
+                                    break;
+                            }
+                        });
                 });
             }
             // Log out
             if (`#${e.target.id}` === UISelectors.logOut) {
                 console.log('tutaj jestem');
-                FirebaseCtrl.logOut();
+                FirebaseCtrl.logOut()
+                    .then(() => {
+                        console.log('user logged out');
+
+                        document.querySelector(UISelectors.loginWrapper).classList.remove('roll-up');
+                        document.querySelector(UISelectors.welcomeHeader).textContent = '';
+                        document.querySelector(UISelectors.leadTodayDate).textContent = '';
+                    });
                 // 
                 // UICtrl.logOut();
                 // 
-                document.querySelector(UISelectors.loginWrapper).classList.remove('roll-up');
-                document.querySelector('body').style.overflow = 'hidden';
+                // document.querySelector('body').style.overflow = 'hidden';
                 // 
-                setTimeout(() => {
-                    // console.log(new Date());
-                    // Reset main app screen
-                    document.querySelector(UISelectors.welcomeHeader).textContent = '';
-                    document.querySelector(UISelectors.leadTodayDate).textContent = '';
-                    // Get user's tasks
+                // setTimeout(() => {
+                //     // console.log(new Date());
+                //     // Reset main app screen
+                //     // Get user's tasks
                     
-                    // Show login loader
-                    UICtrl.createLoginLoader();
-                    // 
-                    setTimeout(() => {
-                        document.querySelector(UISelectors.loginLoader).remove();
-                    }, 1500);
-                }, 400);
+                //     // // Show login loader
+                //     // UICtrl.createLoginLoader();
+                //     // // 
+                //     // setTimeout(() => {
+                //     //     document.querySelector(UISelectors.loginLoader).remove();
+                //     // }, 1500);
+                // }, 400);
             }
             // Show/Hide password
             if (`.${e.target.className}` === UISelectors.showHidePass) {
@@ -245,13 +307,49 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
 
     const setUI = function(user) {
         if (user) {
-            document.querySelector(UISelectors.loginWrapper).style.display = 'none';
-            document.querySelector(UISelectors.mainNavbar).style.display = 'block';
-            document.querySelector(UISelectors.mainBody).style.display = 'block';
-        } else {
+            // user logged in
+            // Adjust loginWrapper
             document.querySelector(UISelectors.loginWrapper).style.display = 'flex';
-            document.querySelector(UISelectors.mainNavbar).style.display = 'none';
-            document.querySelector(UISelectors.mainBody).style.display = 'none';
+            document.querySelector(UISelectors.loginMainDiv).style.opacity = 0;
+            // Show login loader
+            UICtrl.createLoginLoader();
+            document.querySelector(UISelectors.loginLoader).style.height = document.querySelector(UISelectors.loginMainDiv).offsetHeight + 'px';
+            // tu zamiast loginWrapper dodaj jakis inny wrapper z logiem lub tym podobnym, ktory bedzie sie pojawial na poczatku, kiedy aplikacja sie wczytuje
+            setTimeout(() => {
+                document.querySelector(UISelectors.loginWrapper).classList.add('roll-up');
+                document.querySelector('body').style.overflow = 'auto';
+                // 
+                document.querySelector(UISelectors.mainNavbar).style.display = 'block';
+                document.querySelector(UISelectors.mainBody).style.display = 'block';
+                // 
+                setTimeout(() => {
+                    document.querySelector(UISelectors.loginLoader).remove();
+                    document.querySelector(UISelectors.loginWrapper).style.display = 'none';
+                    document.querySelector(UISelectors.loginMainDiv).style.opacity = 1;
+                }, 1000)
+            }, 2000);
+        } else {
+            // user logged out
+            // Adjust loginWrapper
+            document.querySelector(UISelectors.loginWrapper).style.display = 'flex';
+            document.querySelector(UISelectors.loginMainDiv).style.opacity = 0;
+            // Show login loader
+            UICtrl.createLoginLoader();
+            document.querySelector(UISelectors.loginLoader).style.height = document.querySelector(UISelectors.loginMainDiv).offsetHeight + 'px';
+
+            setTimeout(() => {
+                // document.querySelector(UISelectors.loginWrapper).classList.remove('roll-up');
+                document.querySelector('body').style.overflow = 'hidden';
+    
+                document.querySelector(UISelectors.mainNavbar).style.display = 'none';
+                document.querySelector(UISelectors.mainBody).style.display = 'none';
+
+                document.querySelector(UISelectors.loginLoader).remove();
+                document.querySelector(UISelectors.loginMainDiv).style.opacity = 1;
+            }, 2000);
+            // document.querySelector(UISelectors.loginWrapper).style.display = 'flex';
+            // document.querySelector(UISelectors.mainNavbar).style.display = 'none';
+            // document.querySelector(UISelectors.mainBody).style.display = 'none';
         }
     }
 
