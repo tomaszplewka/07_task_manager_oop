@@ -37,60 +37,7 @@
                     </button>
                 </div>
             </div>
-            <!-- <div class="login-add-mode px-4 pt-3 pb-4">
-                <h2 class="display-4 welcome-heading text-center">Create an Account</h2>
-                <form action="" class="mt-4" id="add-account-form" autocomplete="off">
-                    <div class="input-group form-group mb-0 add-username">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="">
-                                <i class="fas fa-user-edit"></i>
-                            </span>
-                        </div>
-                        <input type="text" class="form-control text-center" id="username" name="username"
-                            placeholder="username" tabindex="-1">
-                    </div>
-                    <div class="input-group form-group mb-0 add-email">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">
-                                <i class="fas fa-envelope pl-1"></i>
-                            </span>
-                        </div>
-                        <input type="text" class="form-control text-center" name="email" placeholder="email" id="email" tabindex="-1">
-                    </div>
-                    <div class="input-group form-group add-password mb-1">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="">
-                                <i class="fas fa-key pl-1"></i>
-                            </span>
-                        </div>
-                        <input type="password" class="form-control text-center" name="password" id="password" placeholder="password" tabindex="-1">
-                    </div>
-                    <div class="d-flex justify-content-end align-items-center create-account-show-password-wrapper">
-                        <i class="far fa-circle mr-1 show-password"></i>
-                        <i class="far fa-check-circle mr-1 show-password hide"></i>
-                        <small class="show-password">Show Password</small>
-                        <small class="show-password hide">Hide Password</small>
-                    </div>
-                    <div class="btn-group d-flex pt-2">
-                        <button id="login-add-back-btn" type="button" class="btn btn-outline-light" tabindex="-1">
-                            <i class="fas fa-chevron-left"></i>
-                            <i class="fas fa-chevron-left ml-n2 mr-1"></i>
-                            Go Back
-                        </button>
-                        <button id="login-add-create-btn" type="submit" class="btn btn-outline-light" disabled tabindex="-1">
-                            Create
-                            <i class="fas fa-chevron-right ml-1"></i>
-                            <i class="fas fa-chevron-right ml-n2"></i>
-                        </button>
-                    </div>
-                </form>
-            </div>
-            <div class="login-add-confirm-message px-4 pt-3 pb-4">
-                <h2 class="display-4 welcome-heading text-center">Account Created</h2>
-                <p class="lead text-center">Account for user <span id="confirm-username" class="stand-out"></span> has
-                    been
-                    created</p>
-            </div>
+            <!-- 
             <div class="login-remove-choose px-4 pt-3 pb-4">
                 <h2 class="display-4 welcome-heading text-center">Choose an Account</h2>
                 <ul class="list-group login-remove-accounts mx-auto w-100 mt-4"></ul>
@@ -123,53 +70,17 @@
                         class="stand-out"></span>
                     has been deleted</p>
             </div>
-            <div class="login-confirm px-4 pt-3 pb-4">
-                <h2 class="display-4 welcome-heading text-center">Log In</h2>
-                <ul class="list-group login-confirm-account mx-auto w-100 mb-4 mt-4"></ul>
-                <div class="input-group form-group mt-n4 mb-1">
-                    <input type="password" class="form-control text-center" id="log-in-password" placeholder="password" tabindex="-1">
-                </div>
-                <div class="d-flex justify-content-end align-items-center log-in-show-password-wrapper">
-                    <i class="far fa-circle mr-1 show-password"></i>
-                    <i class="far fa-check-circle mr-1 show-password hide"></i>
-                    <small class="show-password">Show Password</small>
-                    <small class="show-password hide">Hide Password</small>
-                </div>
-                <div class="btn-group d-flex pt-2">
-                    <button id="login-confirm-back-btn" type="button" class="btn btn-outline-light" tabindex="-1">
-                        <i class="fas fa-chevron-left"></i>
-                        <i class="fas fa-chevron-left ml-n2 mr-1"></i>
-                        Go Back
-                    </button>
-                    <button id="login-confirm-login-btn" type="button" class="btn btn-outline-light" tabindex="-1" disabled>
-                        Log In
-                        <i class="fas fa-chevron-right ml-1"></i>
-                        <i class="fas fa-chevron-right ml-n2"></i>
-                    </button>
-                </div>
-            </div>
-            <div id="login-loader">
-                <div class="loadingio-spinner-double-ring-qvrskz4wwq">
-                    <div class="ldio-voeg20dzl7">
-                        <div></div>
-                        <div></div>
-                        <div>
-                            <div></div>
-                        </div>
-                        <div>
-                            <div></div>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
+             -->
         </div>
     </div>
     <div class="container" id="main-navbar" style="display: none;">
         <nav class="navbar navbar-expand-lg p-3">
-            <a class="navbar-brand" href="#" tabindex="-1">
-                <i class="fas fa-tasks"></i>
-                Task Manager
-            </a>
+            <div class="navbar-brand">
+                <h1 class="h1 m-0 text-white">
+                    <i class="fas fa-tasks"></i>
+                    Task Manager
+                </h1>
+            </div>
             <div class="btn-group ml-auto" role="group">
                 <button id="user-btn" type="button" class="btn btn-outline-light dropdown-toggle"
                     data-toggle="dropdown">
@@ -177,15 +88,13 @@
                             class="badge badge-pill nav-notifications"></span></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right nav-menu" id="main-drop-menu">
-                    <a class="dropdown-item d-flex justify-content-between align-items-center disabled" href=""
-                        id="notifications" tabindex="-1">
-                        <div class="mr-2">Notifications</div><span class="badge badge-pill"></span>
+                    <a class="dropdown-item d-flex justify-content-between align-items-center disabled" id="notifications">
+                        Notifications<span class="badge badge-pill"></span>
                     </a>
-                    <a class="dropdown-item" href="" id="settings">
-                        <div class="mr-2" tabindex="-1">Settings</div>
+                    <a class="dropdown-item" id="settings">
+                        Settings
                     </a>
-                    <a class="dropdown-item" href="#" id="log-out">
-                        <!-- <div class="mr-2" tabindex="-1">Log Out</div> -->
+                    <a class="dropdown-item" id="log-out">
                         Log Out
                     </a>
                 </div>
@@ -204,106 +113,128 @@
                 <p class="lead text-center px-3">Today is <span id="lead-today-date"></span></p>
             </div>
         </div>
-        <div class="d-flex justify-content-between align-items-center py-2 px-3 row">
-            <div class="month-mode-wrapper col-12 row d-flex justify-content-between align-items-center">
-                <div class="month-mode-arrow col-2 row justify-content-start order-1 py-2">
-                    <button id="l-month-arrow" type="button" class="btn btn-outline-light d-flex align-items-center">
-                        <i class="fas fa-chevron-left"></i>
-                        <i class="fas fa-chevron-left"></i>
-                        <span class="float-right"></span>
-                    </button>
-                </div>
-                <div class="d-flex align-items-center col-12 col-sm-7 order-3 order-sm-2 py-2 row">
-                    <select class="custom-select col-9 lead" id="month-mode-month">
-                        <option value="0">January</option>
-                        <option value="1">February</option>
-                        <option value="2">March</option>
-                        <option value="3">April</option>
-                        <option value="4">May</option>
-                        <option value="5">June</option>
-                        <option value="6">July</option>
-                        <option value="7">August</option>
-                        <option value="8">September</option>
-                        <option value="9">October</option>
-                        <option value="10">November</option>
-                        <option value="11">December</option>
-                    </select>
-                    <span id="month-mode-year" class="text-center pl-2 col-3 lead"></span>
-                </div>
-                <div class="month-mode-arrow col-2 row justify-content-end order-2 order-sm-3 py-2">
-                    <button id="r-month-arrow" type="button" class="btn btn-outline-light d-flex align-items-center">
-                        <span class="float-left"></span>
-                        <i class="fas fa-chevron-right"></i>
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="week-mode-wrapper col-12 row d-flex justify-content-between align-items-center">
-                <div class="week-mode-arrow col-2 row justify-content-start order-1 py-2">
-                    <button id="l-week-arrow" type="button" class="btn btn-outline-light d-flex align-items-center">
-                        <i class="fas fa-chevron-left"></i>
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                </div>
-                <span id="week-mode-content"
-                    class="text-center w-100 col-12 col-sm-8 order-3 order-sm-2 py-2 lead"></span>
-                <div class="week-mode-arrow col-2 row justify-content-end order-2 order-sm-3 py-2">
-                    <button id="r-week-arrow" type="button" class="btn btn-outline-light d-flex align-items-center">
-                        <i class="fas fa-chevron-right"></i>
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
+        <div class="row justify-content-between align-items-center py-2 px-3 mx-0">
+            <div class="month-mode-wrapper col-12 p-0">
+                <div class="row justify-content-between align-items-center">
+                    <div class="month-mode-arrow col-2 order-1 py-2">
+                        <div class="d-flex justify-content-start">
+                            <button id="l-month-arrow" type="button" class="btn btn-outline-light d-flex align-items-center">
+                                <i class="fas fa-chevron-left"></i>
+                                <i class="fas fa-chevron-left"></i>
+                                <span class="float-right"></span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center col-12 col-sm-7 order-3 order-sm-2 py-2">
+                        <div class="row">
+                            <select class="custom-select col-9 lead" id="month-mode-month">
+                                <option value="0">January</option>
+                                <option value="1">February</option>
+                                <option value="2">March</option>
+                                <option value="3">April</option>
+                                <option value="4">May</option>
+                                <option value="5">June</option>
+                                <option value="6">July</option>
+                                <option value="7">August</option>
+                                <option value="8">September</option>
+                                <option value="9">October</option>
+                                <option value="10">November</option>
+                                <option value="11">December</option>
+                            </select>
+                            <span id="month-mode-year" class="text-center pl-2 col-3 lead"></span>
+                        </div>
+                    </div>
+                    <div class="month-mode-arrow col-2 order-2 order-sm-3 py-2">
+                        <div class="d-flex justify-content-end">
+                            <button id="r-month-arrow" type="button" class="btn btn-outline-light d-flex align-items-center">
+                                <span class="float-left"></span>
+                                <i class="fas fa-chevron-right"></i>
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="day-mode-wrapper col-12 row d-flex justify-content-between align-items-center">
-                <div class="day-mode-arrow col-2 row justify-content-start order-1 py-2">
-                    <button id="l-day-arrow" type="button" class="btn btn-outline-light d-flex align-items-center">
-                        <i class="fas fa-chevron-left"></i>
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
+            <div class="week-mode-wrapper col-12 p-0">
+                <div class="row justify-content-between align-items-center">
+                    <div class="week-mode-arrow col-2 order-1 py-2">
+                        <div class="d-flex justify-content-start">
+                            <button id="l-week-arrow" type="button" class="btn btn-outline-light d-flex align-items-center">
+                                <i class="fas fa-chevron-left"></i>
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <span id="week-mode-content"
+                        class="text-center w-100 col-12 col-sm-8 order-3 order-sm-2 py-2 lead"></span>
+                    <div class="week-mode-arrow col-2 order-2 order-sm-3 py-2">
+                        <div class="d-flex justify-content-end">
+                            <button id="r-week-arrow" type="button" class="btn btn-outline-light d-flex align-items-center">
+                                <i class="fas fa-chevron-right"></i>
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <span id="day-mode-content"
-                    class="text-center w-100 col-12 col-sm-8 order-3 order-sm-2 py-2 lead"></span>
-                <div class="day-mode-arrow col-2 row justify-content-end order-2 order-sm-3 py-2">
-                    <button id="r-day-arrow" type="button" class="btn btn-outline-light d-flex align-items-center">
-                        <i class="fas fa-chevron-right"></i>
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
+            </div>
+            <div class="day-mode-wrapper col-12 p-0">
+                <div class="row justify-content-between align-items-center">
+                    <div class="day-mode-arrow col-2 order-1 py-2">
+                        <div class="d-flex justify-content-start">
+                            <button id="l-day-arrow" type="button" class="btn btn-outline-light d-flex align-items-center">
+                                <i class="fas fa-chevron-left"></i>
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <span id="day-mode-content"
+                        class="text-center w-100 col-12 col-sm-8 order-3 order-sm-2 py-2 lead"></span>
+                    <div class="day-mode-arrow col-2 order-2 order-sm-3 py-2">
+                        <div class="d-flex justify-content-end">
+                            <button id="r-day-arrow" type="button" class="btn btn-outline-light d-flex align-items-center">
+                                <i class="fas fa-chevron-right"></i>
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="row">
+        <div class="row mx-0">
             <div class="col-12">
                 <p class="lead text-center px-3">You have <span id="lead-task-number"></span> task(s) scheduled</p>
             </div>
             <div class="col-12 hide">
                 <p class="lead text-center px-3">You have <span id="lead-task-completed"></span> task(s) completed</p>
             </div>
-            <div class="col-12 row px-3 mb-2" id="task-progress">
-                <div class="progress w-100">
-                    <div class="progress-bar progress-bar-striped progress-bar-animated position-relative" role="progressbar" aria-valuemin="0"
-                        aria-valuemax="100"><small class="px-1"></small></div>
+            <div class="col-12 px-3 mb-2" id="task-progress">
+                <div class="d-flex">
+                    <div class="progress w-100">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated position-relative" role="progressbar" aria-valuemin="0"
+                            aria-valuemax="100"><small class="px-1"></small></div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="d-flex justify-content-center align-items-center py-2 px-3 row" id="mode-btns">
-            <div class="btn-group col-12 row" role="group">
-                <button id="day-mode-btn" type="button" class="btn btn-outline-light col-12 col-sm-4 py-1">Day
+        <div class="row py-2 px-3 mx-0" id="mode-btns">
+            <div class="btn-group col-12 p-0 d-flex justify-content-center" role="group">
+                <button id="day-mode-btn" type="button" class="btn btn-outline-light">Day
                     Mode</button>
-                <button id="week-mode-btn" type="button" class="btn btn-outline-light col-12 col-sm-4 py-1">Week
+                <button id="week-mode-btn" type="button" class="btn btn-outline-light">Week
                     Mode</button>
-                <button id="month-mode-btn" type="button" class="btn btn-outline-light col-12 col-sm-4 py-1">Month
+                <button id="month-mode-btn" type="button" class="btn btn-outline-light">Month
                     Mode</button>
             </div>
         </div>
-        <div class="d-flex justify-content-end align-items-center py-2 px-3 row" id="main-options-btn">
-            <div class="btn-group col-12 row" role="group">
-                <button type="button" class="btn btn-outline-light col-12 col-sm-4 py-1" id="search-icon-primary">
+        <div class="row py-2 px-3 mx-0" id="main-options-btn">
+            <div class="btn-group col-12 p-0 d-flex justify-content-center" role="group">
+                <button type="button" class="btn btn-outline-light" id="search-icon-primary">
                     <i class="fas fa-search"></i>
                 </button>
-                <button type="button" class="btn btn-outline-light col-12 col-sm-4 py-1" id="add-icon-primary">
+                <button type="button" class="btn btn-outline-light" id="add-icon-primary">
                     <i class="fas fa-plus"></i>
                 </button>
-                <div class="btn-group col-12 col-sm-4" role="group">
+                <div class="btn-group" role="group">
                     <button id="more-options-btn" type="button" class="btn btn-outline-light dropdown-toggle py-1"
                         data-toggle="dropdown">
                         <i class="fas fa-ellipsis-v"></i>
@@ -336,7 +267,7 @@
                 </div>
             </form>
         </div>
-        <div id="pick-date-form-wrapper">
+        <!-- <div id="pick-date-form-wrapper">
             <div
                 class="row calendar text-center py-2 px-3 input-group d-flex justify-content-center align-items-center">
                 <div class="date-toasts row d-flex justify-content-center align-items-center"></div>
@@ -375,7 +306,7 @@
                     Completed
                 </button>
             </div>
-        </div>
+        </div> -->
         <table class="table table-hover">
             <thead id="table-head" class="text-center">
                 <tr>

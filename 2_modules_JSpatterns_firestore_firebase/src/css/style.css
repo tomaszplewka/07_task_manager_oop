@@ -442,7 +442,7 @@ td:hover.invalid-day {
 #search-form-wrapper,
 #add-form-wrapper,
 #pick-date-form-wrapper,
-#main-options-btn,
+/* #main-options-btn, */
 #select-all-options {
 	max-height: 0px;
 	overflow: hidden;
@@ -702,6 +702,18 @@ p.invalid {
 	top: 10px;
 	right: 16px;
 	cursor: pointer;
+}
+
+#mode-btns button {
+	width: 33.33%;
+}
+
+#main-options-btn div div.btn-group {
+	width: 33.33%;
+}
+
+.btn-group > .btn-group:not(:first-child), .btn-group > .btn:not(:first-child) {
+	margin-left: 0;
 }
 
 /* MQs */

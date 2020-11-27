@@ -32,7 +32,7 @@ import UserCtrl from './js/UserCtrl';
 import DnDCtrl from './js/DnDCtrl';
 import FirebaseCtrl from './js/FirebaseCtrl';
 // 
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -168,34 +168,23 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                             document.querySelector(UISelectors.loginLoader).style.height = document.querySelector(UISelectors.loginMainDiv).offsetHeight + 'px';
                             // 
                             document.querySelector(UISelectors.loginMainDiv).classList.remove('move-y-up');
-
-                            // setTimeout(() => {
-                            //     document.querySelector(UISelectors.loginWrapper).classList.add('roll-up');
-                            //     // 
-                            //     document.querySelector('body').style.overflow = 'auto';
-                            //     // console.log(new Date());
-
-                            //     // Adjust main app screen
-                            //     // document.querySelector(UISelectors.welcomeHeader).textContent = user.name;
-                            //     // Get user's tasks
-
-                            //     // user.tasks = Store.getUser(user.data.name).tasks;
-                            //     // const today = new Date();
-                            //     // document.querySelector(UISelectors.leadTodayDate).textContent = format(today, "do 'of' MMMM yyyy");
-                            //     // 
-                            //     // setTimeout(() => {
-                            //     //     // document.querySelector(UISelectors.loginWrapper).remove();
-                            //     //     document.querySelector(UISelectors.loginLoader).remove();
-                            //     // }, 500);
-                            // }, 2000);
                         })
                         .catch(error => {
                             console.log(error);
                             console.log('w error jestem');
                             const { msg, email, pass } = DataCtrl.errorHandling(error.code);
-                            switch (error) {
+                            switch (true) {
                                 case emailValue.value === '' && passValue.value === '':
                                     errorPara.innerHTML = "No email and password provided.";
+                                    errorPara.classList.remove('hide');
+                                    emailValue.classList.add('invalid');
+                                    passValue.classList.add('invalid');
+                                    setTimeout(() => {
+                                        errorPara.classList.add('hide');
+                                        emailValue.classList.remove('invalid');
+                                        passValue.classList.remove('invalid');
+                                    }, 3000);
+                                    break;
                                 case email === 1 && pass === 1:
                                     errorPara.innerHTML = msg;
                                     errorPara.classList.remove('hide');
@@ -240,23 +229,6 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                         document.querySelector(UISelectors.welcomeHeader).textContent = '';
                         document.querySelector(UISelectors.leadTodayDate).textContent = '';
                     });
-                // 
-                // UICtrl.logOut();
-                // 
-                // document.querySelector('body').style.overflow = 'hidden';
-                // 
-                // setTimeout(() => {
-                //     // console.log(new Date());
-                //     // Reset main app screen
-                //     // Get user's tasks
-                    
-                //     // // Show login loader
-                //     // UICtrl.createLoginLoader();
-                //     // // 
-                //     // setTimeout(() => {
-                //     //     document.querySelector(UISelectors.loginLoader).remove();
-                //     // }, 1500);
-                // }, 400);
             }
             // Show/Hide password
             if (`.${e.target.className}` === UISelectors.showHidePass) {
@@ -292,6 +264,40 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                     //
                 });
             }
+            // Add task
+            if (`#${e.target.id}` === UISelectors.addOption) {
+                console.log('add option clicked');
+                document.querySelector(UISelectors.addFormWrapper).classList.toggle('add-form-open');
+                // UI.removeClass(pickDateFormWrapper, 'pick-date-form-open');
+                //
+                if (document.querySelector(UISelectors.addFormWrapper).classList.contains('add-form-open')) {
+                    document.querySelector(UISelectors.addForm).add.disabled = false;
+                    document.querySelector(UISelectors.addFormInputs).focus();
+                    document.querySelector(UISelectors.addFormInputs).select();
+                }
+                // dateToasts.innerHTML = '';
+            }
+        });
+        // Add form submit event
+        document.querySelector(UISelectors.addForm).addEventListener('submit', (e) => {
+            e.preventDefault();
+            // 
+            const task = document.querySelector(UISelectors.addForm).add.value.trim();
+            // Check if task has length
+            if (task.length) {  // YES
+                // Check if particular day field exist in 'tasks' collection
+                const currToday = format(parse('26 November 2020, Thursday', "d MMMM yyyy, EEEE", new Date()), "d'-'MMM'-'yyyy");
+                console.log(currToday);
+                FirebaseCtrl.addTasks({
+                    currToday
+                })
+
+            } else {    // NO
+
+            }
+
+
+            
         });
     }
 
@@ -306,8 +312,7 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
     }
 
     const setUI = function(user) {
-        if (user) {
-            // user logged in
+        if (user) { // user logged in
             // Adjust loginWrapper
             document.querySelector(UISelectors.loginWrapper).style.display = 'flex';
             document.querySelector(UISelectors.loginMainDiv).style.opacity = 0;
@@ -328,8 +333,7 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                     document.querySelector(UISelectors.loginMainDiv).style.opacity = 1;
                 }, 1000)
             }, 2000);
-        } else {
-            // user logged out
+        } else { // user logged out
             // Adjust loginWrapper
             document.querySelector(UISelectors.loginWrapper).style.display = 'flex';
             document.querySelector(UISelectors.loginMainDiv).style.opacity = 0;
@@ -338,18 +342,14 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
             document.querySelector(UISelectors.loginLoader).style.height = document.querySelector(UISelectors.loginMainDiv).offsetHeight + 'px';
 
             setTimeout(() => {
-                // document.querySelector(UISelectors.loginWrapper).classList.remove('roll-up');
                 document.querySelector('body').style.overflow = 'hidden';
-    
+                // 
                 document.querySelector(UISelectors.mainNavbar).style.display = 'none';
                 document.querySelector(UISelectors.mainBody).style.display = 'none';
-
+                // 
                 document.querySelector(UISelectors.loginLoader).remove();
                 document.querySelector(UISelectors.loginMainDiv).style.opacity = 1;
             }, 2000);
-            // document.querySelector(UISelectors.loginWrapper).style.display = 'flex';
-            // document.querySelector(UISelectors.mainNavbar).style.display = 'none';
-            // document.querySelector(UISelectors.mainBody).style.display = 'none';
         }
     }
 
@@ -359,7 +359,7 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
         // adjust UI
         document.querySelector(UISelectors.monthModeWrapper).setAttribute('style', 'display: none !important');
 		document.querySelector(UISelectors.weekModeWrapper).setAttribute('style', 'display: none !important');
-		document.querySelector(UISelectors.dayModeWrapper).setAttribute('style', 'display: flex !important');
+		document.querySelector(UISelectors.dayModeWrapper).setAttribute('style', 'display: block !important');
 		document.querySelector(UISelectors.lMonthArrow).parentElement.style.display = 'none';
 		document.querySelector(UISelectors.rMonthArrow).parentElement.style.display = 'none';
 		document.querySelector(UISelectors.lWeekArrow).parentElement.style.display = 'none';
@@ -367,7 +367,7 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
 		document.querySelector(UISelectors.lDayArrow).parentElement.style.display = 'flex';
         document.querySelector(UISelectors.rDayArrow).parentElement.style.display = 'flex';
         // 
-        document.querySelector(UISelectors.taskTabs).classList.remove('hide');
+        // document.querySelector(UISelectors.taskTabs).classList.remove('hide');
         // 
         document.querySelector(UISelectors.dayModeContent).textContent = `
             ${format(currToday, "d MMMM yyyy, EEEE")}
@@ -388,13 +388,14 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
             // test firebase
             FirebaseCtrl.test();
             // Adjust UI on user status change
-            FirebaseCtrl.authStatus({
+            const user = FirebaseCtrl.authStatus({
                 setUI,
                 renderLoginAccounts: UICtrl.renderLoginAccounts,
                 uiListSelector: UISelectors.loginAccounts,
                 renderDayModeCalendar,
                 currToday: new Date()
             });
+            // console.log(FirebaseCtrl.checkIfLoggedIn());
             // If no accounts, disable remove btn
             if (!1) {
                 document.querySelector(UISelectors.removeUserBtn).disabled = true;
@@ -421,3 +422,6 @@ AppCtrl.init();
 
 // console.log(dateFormat(new Date(), 'Do of MMMM YYYY'));
 // console.log(format(new Date(), "do 'of' MMMM yyyy"));
+
+// console.log(parse('26 November 2020, Thursday', "d MMMM yyyy, EEEE", new Date()));
+// console.log(format(parse('26 November 2020, Thursday', "d MMMM yyyy, EEEE", new Date()), "d'-'MMM'-'yyyy"));

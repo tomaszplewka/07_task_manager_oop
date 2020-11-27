@@ -49,7 +49,11 @@ const UICtrl = (function() {
         logInConfirmAccount: '.login-confirm-account',
         logInConfirmMode: '.login-confirm',
         logInForm: '#login-form',
-        errorPara: '.error'
+        errorPara: '.error',
+        addOption: '#add-icon-primary',
+        addForm: '.add',
+        addFormWrapper: '#add-form-wrapper',
+        addFormInputs: '.add input'
     }
 
     const createHeading = function(cssClass, headingTitle) {
