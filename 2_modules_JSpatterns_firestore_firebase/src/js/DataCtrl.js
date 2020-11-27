@@ -81,10 +81,32 @@ const DataCtrl = (function() {
             }
     }
 
+    const filterTasks = function(term, selector) {
+        const list = document.querySelector(selector);
+        console.log(list);
+		//
+		Array.from(list.children)
+			.filter(task => !task.textContent.toLowerCase().includes(term))
+			.forEach(task => {
+                task.classList.remove('d-flex');
+                task.classList.add('filtered');
+                console.log(task);
+            });
+            //
+            Array.from(list.children)
+			.filter(task => task.textContent.toLowerCase().includes(term))
+			.forEach(task => {
+                task.classList.add('d-flex');
+                task.classList.remove('filtered');
+                console.log(task);
+            });
+    }
+
     return {
         validate,
         displayLogInFormat,
-        errorHandling
+        errorHandling,
+        filterTasks
     }
 
 })();

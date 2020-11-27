@@ -145,7 +145,7 @@
 
 /* General Styling */
 body {
-	background-color: var(--theme1-bg-color);
+	background-color: var(--theme1-bg-color) !important;
 	overflow: hidden;
 }
 

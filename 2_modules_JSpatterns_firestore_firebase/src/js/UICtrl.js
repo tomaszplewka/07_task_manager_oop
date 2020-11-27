@@ -53,7 +53,12 @@ const UICtrl = (function() {
         addOption: '#add-icon-primary',
         addForm: '.add',
         addFormWrapper: '#add-form-wrapper',
-        addFormInputs: '.add input'
+        addFormInputs: '.add input',
+        errorTask: '.error-task',
+        errorTaskMsg: '.error-task-msg',
+        searchTasks: '#search-icon-primary',
+        searchForm: '.search-form',
+        searchFormWrapper: '#search-form-wrapper'
     }
 
     const createHeading = function(cssClass, headingTitle) {
@@ -83,7 +88,7 @@ const UICtrl = (function() {
 
     const createUl = function(ulClass) {
         let ul = document.createElement('ul');
-        ul.className = `list-group ${ulClass} mx-auto w-100 mt-4`;
+        ul.className = `list-group ${ulClass} mx-auto w-100 my-4`;
 
         return ul;
     }
@@ -333,22 +338,35 @@ const UICtrl = (function() {
     }
 
     const displayTasks = function(tasks, currToday, enableDnD) {
-        if (tasks) {
-            tasks.some(task => {
-                console.log(task.data());
-                console.log(format(new Date(), "d'-'MMM'-'yyyy"));
-                console.log(task.data()[format(currToday, "d'-'MMM'-'yyyy")]);
-                if (task.data()[format(currToday, "d'-'MMM'-'yyyy")]) {
-                    task.data()[format(currToday, "d'-'MMM'-'yyyy")].forEach((task, index) => {
-                        console.log(task);
-                        generateDayTemplate(task, index, enableDnD);
-                    })
-                    // 
-                    // 
-                    return true;
-                }
-            })
+        console.log('displayTasks');
+        currToday = format(currToday, "d'-'MMM'-'yyyy");
+        console.log(currToday);
+        console.log(tasks);
+        console.log(tasks === undefined);
+        console.log(tasks[currToday]);
+        
+        if (!(tasks === undefined)) {
+            console.log('inside first if');
+            console.log(tasks[currToday]);
+            if (tasks[currToday]) {
+                console.log('displayTasks inside if');
+                tasks[currToday].forEach((task, index) => {
+                    console.log(task);
+                    generateDayTemplate(task, index, enableDnD);
+                });
+            }
+            else {
+                // no tasks for this date
+                let list = document.querySelector(UISelectors.tasks);
+                let li = createLi('list-group-item d-flex justify-content-between align-items-center');
+                let p = document.createElement('p');
+                p.className = 'lead text-center';
+                p.appendChild(document.createTextNode('No tasks to display'));
+                li.appendChild(p);
+                list.appendChild(li);
+            }
         }
+
     }
 
     const generateDayTemplate = function(task, index, enableDnD) {
@@ -378,6 +396,20 @@ const UICtrl = (function() {
 		list.appendChild(li);
     }
 
+    const errorTasks = function(text) {
+        document.querySelector(UISelectors.addForm).add.disabled = true;
+        document.querySelector(UISelectors.addForm).add.classList.toggle('invalid');
+        document.querySelector(UISelectors.errorTaskMsg).innerText = `${text}`;
+        document.querySelector(UISelectors.errorTask).classList.toggle('hide');
+        setTimeout(() => {
+            document.querySelector(UISelectors.addForm).add.disabled = false;
+            document.querySelector(UISelectors.errorTask).classList.toggle('hide');
+            document.querySelector(UISelectors.addForm).add.classList.toggle('invalid');
+        }, 1500);
+
+        return true;
+    }
+
     return {
         getSelectors: function() {
             return UISelectors;
@@ -392,7 +424,8 @@ const UICtrl = (function() {
         renderListElements,
         setTableBodyHead,
         renderTableUI,
-        displayTasks
+        displayTasks,
+        errorTasks
     }
 
 })();

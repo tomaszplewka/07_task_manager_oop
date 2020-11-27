@@ -248,7 +248,7 @@
         <div id="search-form-wrapper">
             <form class="search-form py-2 px-3" autocomplete="off">
                 <div class="input-group">
-                    <input class="form-control m-auto" type="text" name="search" placeholder="search tasks..." />
+                    <input class="form-control m-auto" type="text" name="searchInput" placeholder="search tasks..." />
                 </div>
             </form>
         </div>
@@ -266,6 +266,9 @@
                     </div>
                 </div>
             </form>
+            <div class="error-task py-2 px-3 hide">
+                <p class="lead text-center error-task-msg invalid"></p>
+            </div>
         </div>
         <!-- <div id="pick-date-form-wrapper">
             <div

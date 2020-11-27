@@ -43,262 +43,299 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
     // Load event listeners
     const loadEventListeners = function() {
         // UI event listeners
-        document.querySelector('body').addEventListener('click', e => {
-            // Add user - sign up & log in
-            if (`#${e.target.id}` === UISelectors.addUserBtn) {
-                // Create add user mode
-                UICtrl.createAddMode();
-                // 
-                setTimeout(() => {
-                    document.querySelector(UISelectors.loginMainDiv).classList.add('move-y-up');
-                    document.querySelector(UISelectors.loginAddMode).classList.add('move-y-zero');
-                    // 
-                    document.querySelector(UISelectors.username).select();
-                    document.querySelector(UISelectors.email).removeAttribute('tabindex');
-                    document.querySelector(UISelectors.password).removeAttribute('tabindex');
-                }, 100)
-                // Validate username, email & password
-                Array.from(document.querySelectorAll('input')).forEach(input => input.addEventListener('keyup', e => {
-                    DataCtrl.validate(e.target);
-                    enableDisableCreateBtn();
-                }));
-                // Go Back from Add Account Screen
-                document.querySelector(UISelectors.addBackBtn).addEventListener('click', () => {
-                    document.querySelector(UISelectors.loginMainDiv).classList.remove('move-y-up');
-                    document.querySelector(UISelectors.loginAddMode).classList.remove('move-y-zero');
-                    setTimeout(() => {
-                        document.querySelector(UISelectors.loginAddMode).remove();
-                    }, 100)
-                    console.log('back');
-                })
-                // Add new account - submit event
-                document.querySelector(UISelectors.addAccountForm).addEventListener('submit', e => {
-                    e.preventDefault();
-                    // Creat and store new user in Firebase
-                    const user = {
-                        name: document.querySelector(UISelectors.username).value,
-                        avatar: 'avatar-1',
-                        theme: 'theme-1',
-                        toast: 'toast-change-1'
-                    }
-                    FirebaseCtrl.signUp(document.querySelector(UISelectors.email).value, document.querySelector(UISelectors.password).value, user)
-                        .then(() => {
-                            console.log('i am here!!!');
-                        });
-                    // at this point user is created and logged in
-                    // 
-                    // Create confirm user mode
-                    UICtrl.createConfirmMode();
-                    document.querySelector(UISelectors.confirmUser).textContent = user.name;
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelector('body').addEventListener('click', e => {
+                // Add user - sign up & log in
+                if (`#${e.target.id}` === UISelectors.addUserBtn) {
+                    // Create add user mode
+                    UICtrl.createAddMode();
                     // 
                     setTimeout(() => {
-                        document.querySelector(UISelectors.loginAddMode).classList.remove('move-y-zero'); 
-                        document.querySelector(UISelectors.loginAddMode).classList.add('move-y-up');
-                        document.querySelector(UISelectors.loginConfirmMode).classList.add('move-y-zero');
-                        console.log(new Date());
-                    }, 100)
-                    // 
-                    setTimeout(() => {
-                        document.querySelector(UISelectors.loginConfirmMode).classList.remove('move-y-zero');
-                        // Show login loader
-                        UICtrl.createLoginLoader();
-                        document.querySelector(UISelectors.loginLoader).style.height = document.querySelector(UISelectors.loginConfirmMode).offsetHeight + 'px';
+                        document.querySelector(UISelectors.loginMainDiv).classList.add('move-y-up');
+                        document.querySelector(UISelectors.loginAddMode).classList.add('move-y-zero');
                         // 
+                        document.querySelector(UISelectors.username).select();
+                        document.querySelector(UISelectors.email).removeAttribute('tabindex');
+                        document.querySelector(UISelectors.password).removeAttribute('tabindex');
+                    }, 100)
+                    // Validate username, email & password
+                    Array.from(document.querySelectorAll('input')).forEach(input => input.addEventListener('keyup', e => {
+                        DataCtrl.validate(e.target);
+                        enableDisableCreateBtn();
+                    }));
+                    // Go Back from Add Account Screen
+                    document.querySelector(UISelectors.addBackBtn).addEventListener('click', () => {
                         document.querySelector(UISelectors.loginMainDiv).classList.remove('move-y-up');
-                        document.querySelector(UISelectors.loginAddMode).remove();
-                        document.querySelector(UISelectors.loginConfirmMode).remove();
-                        // Clear login accounts
-                        document.querySelector(UISelectors.loginAccounts).innerHTML = '';
-                        // console.log(new Date());
+                        document.querySelector(UISelectors.loginAddMode).classList.remove('move-y-zero');
+                        setTimeout(() => {
+                            document.querySelector(UISelectors.loginAddMode).remove();
+                        }, 100)
+                        console.log('back');
+                    })
+                    // Add new account - submit event
+                    document.querySelector(UISelectors.addAccountForm).addEventListener('submit', e => {
+                        e.preventDefault();
+                        // Creat and store new user in Firebase
+                        const user = {
+                            name: document.querySelector(UISelectors.username).value,
+                            avatar: 'avatar-1',
+                            theme: 'theme-1',
+                            toast: 'toast-change-1'
+                        }
+                        FirebaseCtrl.signUp(document.querySelector(UISelectors.email).value, document.querySelector(UISelectors.password).value, user)
+                            .then(() => {
+                                console.log('i am here!!!');
+                            });
+                        // at this point user is created and logged in
+                        // 
+                        // Create confirm user mode
+                        UICtrl.createConfirmMode();
+                        document.querySelector(UISelectors.confirmUser).textContent = user.name;
                         // 
                         setTimeout(() => {
-                            document.querySelector(UISelectors.loginWrapper).classList.add('roll-up');
-                            // 
-                            document.querySelector('body').style.overflow = 'auto';
-                            // console.log(new Date());
-                            // Adjust main app screen
-                            document.querySelector(UISelectors.welcomeHeader).textContent = user.name;
-                            // Get user's tasks
-
-                            // user.tasks = Store.getUser(user.data.name).tasks;
-                            const today = new Date();
-                            document.querySelector(UISelectors.leadTodayDate).textContent = format(today, "do 'of' MMMM yyyy");
-                            // 
-                            setTimeout(() => {
-                                // document.querySelector(UISelectors.loginWrapper).remove();
-                                document.querySelector(UISelectors.loginLoader).remove();
-                            }, 500);
-                        }, 2000);
-                    }, 1500)
-                })
-            }
-            // Log in
-            console.log(document.querySelector(UISelectors.loginAccounts).contains(e.target));
-            console.log(e.target.tagName);
-            if (document.querySelector(UISelectors.loginAccounts).contains(e.target) && !document.querySelector(UISelectors.loginAccounts).classList.contains('empty')) {
-                let id = '';
-                if (e.target.tagName.toLowerCase() === 'i') {
-                    id = e.target.parentElement.id;
-                } else if(e.target.tagName.toLowerCase() === 'li') {
-                    id = e.target.id;
-                }
-                // 
-                UICtrl.createLogInMode(id);
-                // 
-                setTimeout(() => {
-                    document.querySelector(UISelectors.loginMainDiv).classList.add('move-x-left');
-                    document.querySelector(UISelectors.logInConfirmMode).classList.add('move-x-zero');
-                    document.querySelector(UISelectors.email).select();
-                }, 100)
-                // LogIn to an Account
-                document.querySelector(UISelectors.logInForm).addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    console.log('tutaj tutaj tutaj');
-                    // 
-                    const emailValue = document.querySelector(UISelectors.email);
-                    const passValue = document.querySelector(UISelectors.password);
-                    const errorPara = document.querySelector(UISelectors.errorPara);
-                    FirebaseCtrl.logIn(emailValue.value, passValue.value)
-                        .then(credentials => {
-                            console.log(credentials.user);
-                            // Adjust UI
-                            document.querySelector(UISelectors.logInConfirmMode).remove();
+                            document.querySelector(UISelectors.loginAddMode).classList.remove('move-y-zero'); 
+                            document.querySelector(UISelectors.loginAddMode).classList.add('move-y-up');
+                            document.querySelector(UISelectors.loginConfirmMode).classList.add('move-y-zero');
+                            console.log(new Date());
+                        }, 100)
+                        // 
+                        setTimeout(() => {
+                            document.querySelector(UISelectors.loginConfirmMode).classList.remove('move-y-zero');
                             // Show login loader
                             UICtrl.createLoginLoader();
-                            document.querySelector(UISelectors.loginLoader).style.height = document.querySelector(UISelectors.loginMainDiv).offsetHeight + 'px';
+                            document.querySelector(UISelectors.loginLoader).style.height = document.querySelector(UISelectors.loginConfirmMode).offsetHeight + 'px';
                             // 
                             document.querySelector(UISelectors.loginMainDiv).classList.remove('move-y-up');
-                        })
-                        .catch(error => {
-                            console.log(error);
-                            console.log('w error jestem');
-                            const { msg, email, pass } = DataCtrl.errorHandling(error.code);
-                            switch (true) {
-                                case emailValue.value === '' && passValue.value === '':
-                                    errorPara.innerHTML = "No email and password provided.";
-                                    errorPara.classList.remove('hide');
-                                    emailValue.classList.add('invalid');
-                                    passValue.classList.add('invalid');
-                                    setTimeout(() => {
-                                        errorPara.classList.add('hide');
-                                        emailValue.classList.remove('invalid');
-                                        passValue.classList.remove('invalid');
-                                    }, 3000);
-                                    break;
-                                case email === 1 && pass === 1:
-                                    errorPara.innerHTML = msg;
-                                    errorPara.classList.remove('hide');
-                                    emailValue.classList.add('invalid');
-                                    passValue.classList.add('invalid');
-                                    setTimeout(() => {
-                                        errorPara.classList.add('hide');
-                                        emailValue.classList.remove('invalid');
-                                        passValue.classList.remove('invalid');
-                                    }, 3000);
-                                    break;
-                                case email === 1:
-                                    errorPara.innerHTML = msg;
-                                    errorPara.classList.remove('hide');
-                                    emailValue.classList.add('invalid');
-                                    setTimeout(() => {
-                                        errorPara.classList.add('hide');
-                                        emailValue.classList.remove('invalid');
-                                    }, 3000);
-                                    break;
-                                case pass === 1:
-                                    errorPara.innerHTML = msg;
-                                    errorPara.classList.remove('hide');
-                                    passValue.classList.add('invalid');
-                                    setTimeout(() => {
-                                        errorPara.classList.add('hide');
-                                        passValue.classList.remove('invalid');
-                                    }, 3000);
-                                    break;
-                            }
-                        });
-                });
-            }
-            // Log out
-            if (`#${e.target.id}` === UISelectors.logOut) {
-                console.log('tutaj jestem');
-                FirebaseCtrl.logOut()
-                    .then(() => {
-                        console.log('user logged out');
-
-                        document.querySelector(UISelectors.loginWrapper).classList.remove('roll-up');
-                        document.querySelector(UISelectors.welcomeHeader).textContent = '';
-                        document.querySelector(UISelectors.leadTodayDate).textContent = '';
-                    });
-            }
-            // Show/Hide password
-            if (`.${e.target.className}` === UISelectors.showHidePass) {
-                UICtrl.showHidePass(e.target, document.querySelector(UISelectors.password));
-            }
-            // Remove user
-            if (`#${e.target.id}` === UISelectors.removeUserBtn) {
-                UICtrl.createRemoveMode();
-                // 
-                setTimeout(() => {
-                    // render list elements
-                    UICtrl.renderListElements(UISelectors.loginAccounts, UISelectors.loginRemoveAccounts);
+                            document.querySelector(UISelectors.loginAddMode).remove();
+                            document.querySelector(UISelectors.loginConfirmMode).remove();
+                            // Clear login accounts
+                            document.querySelector(UISelectors.loginAccounts).innerHTML = '';
+                            // console.log(new Date());
+                            // 
+                            setTimeout(() => {
+                                document.querySelector(UISelectors.loginWrapper).classList.add('roll-up');
+                                // 
+                                document.querySelector('body').style.overflow = 'auto';
+                                // console.log(new Date());
+                                // Adjust main app screen
+                                document.querySelector(UISelectors.welcomeHeader).textContent = user.name;
+                                // Get user's tasks
+    
+                                // user.tasks = Store.getUser(user.data.name).tasks;
+                                const today = new Date();
+                                document.querySelector(UISelectors.leadTodayDate).textContent = format(today, "do 'of' MMMM yyyy");
+                                // 
+                                setTimeout(() => {
+                                    // document.querySelector(UISelectors.loginWrapper).remove();
+                                    document.querySelector(UISelectors.loginLoader).remove();
+                                }, 500);
+                            }, 2000);
+                        }, 1500)
+                    })
+                }
+                // Log in
+                console.log(document.querySelector(UISelectors.loginAccounts).contains(e.target));
+                console.log(e.target.tagName);
+                if (document.querySelector(UISelectors.loginAccounts).contains(e.target) && !document.querySelector(UISelectors.loginAccounts).classList.contains('empty')) {
+                    let id = '';
+                    if (e.target.tagName.toLowerCase() === 'i') {
+                        id = e.target.parentElement.id;
+                    } else if(e.target.tagName.toLowerCase() === 'li') {
+                        id = e.target.id;
+                    }
                     // 
-                    document.querySelector(UISelectors.loginMainDiv).classList.add('move-y-up');
-                    document.querySelector(UISelectors.loginRemoveMode).classList.add('move-y-zero');
-                }, 100);
-                // Go Back from Remove Account Screen
-                document.querySelector(UISelectors.removeBackBtn).addEventListener('click', () => {
+                    UICtrl.createLogInMode(id);
+                    // 
+                    setTimeout(() => {
+                        document.querySelector(UISelectors.loginMainDiv).classList.add('move-x-left');
+                        document.querySelector(UISelectors.logInConfirmMode).classList.add('move-x-zero');
+                        document.querySelector(UISelectors.email).select();
+                    }, 100)
+                    // LogIn to an Account
+                    document.querySelector(UISelectors.logInForm).addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        console.log('tutaj tutaj tutaj');
+                        // 
+                        const emailValue = document.querySelector(UISelectors.email);
+                        const passValue = document.querySelector(UISelectors.password);
+                        const errorPara = document.querySelector(UISelectors.errorPara);
+                        FirebaseCtrl.logIn(emailValue.value, passValue.value)
+                            .then(credentials => {
+                                console.log(credentials.user);
+                                // Adjust UI
+                                document.querySelector(UISelectors.logInConfirmMode).remove();
+                                // Show login loader
+                                UICtrl.createLoginLoader();
+                                document.querySelector(UISelectors.loginLoader).style.height = document.querySelector(UISelectors.loginMainDiv).offsetHeight + 'px';
+                                // 
+                                document.querySelector(UISelectors.loginMainDiv).classList.remove('move-y-up');
+                            })
+                            .catch(error => {
+                                console.log(error);
+                                console.log('w error jestem');
+                                const { msg, email, pass } = DataCtrl.errorHandling(error.code);
+                                switch (true) {
+                                    case emailValue.value === '' && passValue.value === '':
+                                        errorPara.innerHTML = "No email and password provided.";
+                                        errorPara.classList.remove('hide');
+                                        emailValue.classList.add('invalid');
+                                        passValue.classList.add('invalid');
+                                        setTimeout(() => {
+                                            errorPara.classList.add('hide');
+                                            emailValue.classList.remove('invalid');
+                                            passValue.classList.remove('invalid');
+                                        }, 3000);
+                                        break;
+                                    case email === 1 && pass === 1:
+                                        errorPara.innerHTML = msg;
+                                        errorPara.classList.remove('hide');
+                                        emailValue.classList.add('invalid');
+                                        passValue.classList.add('invalid');
+                                        setTimeout(() => {
+                                            errorPara.classList.add('hide');
+                                            emailValue.classList.remove('invalid');
+                                            passValue.classList.remove('invalid');
+                                        }, 3000);
+                                        break;
+                                    case email === 1:
+                                        errorPara.innerHTML = msg;
+                                        errorPara.classList.remove('hide');
+                                        emailValue.classList.add('invalid');
+                                        setTimeout(() => {
+                                            errorPara.classList.add('hide');
+                                            emailValue.classList.remove('invalid');
+                                        }, 3000);
+                                        break;
+                                    case pass === 1:
+                                        errorPara.innerHTML = msg;
+                                        errorPara.classList.remove('hide');
+                                        passValue.classList.add('invalid');
+                                        setTimeout(() => {
+                                            errorPara.classList.add('hide');
+                                            passValue.classList.remove('invalid');
+                                        }, 3000);
+                                        break;
+                                }
+                            });
+                    });
+                }
+                // Log out
+                if (`#${e.target.id}` === UISelectors.logOut) {
+                    console.log('tutaj jestem');
+                    FirebaseCtrl.logOut()
+                        .then(() => {
+                            console.log('user logged out');
+    
+                            document.querySelector(UISelectors.loginWrapper).classList.remove('roll-up');
+                            document.querySelector(UISelectors.welcomeHeader).textContent = '';
+                            document.querySelector(UISelectors.leadTodayDate).textContent = '';
+                        });
+                }
+                // Show/Hide password
+                if (`.${e.target.className}` === UISelectors.showHidePass) {
+                    UICtrl.showHidePass(e.target, document.querySelector(UISelectors.password));
+                }
+                // Remove user
+                if (`#${e.target.id}` === UISelectors.removeUserBtn) {
+                    UICtrl.createRemoveMode();
+                    // 
                     setTimeout(() => {
                         // render list elements
-                        UICtrl.renderListElements(UISelectors.loginRemoveAccounts, UISelectors.loginAccounts);
+                        UICtrl.renderListElements(UISelectors.loginAccounts, UISelectors.loginRemoveAccounts);
                         // 
-                        document.querySelector(UISelectors.loginMainDiv).classList.remove('move-y-up');
-                        document.querySelector(UISelectors.loginRemoveMode).classList.remove('move-y-zero');
-                        // 
-                        document.querySelector(UISelectors.loginRemoveMode).remove();
+                        document.querySelector(UISelectors.loginMainDiv).classList.add('move-y-up');
+                        document.querySelector(UISelectors.loginRemoveMode).classList.add('move-y-zero');
                     }, 100);
-                });
-                // Remove account screen
-                document.querySelector(UISelectors.loginRemoveAccounts).addEventListener('click', e => {
-                    //
-                    
-                    //
-                });
-            }
-            // Add task
-            if (`#${e.target.id}` === UISelectors.addOption) {
-                console.log('add option clicked');
-                document.querySelector(UISelectors.addFormWrapper).classList.toggle('add-form-open');
-                // UI.removeClass(pickDateFormWrapper, 'pick-date-form-open');
-                //
-                if (document.querySelector(UISelectors.addFormWrapper).classList.contains('add-form-open')) {
-                    document.querySelector(UISelectors.addForm).add.disabled = false;
-                    document.querySelector(UISelectors.addFormInputs).focus();
-                    document.querySelector(UISelectors.addFormInputs).select();
+                    // Go Back from Remove Account Screen
+                    document.querySelector(UISelectors.removeBackBtn).addEventListener('click', () => {
+                        setTimeout(() => {
+                            // render list elements
+                            UICtrl.renderListElements(UISelectors.loginRemoveAccounts, UISelectors.loginAccounts);
+                            // 
+                            document.querySelector(UISelectors.loginMainDiv).classList.remove('move-y-up');
+                            document.querySelector(UISelectors.loginRemoveMode).classList.remove('move-y-zero');
+                            // 
+                            document.querySelector(UISelectors.loginRemoveMode).remove();
+                        }, 100);
+                    });
+                    // Remove account screen
+                    document.querySelector(UISelectors.loginRemoveAccounts).addEventListener('click', e => {
+                        //
+                        
+                        //
+                    });
                 }
-                // dateToasts.innerHTML = '';
-            }
-        });
-        // Add form submit event
-        document.querySelector(UISelectors.addForm).addEventListener('submit', (e) => {
-            e.preventDefault();
-            // 
-            const task = document.querySelector(UISelectors.addForm).add.value.trim();
-            // Check if task has length
-            if (task.length) {  // YES
-                // Check if particular day field exist in 'tasks' collection
-                const currToday = format(parse('26 November 2020, Thursday', "d MMMM yyyy, EEEE", new Date()), "d'-'MMM'-'yyyy");
-                console.log(currToday);
-                FirebaseCtrl.addTasks({
-                    currToday
-                })
-
-            } else {    // NO
-
-            }
-
-
-            
-        });
+                // Add task
+                if (`#${e.target.id}` === UISelectors.addOption || document.querySelector(UISelectors.addOption).contains(e.target)) {
+                    console.log('add option clicked');
+                    document.querySelector(UISelectors.addFormWrapper).classList.toggle('add-form-open');
+                    // UI.removeClass(pickDateFormWrapper, 'pick-date-form-open');
+                    //
+                    if (document.querySelector(UISelectors.addFormWrapper).classList.contains('add-form-open')) {
+                        document.querySelector(UISelectors.addForm).add.disabled = false;
+                        document.querySelector(UISelectors.addFormInputs).focus();
+                        document.querySelector(UISelectors.addFormInputs).select();
+                    }
+                    // dateToasts.innerHTML = '';
+                }
+                // Search tasks
+                if (`#${e.target.id}` === UISelectors.searchTasks || document.querySelector(UISelectors.searchTasks).contains(e.target)) {
+                    console.log('search option clicked');
+                    document.querySelector(UISelectors.searchFormWrapper).classList.toggle('search-form-open');
+                    if (document.querySelector(UISelectors.searchFormWrapper).classList.contains('search-form-open')) {
+                        document.querySelector(UISelectors.searchForm).searchInput.focus();
+                        document.querySelector(UISelectors.searchForm).searchInput.select();
+                    }
+                    document.querySelector(UISelectors.searchForm).searchInput.value = '';
+                    // 
+                    const list = document.querySelector(UISelectors.tasks);
+                    Array.from(list.children).forEach(task => {
+                        task.classList.remove('filtered');
+                    });
+                }
+            });
+            // Add form submit event
+            document.querySelector(UISelectors.addForm).addEventListener('submit', (e) => {
+                e.preventDefault();
+                // 
+                const task = document.querySelector(UISelectors.addForm).add.value.trim();
+                // Check if task has length
+                if (task.length) {  // YES
+                    // Check if particular day field exist in 'tasks' collection
+                    const today = document.querySelector(UISelectors.dayModeContent).textContent.trim();
+                    console.log(today);
+                    const currToday = format(parse(today, "d MMMM yyyy, EEEE", new Date()), "d'-'MMM'-'yyyy");
+                    console.log(currToday);
+                    FirebaseCtrl.addTasks({
+                        currToday,
+                        task,
+                        error: UICtrl.errorTasks
+                    })
+                        .then(response => {
+                            console.log("let's seee...");
+                            console.log(response);
+                        })
+                        .catch(err => {
+                            console.log('Error getting document', err);
+                        });
+    
+                } else {    // NO
+    
+                }
+    
+    
+                
+            });
+            // Search form keyup event
+            document.querySelector(UISelectors.searchForm).searchInput.addEventListener('keyup', () => {
+                const term = document.querySelector(UISelectors.searchForm).searchInput.value.trim().toLowerCase();
+                DataCtrl.filterTasks(term, UISelectors.tasks);
+            });
+            // Search form prevent default
+             document.querySelector(UISelectors.searchForm).addEventListener('submit', e => {
+                 e.preventDefault();
+             });
+        })
     }
 
     const enableDisableCreateBtn = function() {
@@ -388,7 +425,7 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
             // test firebase
             FirebaseCtrl.test();
             // Adjust UI on user status change
-            const user = FirebaseCtrl.authStatus({
+            FirebaseCtrl.authStatus({
                 setUI,
                 renderLoginAccounts: UICtrl.renderLoginAccounts,
                 uiListSelector: UISelectors.loginAccounts,
