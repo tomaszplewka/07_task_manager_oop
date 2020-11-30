@@ -58,7 +58,11 @@ const UICtrl = (function() {
         errorTaskMsg: '.error-task-msg',
         searchTasks: '#search-icon-primary',
         searchForm: '.search-form',
-        searchFormWrapper: '#search-form-wrapper'
+        searchFormWrapper: '#search-form-wrapper',
+        leadTaskNum: '#lead-task-number',
+        weekModeView: '#week-mode-btn',
+        weekModeContent: '#week-mode-content',
+        mainOptionsBtns: '#main-options-btn'
     }
 
     const createHeading = function(cssClass, headingTitle) {
@@ -358,12 +362,14 @@ const UICtrl = (function() {
             else {
                 // no tasks for this date
                 let list = document.querySelector(UISelectors.tasks);
-                let li = createLi('list-group-item d-flex justify-content-between align-items-center');
+                let li = createLi('list-group-item d-flex justify-content-center align-items-center');
                 let p = document.createElement('p');
-                p.className = 'lead text-center';
+                p.className = 'lead text-center m-0';
                 p.appendChild(document.createTextNode('No tasks to display'));
                 li.appendChild(p);
                 list.appendChild(li);
+
+                return 0;
             }
         }
 

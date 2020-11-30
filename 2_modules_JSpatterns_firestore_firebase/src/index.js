@@ -32,7 +32,7 @@ import UserCtrl from './js/UserCtrl';
 import DnDCtrl from './js/DnDCtrl';
 import FirebaseCtrl from './js/FirebaseCtrl';
 // 
-import { format, parse } from 'date-fns';
+import { format, parse, subDays, addDays, startOfWeek, addWeeks, eachDayOfInterval } from 'date-fns';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -40,8 +40,14 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
     // Load UI selectors
     const UISelectors = UICtrl.getSelectors();
+    // Initialize global user
+    let globalUser = '';
+    // Initialize global tasks
+    let globalTasks = '';
     // Load event listeners
     const loadEventListeners = function() {
+        // 
+        // const tasks = userTasks;
         // UI event listeners
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelector('body').addEventListener('click', e => {
@@ -293,6 +299,47 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                         task.classList.remove('filtered');
                     });
                 }
+                // Left arrow in day mode clicked
+                if (`#${e.target.id}` === UISelectors.lDayArrow || document.querySelector(UISelectors.lDayArrow).contains(e.target)) {
+                    console.log(FirebaseCtrl.checkIfLoggedIn().uid);
+                    // 
+                    console.log('left arrow here');
+                    const todayContent = document.querySelector(UISelectors.dayModeContent).textContent.trim();
+                    let today = parse(todayContent, "d MMMM yyyy, EEEE", new Date());
+                    console.log(today);
+                    const prevToday = subDays(today, 1);
+                    let currToday = prevToday;
+                    console.log(prevToday);
+                    // currToday = format(currToday, "d'-'MMM'-'yyyy");
+                    console.log(currToday);
+                    // console.log(globalUser);
+                    // console.log(globalTasks);
+                    // 
+                    renderDayModeCalendar(currToday, globalTasks);
+                }
+                // Right arrow in day mode clicked
+                if (`#${e.target.id}` === UISelectors.rDayArrow || document.querySelector(UISelectors.rDayArrow).contains(e.target)) {
+                    // console.log(FirebaseCtrl.checkIfLoggedIn().uid);
+                    // 
+                    console.log('right arrow here');
+                    const todayContent = document.querySelector(UISelectors.dayModeContent).textContent.trim();
+                    let today = parse(todayContent, "d MMMM yyyy, EEEE", new Date());
+                    console.log(today);
+                    const nextToday = addDays(today, 1);
+                    let currToday = nextToday;
+                    console.log(nextToday);
+                    // currToday = format(currToday, "d'-'MMM'-'yyyy");
+                    console.log(currToday);
+                    // console.log(globalUser);
+                    // console.log(globalTasks);
+                    // 
+                    renderDayModeCalendar(currToday, globalTasks);
+                }
+                // Switch to week mode
+                if (`#${e.target.id}` === UISelectors.weekModeView) {
+                    console.log('week mode clicked');
+                    renderWeekModeCalendar();
+                }
             });
             // Add form submit event
             document.querySelector(UISelectors.addForm).addEventListener('submit', (e) => {
@@ -348,7 +395,10 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
         }
     }
 
-    const setUI = function(user) {
+    const setUI = function(user, data) {
+        // Set global user
+        globalUser = user;
+        // 
         if (user) { // user logged in
             // Adjust loginWrapper
             document.querySelector(UISelectors.loginWrapper).style.display = 'flex';
@@ -363,6 +413,14 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                 // 
                 document.querySelector(UISelectors.mainNavbar).style.display = 'block';
                 document.querySelector(UISelectors.mainBody).style.display = 'block';
+                // Set UI for a particular user
+                console.log(user.displayName);
+                console.log(user.email);
+                console.log(user.metadata);
+                console.log(data);
+                document.querySelector(UISelectors.welcomeHeader).textContent = data.info.name;
+                document.querySelector(UISelectors.leadTodayDate).textContent = format(data.date, "do 'of' MMMM yyyy");
+                // document.querySelector(UISelectors.leadTaskNum).textContent = 
                 // 
                 setTimeout(() => {
                     document.querySelector(UISelectors.loginLoader).remove();
@@ -393,6 +451,10 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
     
 
     const renderDayModeCalendar = function(currToday, tasks) {
+        // Set global tasks
+        if (!globalTasks) {
+            globalTasks = tasks;
+        }
         // adjust UI
         document.querySelector(UISelectors.monthModeWrapper).setAttribute('style', 'display: none !important');
 		document.querySelector(UISelectors.weekModeWrapper).setAttribute('style', 'display: none !important');
@@ -413,7 +475,57 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
         UICtrl.renderTableUI();
         // 
         console.log('renderDayMode');
-        UICtrl.displayTasks(tasks, currToday, DnDCtrl.enableDnD);
+        const taskNum = UICtrl.displayTasks(tasks, currToday, DnDCtrl.enableDnD);
+        console.log(taskNum);
+        if (taskNum) {
+            console.log('tutaj?');
+            document.querySelector(UISelectors.leadTaskNum).textContent = 'jajeczko';
+        } else {
+            console.log('a moze tutaj???');
+            document.querySelector(UISelectors.leadTaskNum).textContent = 0;
+        }
+        // Day mode is active
+        document.querySelector('body').classList.add('day-mode-active');
+    }
+
+    const renderWeekModeCalendar = function() {
+        // Check which mode is active
+        if (document.querySelector('body').classList.contains('day-mode-active')) {
+            const todayContent = document.querySelector(UISelectors.dayModeContent).textContent.trim();
+            let today = parse(todayContent, "d MMMM yyyy, EEEE", new Date());
+            console.log(today);
+            const currFirstDayOfWeek = startOfWeek(today);
+            console.log(currFirstDayOfWeek);
+            // Adjust week mode display
+            document.querySelector(UISelectors.monthModeWrapper).setAttribute('style', 'display: none !important');
+            document.querySelector(UISelectors.weekModeWrapper).setAttribute('style', 'display: flex !important');
+            document.querySelector(UISelectors.dayModeWrapper).setAttribute('style', 'display: none !important');
+            document.querySelector(UISelectors.lMonthArrow).parentElement.style.display = 'none';
+            document.querySelector(UISelectors.rMonthArrow).parentElement.style.display = 'none';
+            document.querySelector(UISelectors.lWeekArrow).parentElement.style.display = 'flex';
+            document.querySelector(UISelectors.rWeekArrow).parentElement.style.display = 'flex';
+            document.querySelector(UISelectors.lDayArrow).parentElement.style.display = 'none';
+            document.querySelector(UISelectors.rDayArrow).parentElement.style.display = 'none';
+            // document.querySelector(UISelectors.taskTabs).classList.add('hide');
+            document.querySelector(UISelectors.mainOptionsBtns).classList.add('hide');
+            // 
+            const firstDayNextWeek = addWeeks(currFirstDayOfWeek, 1);
+            const week = eachDayOfInterval({
+                start: currFirstDayOfWeek,
+                end: subDays(firstDayNextWeek, 1)
+            });
+            console.log(week);
+            //
+            // generateWeekTemplate(currFirstDayOfWeek, firstDayNextWeek, week, user);
+        } else if (document.querySelector('body').classList.contains('month-mode-active')) {
+
+        } else {
+
+        }
+    }
+
+    const generateWeekTemplate = function() {
+        
     }
 
 	return {
@@ -425,6 +537,7 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
             // test firebase
             FirebaseCtrl.test();
             // Adjust UI on user status change
+            // let user = '';
             FirebaseCtrl.authStatus({
                 setUI,
                 renderLoginAccounts: UICtrl.renderLoginAccounts,
@@ -432,6 +545,8 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                 renderDayModeCalendar,
                 currToday: new Date()
             });
+            // console.log(user);
+            
             // console.log(FirebaseCtrl.checkIfLoggedIn());
             // If no accounts, disable remove btn
             if (!1) {
