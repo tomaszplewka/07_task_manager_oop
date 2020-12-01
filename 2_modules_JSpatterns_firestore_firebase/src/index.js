@@ -32,7 +32,7 @@ import UserCtrl from './js/UserCtrl';
 import DnDCtrl from './js/DnDCtrl';
 import FirebaseCtrl from './js/FirebaseCtrl';
 // 
-import { format, parse, subDays, addDays, startOfWeek, addWeeks, eachDayOfInterval } from 'date-fns';
+import { format, parse, subDays, addDays, startOfWeek, addWeeks, eachDayOfInterval, getDate, isToday } from 'date-fns';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -340,6 +340,30 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                     console.log('week mode clicked');
                     renderWeekModeCalendar();
                 }
+                // Switch to day mode
+                if (`#${e.target.id}` === UISelectors.dayModeView) {
+                    console.log('day mode clicked');
+                    // Check if day mdoe is already active
+                    renderDayModeCalendar(new Date(), globalTasks);
+                }
+                // // Left arrow in week mode clicked
+                // if (`#${e.target.id}` === UISelectors.lDayArrow || document.querySelector(UISelectors.lDayArrow).contains(e.target)) {
+                //     console.log(FirebaseCtrl.checkIfLoggedIn().uid);
+                //     // 
+                //     console.log('left arrow here');
+                //     const todayContent = document.querySelector(UISelectors.dayModeContent).textContent.trim();
+                //     let today = parse(todayContent, "d MMMM yyyy, EEEE", new Date());
+                //     console.log(today);
+                //     const prevToday = subDays(today, 1);
+                //     let currToday = prevToday;
+                //     console.log(prevToday);
+                //     // currToday = format(currToday, "d'-'MMM'-'yyyy");
+                //     console.log(currToday);
+                //     // console.log(globalUser);
+                //     // console.log(globalTasks);
+                //     // 
+                //     renderDayModeCalendar(currToday, globalTasks);
+                // }
             });
             // Add form submit event
             document.querySelector(UISelectors.addForm).addEventListener('submit', (e) => {
@@ -489,43 +513,84 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
     }
 
     const renderWeekModeCalendar = function() {
-        // Check which mode is active
-        if (document.querySelector('body').classList.contains('day-mode-active')) {
-            const todayContent = document.querySelector(UISelectors.dayModeContent).textContent.trim();
-            let today = parse(todayContent, "d MMMM yyyy, EEEE", new Date());
-            console.log(today);
-            const currFirstDayOfWeek = startOfWeek(today);
-            console.log(currFirstDayOfWeek);
-            // Adjust week mode display
-            document.querySelector(UISelectors.monthModeWrapper).setAttribute('style', 'display: none !important');
-            document.querySelector(UISelectors.weekModeWrapper).setAttribute('style', 'display: flex !important');
-            document.querySelector(UISelectors.dayModeWrapper).setAttribute('style', 'display: none !important');
-            document.querySelector(UISelectors.lMonthArrow).parentElement.style.display = 'none';
-            document.querySelector(UISelectors.rMonthArrow).parentElement.style.display = 'none';
-            document.querySelector(UISelectors.lWeekArrow).parentElement.style.display = 'flex';
-            document.querySelector(UISelectors.rWeekArrow).parentElement.style.display = 'flex';
-            document.querySelector(UISelectors.lDayArrow).parentElement.style.display = 'none';
-            document.querySelector(UISelectors.rDayArrow).parentElement.style.display = 'none';
-            // document.querySelector(UISelectors.taskTabs).classList.add('hide');
-            document.querySelector(UISelectors.mainOptionsBtns).classList.add('hide');
-            // 
-            const firstDayNextWeek = addWeeks(currFirstDayOfWeek, 1);
-            const week = eachDayOfInterval({
-                start: currFirstDayOfWeek,
-                end: subDays(firstDayNextWeek, 1)
-            });
-            console.log(week);
-            //
-            // generateWeekTemplate(currFirstDayOfWeek, firstDayNextWeek, week, user);
-        } else if (document.querySelector('body').classList.contains('month-mode-active')) {
-
-        } else {
-
-        }
+        const todayContent = document.querySelector(UISelectors.dayModeContent).textContent.trim();
+        let today = parse(todayContent, "d MMMM yyyy, EEEE", new Date());
+        console.log(today);
+        const currFirstDayOfWeek = startOfWeek(today);
+        console.log(currFirstDayOfWeek);
+        // Adjust week mode display
+        document.querySelector(UISelectors.monthModeWrapper).setAttribute('style', 'display: none !important');
+        document.querySelector(UISelectors.weekModeWrapper).setAttribute('style', 'display: block !important');
+        document.querySelector(UISelectors.dayModeWrapper).setAttribute('style', 'display: none !important');
+        document.querySelector(UISelectors.lMonthArrow).parentElement.style.display = 'none';
+        document.querySelector(UISelectors.rMonthArrow).parentElement.style.display = 'none';
+        document.querySelector(UISelectors.lWeekArrow).parentElement.style.display = 'flex';
+        document.querySelector(UISelectors.rWeekArrow).parentElement.style.display = 'flex';
+        document.querySelector(UISelectors.lDayArrow).parentElement.style.display = 'none';
+        document.querySelector(UISelectors.rDayArrow).parentElement.style.display = 'none';
+        // document.querySelector(UISelectors.taskTabs).classList.add('hide');
+        document.querySelector(UISelectors.mainOptionsBtns).classList.add('hide');
+        // 
+        const firstDayNextWeek = addWeeks(currFirstDayOfWeek, 1);
+        const week = eachDayOfInterval({
+            start: currFirstDayOfWeek,
+            end: subDays(firstDayNextWeek, 1)
+        });
+        console.log(week);
+        //
+        UICtrl.setTableBodyHead();
+        // 
+        console.log('renderWeekMode');
+        generateWeekTemplate(currFirstDayOfWeek, firstDayNextWeek, week, false);
     }
 
-    const generateWeekTemplate = function() {
-        
+    const generateWeekTemplate = function(firstDayCurrWeek, firstDayNextWeek, week, user) {
+        document.querySelector(UISelectors.weekModeContent).textContent = `
+            ${getDate(firstDayCurrWeek)} ${format(firstDayCurrWeek, 'MMMM yyyy')} - 
+            ${getDate(subDays(firstDayNextWeek, 1))} ${format(subDays(firstDayNextWeek, 1), 'MMMM yyyy')}
+        `;
+        // reset table body & header
+        // this.setTableBodyHead();
+        // Create template
+        let row = document.createElement('tr');
+        console.log('generateWeekTemplate');
+        // 
+        week.forEach(day => {
+            let td = document.createElement('td');
+            td.innerHTML = `
+                ${format(day, 'd')}
+            `;
+            // 
+            if (isToday(day)) {
+                td.classList.add('current-day');
+                row.classList.add('current-week');
+            }
+            // 
+            if (
+				day.getMonth() < subDays(new Date(), 30).getMonth() ||
+				day.getFullYear() < subDays(new Date(), 30).getFullYear() ||
+				(day.getMonth() === subDays(new Date(), 30).getMonth() &&
+					day.getFullYear() === subDays(new Date(), 30).getFullYear() &&
+					day.getDate() < subDays(new Date(), 30).getDate())
+			) {
+                td.classList.add('invalid-day');
+                row.classList.add('archived-week');
+			} else { td.classList.add('valid-day'); }
+			//
+			// td = this.addBadge(user, curr.getFullYear(), curr.getMonth(), curr.getDate(), td);
+			// append td after each iteration
+            row.append(td);
+        });
+        // append row after each iteration
+        console.log(row);
+		document.querySelector(UISelectors.tableBody).append(row);
+		document.querySelector('body').setAttribute('class', 'week-mode-active');
+		//
+		// if (row.classList.contains('archived-week')) {
+		// 	lWeekArrow.disabled = true;
+		// } else {
+		// 	lWeekArrow.disabled = false;
+		// }
     }
 
 	return {

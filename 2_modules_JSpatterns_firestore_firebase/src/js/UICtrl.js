@@ -62,7 +62,8 @@ const UICtrl = (function() {
         leadTaskNum: '#lead-task-number',
         weekModeView: '#week-mode-btn',
         weekModeContent: '#week-mode-content',
-        mainOptionsBtns: '#main-options-btn'
+        mainOptionsBtns: '#main-options-btn',
+        dayModeView: '#day-mode-btn'
     }
 
     const createHeading = function(cssClass, headingTitle) {
@@ -338,7 +339,7 @@ const UICtrl = (function() {
     const renderTableUI = function() {
         setTableBodyHead();
         document.querySelector(UISelectors.tableBody).append(createUl('tasks text-light p-3'));
-		document.querySelector(UISelectors.tableBody).setAttribute('class', 'day-mode');
+		// document.querySelector(UISelectors.tableBody).setAttribute('class', 'day-mode');
     }
 
     const displayTasks = function(tasks, currToday, enableDnD) {
