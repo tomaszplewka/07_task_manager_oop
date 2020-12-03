@@ -63,7 +63,10 @@ const UICtrl = (function() {
         weekModeView: '#week-mode-btn',
         weekModeContent: '#week-mode-content',
         mainOptionsBtns: '#main-options-btn',
-        dayModeView: '#day-mode-btn'
+        dayModeView: '#day-mode-btn',
+        monthModeView: '#month-mode-btn',
+        monthModeMonth: '#month-mode-month',
+        monthModeYear: '#month-mode-year'
     }
 
     const createHeading = function(cssClass, headingTitle) {

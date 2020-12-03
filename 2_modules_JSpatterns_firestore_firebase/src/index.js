@@ -32,7 +32,7 @@ import UserCtrl from './js/UserCtrl';
 import DnDCtrl from './js/DnDCtrl';
 import FirebaseCtrl from './js/FirebaseCtrl';
 // 
-import { format, parse, subDays, addDays, startOfWeek, addWeeks, eachDayOfInterval, getDate, isToday } from 'date-fns';
+import { format, parse, subDays, addDays, startOfWeek, addWeeks, eachDayOfInterval, getDate, isToday, getDayOfYear } from 'date-fns';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -44,6 +44,25 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
     let globalUser = '';
     // Initialize global tasks
     let globalTasks = '';
+    // Initialize global variables
+    const globalVars = {
+        currToday: new Date(),
+        curr: true,
+        months: {
+            0: 'Jan',
+            1: 'Feb',
+            2: 'Mar',
+            3: 'Apr',
+            4: 'May',
+            5: 'Jun',
+            6: 'Jul',
+            7: 'Aug',
+            8: 'Sep',
+            9: 'Oct',
+            10: 'Nov',
+            11: 'Dec'
+        }
+    }
     // Load event listeners
     const loadEventListeners = function() {
         // 
@@ -338,7 +357,12 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                 // Switch to week mode
                 if (`#${e.target.id}` === UISelectors.weekModeView) {
                     console.log('week mode clicked');
-                    renderWeekModeCalendar();
+                    const todayContent = document.querySelector(UISelectors.dayModeContent).textContent.trim();
+                    let today = parse(todayContent, "d MMMM yyyy, EEEE", new Date());
+                    console.log(today);
+                    const currFirstDayOfWeek = startOfWeek(today);
+                    console.log(currFirstDayOfWeek);
+                    renderWeekModeCalendar(currFirstDayOfWeek);
                 }
                 // Switch to day mode
                 if (`#${e.target.id}` === UISelectors.dayModeView) {
@@ -347,23 +371,72 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                     renderDayModeCalendar(new Date(), globalTasks);
                 }
                 // // Left arrow in week mode clicked
-                // if (`#${e.target.id}` === UISelectors.lDayArrow || document.querySelector(UISelectors.lDayArrow).contains(e.target)) {
-                //     console.log(FirebaseCtrl.checkIfLoggedIn().uid);
-                //     // 
-                //     console.log('left arrow here');
-                //     const todayContent = document.querySelector(UISelectors.dayModeContent).textContent.trim();
-                //     let today = parse(todayContent, "d MMMM yyyy, EEEE", new Date());
-                //     console.log(today);
-                //     const prevToday = subDays(today, 1);
-                //     let currToday = prevToday;
-                //     console.log(prevToday);
-                //     // currToday = format(currToday, "d'-'MMM'-'yyyy");
-                //     console.log(currToday);
-                //     // console.log(globalUser);
-                //     // console.log(globalTasks);
-                //     // 
-                //     renderDayModeCalendar(currToday, globalTasks);
-                // }
+                if (`#${e.target.id}` === UISelectors.lWeekArrow || document.querySelector(UISelectors.lWeekArrow).contains(e.target)) {
+                    // 
+                    const currWeekContent = document.querySelector(UISelectors.weekModeContent).textContent.trim().split(' - ');
+                    console.log(currWeekContent);
+                    let today = parse(currWeekContent[0], "d MMMM yyyy", new Date());
+                    console.log(today);
+                    const currFirstDayOfWeek = subDays(startOfWeek(today), 7);
+                    // 
+                    renderWeekModeCalendar(currFirstDayOfWeek);
+                    // 
+                }
+                // // Right arrow in week mode clicked
+                if (`#${e.target.id}` === UISelectors.rWeekArrow || document.querySelector(UISelectors.rWeekArrow).contains(e.target)) {
+                    // 
+                    const currWeekContent = document.querySelector(UISelectors.weekModeContent).textContent.trim().split(' - ');
+                    console.log(currWeekContent);
+                    let today = parse(currWeekContent[0], "d MMMM yyyy", new Date());
+                    console.log(today);
+                    const currFirstDayOfWeek = addDays(startOfWeek(today), 7);
+                    // 
+                    renderWeekModeCalendar(currFirstDayOfWeek);
+                    // 
+                }
+                // Switch to month mode
+                if (`#${e.target.id}` === UISelectors.monthModeView) {
+                    console.log('month mode clicked');
+                    // 
+                    UICtrl.setTableBodyHead();
+                    // 
+                    const today = new Date();
+                    // Check if day mdoe is already active
+                    renderMonthModeCalendar(today.getFullYear(), today.getMonth(), today, true);
+                    // 
+                    // Change month in month mode
+                    document.querySelector(UISelectors.monthModeMonth).addEventListener('change', e => {
+                        document.querySelector(UISelectors.tableBody).innerHTML = '';
+                        // 
+                        renderMonthModeCalendar(Number(document.querySelector(UISelectors.monthModeYear).textContent), e.target.selectedIndex, today, true);
+                    });
+                }
+                // Left arrow in month mode clicked
+                if (`#${e.target.id}` === UISelectors.lMonthArrow || document.querySelector(UISelectors.lMonthArrow).contains(e.target)) {
+                    // 
+                    document.querySelector(UISelectors.tableBody).innerHTML = '';
+                    let year = Number(document.querySelector(UISelectors.monthModeYear).textContent);
+                    let month = document.querySelector(UISelectors.monthModeMonth).selectedIndex - 1;
+                    if (month === -1) {
+                        month = 11;
+                        year--;
+                    }
+                    renderMonthModeCalendar(year, month, new Date(), true);
+                    // 
+                }
+                // Right arrow in month mode clicked
+                if (`#${e.target.id}` === UISelectors.rMonthArrow || document.querySelector(UISelectors.rMonthArrow).contains(e.target)) {
+                    // 
+                    document.querySelector(UISelectors.tableBody).innerHTML = '';
+                    let year = Number(document.querySelector(UISelectors.monthModeYear).textContent);
+                    let month = document.querySelector(UISelectors.monthModeMonth).selectedIndex + 1;
+                    if (month === 12) {
+                        month = 0;
+                        year++;
+                    }
+                    renderMonthModeCalendar(year, month, new Date(), true);
+                    // 
+                }
             });
             // Add form submit event
             document.querySelector(UISelectors.addForm).addEventListener('submit', (e) => {
@@ -491,6 +564,9 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
         document.querySelector(UISelectors.rDayArrow).parentElement.style.display = 'flex';
         // 
         // document.querySelector(UISelectors.taskTabs).classList.remove('hide');
+        if (document.querySelector(UISelectors.mainOptionsBtns).classList.contains('hide')) {
+            document.querySelector(UISelectors.mainOptionsBtns).classList.remove('hide');
+        }
         // 
         document.querySelector(UISelectors.dayModeContent).textContent = `
             ${format(currToday, "d MMMM yyyy, EEEE")}
@@ -509,15 +585,11 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
             document.querySelector(UISelectors.leadTaskNum).textContent = 0;
         }
         // Day mode is active
-        document.querySelector('body').classList.add('day-mode-active');
+        document.querySelector('body').setAttribute('class', 'day-mode-active');
     }
 
-    const renderWeekModeCalendar = function() {
-        const todayContent = document.querySelector(UISelectors.dayModeContent).textContent.trim();
-        let today = parse(todayContent, "d MMMM yyyy, EEEE", new Date());
-        console.log(today);
-        const currFirstDayOfWeek = startOfWeek(today);
-        console.log(currFirstDayOfWeek);
+    const renderWeekModeCalendar = function(currFirstDayOfWeek) {
+        
         // Adjust week mode display
         document.querySelector(UISelectors.monthModeWrapper).setAttribute('style', 'display: none !important');
         document.querySelector(UISelectors.weekModeWrapper).setAttribute('style', 'display: block !important');
@@ -528,8 +600,15 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
         document.querySelector(UISelectors.rWeekArrow).parentElement.style.display = 'flex';
         document.querySelector(UISelectors.lDayArrow).parentElement.style.display = 'none';
         document.querySelector(UISelectors.rDayArrow).parentElement.style.display = 'none';
+        // 
         // document.querySelector(UISelectors.taskTabs).classList.add('hide');
-        document.querySelector(UISelectors.mainOptionsBtns).classList.add('hide');
+        // 
+        if (!document.querySelector(UISelectors.mainOptionsBtns).classList.contains('hide')) {
+            document.querySelector(UISelectors.mainOptionsBtns).classList.add('hide');
+        }
+        // 
+        document.querySelector(UISelectors.searchFormWrapper).classList.remove('search-form-open');
+        document.querySelector(UISelectors.addFormWrapper).classList.remove('add-form-open');
         // 
         const firstDayNextWeek = addWeeks(currFirstDayOfWeek, 1);
         const week = eachDayOfInterval({
@@ -591,6 +670,168 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
 		// } else {
 		// 	lWeekArrow.disabled = false;
 		// }
+    }
+
+    const renderMonthModeCalendar = function(year, month, today, user) {
+        // Adjust week mode display
+        document.querySelector(UISelectors.monthModeWrapper).setAttribute('style', 'display: block !important');
+        document.querySelector(UISelectors.weekModeWrapper).setAttribute('style', 'display: none !important');
+        document.querySelector(UISelectors.dayModeWrapper).setAttribute('style', 'display: none !important');
+        document.querySelector(UISelectors.lMonthArrow).parentElement.style.display = 'flex';
+        document.querySelector(UISelectors.rMonthArrow).parentElement.style.display = 'flex';
+        document.querySelector(UISelectors.lWeekArrow).parentElement.style.display = 'none';
+        document.querySelector(UISelectors.rWeekArrow).parentElement.style.display = 'none';
+        document.querySelector(UISelectors.lDayArrow).parentElement.style.display = 'none';
+        document.querySelector(UISelectors.rDayArrow).parentElement.style.display = 'none';
+        // 
+        // document.querySelector(UISelectors.taskTabs).classList.add('hide');
+        // 
+        if (!document.querySelector(UISelectors.mainOptionsBtns).classList.contains('hide')) {
+            document.querySelector(UISelectors.mainOptionsBtns).classList.add('hide');
+        }
+        // 
+        document.querySelector(UISelectors.searchFormWrapper).classList.remove('search-form-open');
+        document.querySelector(UISelectors.addFormWrapper).classList.remove('add-form-open');
+        // 
+        // set up local variables
+        let startOfCurrMonth = new Date(year, month).getDay();
+		let numOfDayCurrMonth = 32 - new Date(year, month, 32).getDate();
+		let numOfDayPrevMonth = 32 - new Date(year, month - 1, 32).getDate();
+		if (numOfDayPrevMonth === -1) {
+			numOfDayPrevMonth = 1;
+		}
+		let renderDaysNumCurrMonth = 1;
+		let renderDaysNumPrevMonth = numOfDayPrevMonth - startOfCurrMonth + 1;
+		let renderDaysNumNextMonth = 1;
+        let flag = 0;
+        // 
+        document.querySelector(UISelectors.monthModeMonth).options[month].selected = true;
+		document.querySelector(UISelectors.monthModeYear).textContent = year;
+		//
+		if (month === 0) {
+			//
+			document.querySelector(UISelectors.lMonthArrow).lastElementChild.textContent = globalVars.months[11];
+			document.querySelector(UISelectors.rMonthArrow).firstElementChild.textContent = globalVars.months[month + 1];
+			//
+		} else if (month === 11) {
+			//
+			document.querySelector(UISelectors.lMonthArrow).lastElementChild.textContent = globalVars.months[month - 1];
+			document.querySelector(UISelectors.rMonthArrow).firstElementChild.textContent = globalVars.months[0];
+			//
+		} else {
+			//
+			document.querySelector(UISelectors.lMonthArrow).lastElementChild.textContent = globalVars.months[month - 1];
+			document.querySelector(UISelectors.rMonthArrow).firstElementChild.textContent = globalVars.months[month + 1];
+			//
+		}
+		if (Number(document.querySelector(UISelectors.monthModeYear).textContent) === today.getFullYear()) {
+			//
+			Array.from(document.querySelector(UISelectors.monthModeMonth).options)
+				.filter(curr => curr.index < subDays(today, 30).getMonth())
+				.forEach(curr => {
+                    //
+                    curr.classList.add('hide');
+					//
+				});
+			//
+		} else {
+			//
+			Array.from(document.querySelector(UISelectors.monthModeMonth).options).forEach(curr => {
+                //
+                curr.classList.remove('hide');
+				//
+			});
+			//
+		}
+		//
+		let i = 0;
+		while (flag >= 0) {
+			//
+			let row = document.createElement('tr');
+			//
+			for (let j = 0; j < 7; j++) {
+				//
+				if (i === 0 && j < startOfCurrMonth) {
+					//
+                    let td = document.createElement('td');
+                    td.classList.add('disabled');
+					td.textContent = renderDaysNumPrevMonth;
+					row.append(td);
+					renderDaysNumPrevMonth++;
+					//
+				} else if (renderDaysNumCurrMonth > numOfDayCurrMonth) {
+					//
+					flag--;
+					//
+					if (j === 0) {
+						break;
+					}
+					//
+                    let td = document.createElement('td');
+                    td.classList.add('disabled');
+					td.textContent = renderDaysNumNextMonth;
+					row.append(td);
+					renderDaysNumNextMonth++;
+					//
+				} else {
+					//
+					let td = document.createElement('td');
+					td.textContent = renderDaysNumCurrMonth;
+					//
+					if (
+						//
+						renderDaysNumCurrMonth === today.getDate() &&
+						year === today.getFullYear() &&
+						month === today.getMonth()
+						//
+					) {
+                        //
+                        td.classList.add('current-day')
+                        row.classList.add('current-week');
+						//
+					}
+					//
+					if (
+						getDayOfYear(new Date(year, month, renderDaysNumCurrMonth)) <
+						getDayOfYear(subDays(today, 30))
+					) {
+                        //
+                        td.classList.add('invalid-day');
+						//
+					} else {
+                        //
+                        td.classList.add('valid-day');
+						//
+					}
+					//
+					// td = this.addBadge(user, year, month, renderDaysNumCurrMonth, td);
+					// append td after each iteration
+					row.append(td);
+					renderDaysNumCurrMonth++;
+					//
+				}
+			}
+            // append row after each iteration
+            document.querySelector(UISelectors.tableBody).append(row);
+			document.querySelector('body').setAttribute('class', 'month-mode-active');
+			i++;
+			//
+		}
+		//
+		if (document.querySelector(UISelectors.monthModeMonth).selectedIndex === subDays(today, 30).getMonth()) {
+			//
+			document.querySelector(UISelectors.lMonthArrow).disabled = true;
+			//
+		} else {
+			//
+			document.querySelector(UISelectors.lMonthArrow).disabled = false;
+			//
+		}
+		// disable searching in month mode
+		// searchIconPrimary.disabled = true;
+		//
+		// UI.removeClass(pickDatePickMode, 'btn-outline-danger');
+		// UI.addClass(pickDatePickMode, 'btn-outline-light');
     }
 
 	return {
