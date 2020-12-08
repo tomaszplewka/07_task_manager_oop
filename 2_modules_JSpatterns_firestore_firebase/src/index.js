@@ -100,7 +100,7 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                     // Add new account - submit event
                     document.querySelector(UISelectors.addAccountForm).addEventListener('submit', e => {
                         e.preventDefault();
-                        // Creat and store new user in Firebase
+                        // Create and store new user in Firebase
                         const user = {
                             name: document.querySelector(UISelectors.username).value,
                             avatar: 'avatar-1',
@@ -118,44 +118,38 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                         document.querySelector(UISelectors.confirmUser).textContent = user.name;
                         // 
                         setTimeout(() => {
+                            // Adjust UI to show confirm mode
                             document.querySelector(UISelectors.loginAddMode).classList.remove('move-y-zero'); 
                             document.querySelector(UISelectors.loginAddMode).classList.add('move-y-up');
                             document.querySelector(UISelectors.loginConfirmMode).classList.add('move-y-zero');
-                            console.log(new Date());
                         }, 100)
                         // 
                         setTimeout(() => {
+                            // Adjust UI to show main app screen
                             document.querySelector(UISelectors.loginConfirmMode).classList.remove('move-y-zero');
                             // Show login loader
                             UICtrl.createLoginLoader();
-                            document.querySelector(UISelectors.loginLoader).style.height = document.querySelector(UISelectors.loginConfirmMode).offsetHeight + 'px';
+                            document.querySelector(UISelectors.loginLoader).style.height = document.querySelector(UISelectors.loginMainDiv).offsetHeight + 'px';
                             // 
                             document.querySelector(UISelectors.loginMainDiv).classList.remove('move-y-up');
                             document.querySelector(UISelectors.loginAddMode).remove();
                             document.querySelector(UISelectors.loginConfirmMode).remove();
                             // Clear login accounts
                             document.querySelector(UISelectors.loginAccounts).innerHTML = '';
-                            // console.log(new Date());
                             // 
                             setTimeout(() => {
+                                // Adjust UI to show main app screen
                                 document.querySelector(UISelectors.loginWrapper).classList.add('roll-up');
-                                // 
                                 document.querySelector('body').style.overflow = 'auto';
-                                // console.log(new Date());
-                                // Adjust main app screen
+                                // Set vars on welcome page
                                 document.querySelector(UISelectors.welcomeHeader).textContent = user.name;
-                                // Get user's tasks
-    
-                                // user.tasks = Store.getUser(user.data.name).tasks;
-                                const today = new Date();
-                                document.querySelector(UISelectors.leadTodayDate).textContent = format(today, "do 'of' MMMM yyyy");
+                                document.querySelector(UISelectors.leadTodayDate).textContent = format(new Date(), "do 'of' MMMM yyyy");
                                 // 
                                 setTimeout(() => {
-                                    // document.querySelector(UISelectors.loginWrapper).remove();
                                     document.querySelector(UISelectors.loginLoader).remove();
                                 }, 500);
                             }, 2000);
-                        }, 1500)
+                        }, 2000);
                     })
                 }
                 // Log in
@@ -176,6 +170,15 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                         document.querySelector(UISelectors.logInConfirmMode).classList.add('move-x-zero');
                         document.querySelector(UISelectors.email).select();
                     }, 100)
+                    // Go back btn clicked
+                    document.querySelector(UISelectors.logInConfirmBackBtn).addEventListener('click', () => {
+                        console.log('back from login');
+                        document.querySelector(UISelectors.loginMainDiv).classList.remove('move-x-left');
+                        document.querySelector(UISelectors.logInConfirmMode).classList.remove('move-x-zero');
+                        setTimeout(() => {
+                            document.querySelector(UISelectors.logInConfirmMode).remove();
+                        }, 100)
+                    })
                     // LogIn to an Account
                     document.querySelector(UISelectors.logInForm).addEventListener('submit', (e) => {
                         e.preventDefault();
@@ -205,10 +208,14 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                                         errorPara.classList.remove('hide');
                                         emailValue.classList.add('invalid');
                                         passValue.classList.add('invalid');
+                                        emailValue.disabled = true;
+                                        passValue.disabled = true;
                                         setTimeout(() => {
                                             errorPara.classList.add('hide');
                                             emailValue.classList.remove('invalid');
                                             passValue.classList.remove('invalid');
+                                            emailValue.disabled = false;
+                                            passValue.disabled = false;
                                         }, 3000);
                                         break;
                                     case email === 1 && pass === 1:
@@ -216,28 +223,40 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                                         errorPara.classList.remove('hide');
                                         emailValue.classList.add('invalid');
                                         passValue.classList.add('invalid');
+                                        emailValue.disabled = true;
+                                        passValue.disabled = true;
                                         setTimeout(() => {
                                             errorPara.classList.add('hide');
                                             emailValue.classList.remove('invalid');
                                             passValue.classList.remove('invalid');
+                                            emailValue.disabled = false;
+                                            passValue.disabled = false;
                                         }, 3000);
                                         break;
                                     case email === 1:
                                         errorPara.innerHTML = msg;
                                         errorPara.classList.remove('hide');
                                         emailValue.classList.add('invalid');
+                                        emailValue.disabled = true;
+                                        passValue.disabled = true;
                                         setTimeout(() => {
                                             errorPara.classList.add('hide');
                                             emailValue.classList.remove('invalid');
+                                            emailValue.disabled = false;
+                                            passValue.disabled = false;
                                         }, 3000);
                                         break;
                                     case pass === 1:
                                         errorPara.innerHTML = msg;
                                         errorPara.classList.remove('hide');
                                         passValue.classList.add('invalid');
+                                        emailValue.disabled = true;
+                                        passValue.disabled = true;
                                         setTimeout(() => {
                                             errorPara.classList.add('hide');
                                             passValue.classList.remove('invalid');
+                                            emailValue.disabled = false;
+                                            passValue.disabled = false;
                                         }, 3000);
                                         break;
                                 }
@@ -286,7 +305,16 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                     // Remove account screen
                     document.querySelector(UISelectors.loginRemoveAccounts).addEventListener('click', e => {
                         //
-                        
+                        if (document.querySelector(UISelectors.loginRemoveAccounts).contains(e.target)) {
+                            let id = '';
+                            if (e.target.tagName.toLowerCase() === 'i') {
+                                id = e.target.parentElement.id;
+                            } else if(e.target.tagName.toLowerCase() === 'li') {
+                                id = e.target.id;
+                            }
+                            // 
+                            // UICtrl.createConfirmRemove(id);
+                        }
                         //
                     });
                 }
@@ -479,6 +507,8 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
              document.querySelector(UISelectors.searchForm).addEventListener('submit', e => {
                  e.preventDefault();
              });
+             //
+            //  FirebaseCtrl.tasksOnSnapshot(globalUser);
         })
     }
 
@@ -586,6 +616,14 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
         }
         // Day mode is active
         document.querySelector('body').setAttribute('class', 'day-mode-active');
+        // Disable searching if no tasks to display
+        if (!(tasks === undefined)) {
+            if (tasks[format(currToday, "d'-'MMM'-'yyyy")] === undefined) {
+                document.querySelector(UISelectors.searchTasks).disabled = true;
+            } else {
+                document.querySelector(UISelectors.searchTasks).disabled = false;
+            }
+        }
     }
 
     const renderWeekModeCalendar = function(currFirstDayOfWeek) {
@@ -851,7 +889,7 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                 renderDayModeCalendar,
                 currToday: new Date()
             });
-            // console.log(user);
+            // console.log(globalUser);
             
             // console.log(FirebaseCtrl.checkIfLoggedIn());
             // If no accounts, disable remove btn
@@ -868,18 +906,5 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
 	}
 
 })(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl);
-
-
-
-
-
 // Initialize App
 AppCtrl.init();
-
-// const dateFormat = function(date, format) { format(date, format) };
-
-// console.log(dateFormat(new Date(), 'Do of MMMM YYYY'));
-// console.log(format(new Date(), "do 'of' MMMM yyyy"));
-
-// console.log(parse('26 November 2020, Thursday', "d MMMM yyyy, EEEE", new Date()));
-// console.log(format(parse('26 November 2020, Thursday', "d MMMM yyyy, EEEE", new Date()), "d'-'MMM'-'yyyy"));

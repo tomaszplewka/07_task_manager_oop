@@ -247,9 +247,31 @@ const UICtrl = (function() {
         console.log('appended remove mode');
     }
 
+    // const confirmRemove = function() {
+    //     const loginMainDiv = document.querySelector(UISelectors.loginMainDiv);
+    //     // Create confirm remove div
+    //     let div = document.createElement('div');
+    //     div.className = `login-remove-confirm px-4 pt-3 pb-4`;
+    //     div.appendChild(createHeading('welcome-heading', 'Are You Sure?'));
+    //     div.appendChild(createUl('login-confirm-account')); 
+    //     div.appendChild(createForm('login-form'));
+    //     div.lastElementChild.appendChild(createInputGroup('login-email', 'fa-key', 'text', 'email', 'email', false));
+    //     div.lastElementChild.appendChild(createInputGroup('login-password', 'fa-key', 'password', 'password', 'password', false));
+    //     div.lastElementChild.appendChild(createShowHidePassword('login-show-password-wrapper'));
+    //     div.lastElementChild.appendChild(createErrMsg());
+    //     div.lastElementChild.appendChild(createBtnGroup(createBtn('login-confirm-back-btn', 'button', 'Go Back', 'fa-chevron-left'), createBtn('login-confirm-login-btn', 'submit', 'Log In', 'fa-chevron-right', false)));
+
+    //     // div.querySelector(UISelectors.logInConfirmBtn).setAttribute('disabled', true);
+    //     // append add div to dom
+    //     loginMainDiv.after(div);
+    //     // 
+    //     document.querySelector(UISelectors.logInConfirmAccount).appendChild(renderLiAccount(id,  'mb-n4'));
+    //     console.log('confirm remove mode');
+    // }
+
     const logInMode = function(id) {
         const loginMainDiv = document.querySelector(UISelectors.loginMainDiv);
-        // Create log in div
+        // Create login div
         let div = document.createElement('div');
         div.className = `login-confirm px-4 pt-3 pb-4`;
         div.appendChild(createHeading('welcome-heading', 'Log In'));
@@ -349,9 +371,9 @@ const UICtrl = (function() {
         console.log('displayTasks');
         currToday = format(currToday, "d'-'MMM'-'yyyy");
         console.log(currToday);
-        console.log(tasks);
+        // console.log(tasks);
         console.log(tasks === undefined);
-        console.log(tasks[currToday]);
+        // console.log(tasks[currToday]);
         
         if (!(tasks === undefined)) {
             console.log('inside first if');
@@ -427,6 +449,7 @@ const UICtrl = (function() {
         createAddMode: addMode,
         createConfirmMode: confirmMode,
         createRemoveMode: removeMode,
+        createConfirmRemove: confirmRemove,
         createLoginLoader: loginLoader,
         createLogInMode: logInMode,
         showHidePass,

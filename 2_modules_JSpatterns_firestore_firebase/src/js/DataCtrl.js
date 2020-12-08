@@ -92,14 +92,14 @@ const DataCtrl = (function() {
                 task.classList.add('filtered');
                 console.log(task);
             });
-            //
-            Array.from(list.children)
-			.filter(task => task.textContent.toLowerCase().includes(term))
-			.forEach(task => {
-                task.classList.add('d-flex');
-                task.classList.remove('filtered');
-                console.log(task);
-            });
+        //
+        Array.from(list.children)
+        .filter(task => task.textContent.toLowerCase().includes(term))
+        .forEach(task => {
+            task.classList.add('d-flex');
+            task.classList.remove('filtered');
+            console.log(task);
+        });
     }
 
     return {
