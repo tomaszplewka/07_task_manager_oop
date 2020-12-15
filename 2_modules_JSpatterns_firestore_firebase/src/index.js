@@ -362,7 +362,7 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                     // console.log(globalUser);
                     // console.log(globalTasks);
                     // 
-                    renderDayModeCalendar(currToday, globalTasks);
+                    renderDayModeCalendar(currToday, globalTasks, globalUser, FirebaseCtrl.updateTasks2);
                 }
                 // Right arrow in day mode clicked
                 if (`#${e.target.id}` === UISelectors.rDayArrow || document.querySelector(UISelectors.rDayArrow).contains(e.target)) {
@@ -380,7 +380,7 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                     // console.log(globalUser);
                     // console.log(globalTasks);
                     // 
-                    renderDayModeCalendar(currToday, globalTasks);
+                    renderDayModeCalendar(currToday, globalTasks, globalUser, FirebaseCtrl.updateTasks2);
                 }
                 // Switch to week mode
                 if (`#${e.target.id}` === UISelectors.weekModeView) {
@@ -396,7 +396,7 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                 if (`#${e.target.id}` === UISelectors.dayModeView) {
                     console.log('day mode clicked');
                     // Check if day mdoe is already active
-                    renderDayModeCalendar(new Date(), globalTasks);
+                    renderDayModeCalendar(new Date(), globalTasks, globalUser, FirebaseCtrl.updateTasks2);
                 }
                 // // Left arrow in week mode clicked
                 if (`#${e.target.id}` === UISelectors.lWeekArrow || document.querySelector(UISelectors.lWeekArrow).contains(e.target)) {
@@ -478,10 +478,13 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                     console.log(today);
                     const currToday = format(parse(today, "d MMMM yyyy, EEEE", new Date()), "d'-'MMM'-'yyyy");
                     console.log(currToday);
+                    console.log(task);
+                    console.log(globalTasks);
                     FirebaseCtrl.addTasks({
                         currToday,
                         task,
-                        error: UICtrl.errorTasks
+                        error: UICtrl.errorTasks,
+                        updateUI: renderDayModeCalendar
                     })
                         .then(response => {
                             console.log("let's seee...");
@@ -577,11 +580,9 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
 
     
 
-    const renderDayModeCalendar = function(currToday, tasks) {
+    const renderDayModeCalendar = function(currToday, tasks, user, setTasks) {
         // Set global tasks
-        if (!globalTasks) {
-            globalTasks = tasks;
-        }
+        globalTasks = tasks;
         // adjust UI
         document.querySelector(UISelectors.monthModeWrapper).setAttribute('style', 'display: none !important');
 		document.querySelector(UISelectors.weekModeWrapper).setAttribute('style', 'display: none !important');
@@ -605,13 +606,10 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
         UICtrl.renderTableUI();
         // 
         console.log('renderDayMode');
-        const taskNum = UICtrl.displayTasks(tasks, currToday, DnDCtrl.enableDnD);
-        console.log(taskNum);
+        const taskNum = UICtrl.displayTasks(tasks, currToday, DnDCtrl.enableDnD, user, setTasks);
         if (taskNum) {
-            console.log('tutaj?');
-            document.querySelector(UISelectors.leadTaskNum).textContent = 'jajeczko';
+            document.querySelector(UISelectors.leadTaskNum).textContent = taskNum;
         } else {
-            console.log('a moze tutaj???');
             document.querySelector(UISelectors.leadTaskNum).textContent = 0;
         }
         // Day mode is active
@@ -879,7 +877,7 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
             // Initialize firebase app
             FirebaseCtrl.firebaseInit();
             // test firebase
-            FirebaseCtrl.test();
+            // FirebaseCtrl.test();
             // Adjust UI on user status change
             // let user = '';
             FirebaseCtrl.authStatus({

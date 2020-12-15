@@ -47,14 +47,15 @@ const DnDCtrl = (function() {
 	}
 
 	// const handleDragEnd = function(user) {
-	const handleDragEnd = function() {
+	const handleDragEnd = function(user, currToday, setTasks) {
 		let taskList = [];
 		console.log('drag end');
 		//
 		[].forEach.call(document.querySelectorAll('.tasks li'), (li) => {
 			li.classList.remove('over');
 			li.style.opacity = '1';
-			// taskList.push(li.textContent);
+			console.log(li.textContent);
+			taskList.push(li.textContent);
 		});
 		//
 		// if (scheduledTasks.classList.contains('active')) {
@@ -62,12 +63,12 @@ const DnDCtrl = (function() {
 		// } else if (completedTasks.classList.contains('active')) {
 		// 	user.completedTasks[dateFormat(currToday, 'MMM-D-YYYY')] = taskList;
 		// }
-		// // update in firestore
-		// Store.setUser(user);
+		// update in firestore
+		setTasks(user, currToday, taskList);
 		//
 	};
 
-	const enableDnD = function(li) {
+	const enableDnD = function(li, user, currToday, setTasks) {
 		li.draggable = true;
 		li.addEventListener('dragstart', handleDragStart, false);
 		li.addEventListener('dragenter', handleDragEnter, false);
@@ -78,7 +79,7 @@ const DnDCtrl = (function() {
 			'dragend',
 			() => {
 				// handleDragEnd(user);
-				handleDragEnd();
+				handleDragEnd(user, currToday, setTasks);
 			},
 			false
 		);

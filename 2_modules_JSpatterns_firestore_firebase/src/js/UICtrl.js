@@ -66,7 +66,11 @@ const UICtrl = (function() {
         dayModeView: '#day-mode-btn',
         monthModeView: '#month-mode-btn',
         monthModeMonth: '#month-mode-month',
-        monthModeYear: '#month-mode-year'
+        monthModeYear: '#month-mode-year',
+        taskTabsOngoing: '#task-tabs-ongoing',
+        taskTabsCompleted: '#task-tabs-completed',
+        leadTaskCompletedNum: '#lead-task-completed',
+        taskProgress: '#task-progress'
     }
 
     const createHeading = function(cssClass, headingTitle) {
@@ -367,23 +371,14 @@ const UICtrl = (function() {
 		// document.querySelector(UISelectors.tableBody).setAttribute('class', 'day-mode');
     }
 
-    const displayTasks = function(tasks, currToday, enableDnD) {
-        console.log('displayTasks');
+    const displayTasks = function(tasks, currToday, enableDnD, user, setTasks) {
         currToday = format(currToday, "d'-'MMM'-'yyyy");
-        console.log(currToday);
-        // console.log(tasks);
-        console.log(tasks === undefined);
-        // console.log(tasks[currToday]);
-        
         if (!(tasks === undefined)) {
-            console.log('inside first if');
-            console.log(tasks[currToday]);
             if (tasks[currToday]) {
-                console.log('displayTasks inside if');
                 tasks[currToday].forEach((task, index) => {
-                    console.log(task);
-                    generateDayTemplate(task, index, enableDnD);
+                    generateDayTemplate(task, index, enableDnD, user, currToday, setTasks);
                 });
+                return tasks[currToday].length;
             }
             else {
                 // no tasks for this date
@@ -394,14 +389,12 @@ const UICtrl = (function() {
                 p.appendChild(document.createTextNode('No tasks to display'));
                 li.appendChild(p);
                 list.appendChild(li);
-
                 return 0;
             }
         }
-
     }
 
-    const generateDayTemplate = function(task, index, enableDnD) {
+    const generateDayTemplate = function(task, index, enableDnD, user, currToday, setTasks) {
         let list = document.querySelector(UISelectors.tasks);
         let li = createLi('list-group-item d-flex justify-content-between align-items-center', `task${index}`);
         // 
@@ -423,7 +416,7 @@ const UICtrl = (function() {
 		divIcon.appendChild(createIcon('far fa-trash-alt delete'));
         li.appendChild(divIcon);
         // 
-        enableDnD(li);
+        enableDnD(li, user, currToday, setTasks);
 		//
 		list.appendChild(li);
     }
@@ -449,7 +442,7 @@ const UICtrl = (function() {
         createAddMode: addMode,
         createConfirmMode: confirmMode,
         createRemoveMode: removeMode,
-        createConfirmRemove: confirmRemove,
+        // createConfirmRemove: confirmRemove,
         createLoginLoader: loginLoader,
         createLogInMode: logInMode,
         showHidePass,
