@@ -136,6 +136,10 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                             document.querySelector(UISelectors.loginConfirmMode).remove();
                             // Clear login accounts
                             document.querySelector(UISelectors.loginAccounts).innerHTML = '';
+                            // Set theme, avatar & toasts
+                            UICtrl.chooseTheme(user.theme);
+                            UICtrl.chooseAvatar(user.avatar);
+                            UICtrl.chooseTheme(user.toast);
                             // 
                             setTimeout(() => {
                                 // Adjust UI to show main app screen
@@ -465,6 +469,129 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                     renderMonthModeCalendar(year, month, new Date(), true);
                     // 
                 }
+                // Switch to ongoing tasks
+                if (`#${e.target.id}` === UISelectors.taskTabsOngoing) {
+                    if (!e.target.classList.contains('active')) {
+                        const todayContent = document.querySelector(UISelectors.dayModeContent).textContent.trim();
+                        let today = parse(todayContent, "d MMMM yyyy, EEEE", new Date());
+                        let currToday = today;
+                        renderDayModeCalendar(currToday, globalTasks, globalUser, FirebaseCtrl.updateTasks2);
+                        e.target.classList.add('active');
+                        e.target.nextElementSibling.classList.remove('active');
+                        // 
+                        document.querySelector(UISelectors.leadTaskNum).parentElement.parentElement.classList.remove('hide');
+                        document.querySelector(UISelectors.leadTaskNum).parentElement.parentElement.nextElementSibling.classList.add('hide');
+                    }
+                }
+                // Switch to completed tasks
+                if (`#${e.target.id}` === UISelectors.taskTabsCompleted) {
+                    if (!e.target.classList.contains('active')) {
+                        const todayContent = document.querySelector(UISelectors.dayModeContent).textContent.trim();
+                        let today = parse(todayContent, "d MMMM yyyy, EEEE", new Date());
+                        let currToday = today;
+                        // grab completed tasks from firestore
+                        FirebaseCtrl.tasksOnSnapshotCompleted(globalUser)
+                            .then(snapshot => {
+                                UICtrl.renderTableUI();
+                                const taskNum = UICtrl.displayTasks(snapshot.data(), currToday, DnDCtrl.enableDnD, globalUser, FirebaseCtrl.updateTasks2);
+                                if (taskNum) {
+                                    document.querySelector(UISelectors.leadTaskNum).textContent = taskNum;
+                                } else {
+                                    document.querySelector(UISelectors.leadTaskNum).textContent = 0;
+                                }
+                                // Day mode is active
+                                // document.querySelector('body').setAttribute('class', 'day-mode-active');
+                                // Disable searching if no tasks to display
+                                if (!(snapshot.data() === undefined)) {
+                                    if (snapshot.data()[format(currToday, "d'-'MMM'-'yyyy")] === undefined || snapshot.data()[format(currToday, "d'-'MMM'-'yyyy")].length === 0) {
+                                        document.querySelector(UISelectors.searchTasks).disabled = true;
+                                    } else {
+                                        document.querySelector(UISelectors.searchTasks).disabled = false;
+                                    }
+                                }
+                                // renderDayModeCalendar(currToday, snapshot.data(), globalUser, FirebaseCtrl.updateTasks2);
+                            });
+                        e.target.classList.add('active');
+                        e.target.previousElementSibling.classList.remove('active');
+                        // 
+                        document.querySelector(UISelectors.leadTaskCompletedNum).parentElement.parentElement.classList.remove('hide');
+                        document.querySelector(UISelectors.leadTaskCompletedNum).parentElement.parentElement.previousElementSibling.classList.add('hide');
+                    }
+                }
+                // Settings
+                if (`#${e.target.id}` === UISelectors.settings) {
+                    document.querySelector(UISelectors.settingsWrapper).style.display = 'flex';
+                    document.querySelector(UISelectors.settingsWrapper).style.opacity = 1;
+                    document.querySelector('body').style.overflow = 'hidden';
+                }
+                // Settings wrapper & settings close btn
+                if (`#${e.target.id}` === UISelectors.settingsWrapper || document.querySelector(UISelectors.settingsCloseBtn).contains(e.target)) {
+                    document.querySelector(UISelectors.settingsWrapper).style.display = 'none';
+                    document.querySelector(UISelectors.settingsWrapper).style.opacity = 0;
+                    document.querySelector('body').style.overflow = 'auto';
+                    // 
+                    // listPastTasks.innerHTML = '';
+                }
+                // Change theme event listener
+                if (e.target.classList.contains('theme')) {
+                    const themeBtns = document.querySelectorAll(UISelectors.themeBtns);
+                    // 
+                    Array.from(themeBtns).some(themeBtn => {
+                        if (themeBtn.classList.contains('theme-active')) {
+                            themeBtn.classList.remove('theme-active');
+                            return true;
+                        }
+                    });
+                    // Switch theme
+                    UICtrl.chooseTheme(e.target.id);
+                    // Update db & global data
+                    FirebaseCtrl.updateUser(globalUser, 'theme', e.target.id);
+                    // globalUser.theme = e.target.id;
+                }
+                // Change avatar event listener
+                if (document.querySelector(UISelectors.avatarBtnsWrapper).contains(e.target)) {
+                    const avatarBtns = document.querySelectorAll(UISelectors.avatarBtns);
+                    //
+                    Array.from(avatarBtns).some((avatarBtn) => {
+                        if (avatarBtn.classList.contains('avatar-active')) {
+                            avatarBtn.classList.remove('avatar-active');
+                            return true;
+                        }
+                    });
+                    if (e.target.classList.contains('avatar')) {
+                        UICtrl.chooseAvatar(e.target.id);
+                        // Update db & global data
+                        FirebaseCtrl.updateUser(globalUser, 'avatar', e.target.id);
+                        // globalUser.theme = e.target.id;
+                        //
+                        document.querySelector(UISelectors.userAvatar).setAttribute('class', e.target.firstElementChild.classList.value);
+                        document.querySelector(UISelectors.userAvatar).classList.add('position-relative');
+                    }
+                    if (e.target.classList.contains('fas')) {
+                        UICtrl.chooseAvatar(e.target.parentElement.id);
+                        // Update db & global data
+                        FirebaseCtrl.updateUser(globalUser, 'avatar', e.target.parentElement.id);
+                        // globalUser.theme = e.target.id;
+                        //
+                        document.querySelector(UISelectors.userAvatar).setAttribute('class', e.target.classList.value);
+                        document.querySelector(UISelectors.userAvatar).classList.add('position-relative');
+                    }
+                }
+                // Change toast event listener
+                if (e.target.classList.contains('toast-change')) {
+                    const toastBtns = document.querySelectorAll(UISelectors.toastBtns);
+                    //
+                    Array.from(toastBtns).some((toastBtn) => {
+                        if (toastBtn.classList.contains('toast-active')) {
+                            toastBtn.classList.remove('toast-active');
+                            return true;
+                        }
+                    });
+                    UICtrl.chooseToast(e.target.id);
+                    // Update db & global data
+                    FirebaseCtrl.updateUser(globalUser, 'toast', e.target.id);
+                    // globalUser.theme = e.target.id;
+                }
             });
             // Add form submit event
             document.querySelector(UISelectors.addForm).addEventListener('submit', (e) => {
@@ -551,6 +678,10 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                 document.querySelector(UISelectors.welcomeHeader).textContent = data.info.name;
                 document.querySelector(UISelectors.leadTodayDate).textContent = format(data.date, "do 'of' MMMM yyyy");
                 // document.querySelector(UISelectors.leadTaskNum).textContent = 
+                // Set theme, avatar & toasts
+                UICtrl.chooseTheme(data.info.theme);
+                UICtrl.chooseAvatar(data.info.avatar);
+                UICtrl.chooseToast(data.info.toast);
                 // 
                 setTimeout(() => {
                     document.querySelector(UISelectors.loginLoader).remove();

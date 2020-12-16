@@ -70,7 +70,17 @@ const UICtrl = (function() {
         taskTabsOngoing: '#task-tabs-ongoing',
         taskTabsCompleted: '#task-tabs-completed',
         leadTaskCompletedNum: '#lead-task-completed',
-        taskProgress: '#task-progress'
+        taskProgress: '#task-progress',
+        settings: '#settings',
+        settingsWrapper: '#settings-wrapper',
+        settingsCloseBtn: '#settings-close-btn',
+        themeBtnsWrapper: '#theme-btns-wrapper',
+        themeBtns: '.theme',
+        avatarBtns: '.avatar',
+        toastBtns: '.toast-change',
+        avatarBtnsWrapper: '#avatar-btns-wrapper',
+        userAvatar: '#user-avatar',
+        toastBtnsWrapper: '#toast-btns-wrapper'
     }
 
     const createHeading = function(cssClass, headingTitle) {
@@ -373,12 +383,25 @@ const UICtrl = (function() {
 
     const displayTasks = function(tasks, currToday, enableDnD, user, setTasks) {
         currToday = format(currToday, "d'-'MMM'-'yyyy");
+        console.log(tasks);
         if (!(tasks === undefined)) {
-            if (tasks[currToday]) {
-                tasks[currToday].forEach((task, index) => {
-                    generateDayTemplate(task, index, enableDnD, user, currToday, setTasks);
-                });
-                return tasks[currToday].length;
+            if (tasks[currToday] !== undefined ) {
+                if (tasks[currToday].length !== 0) {
+                    tasks[currToday].forEach((task, index) => {
+                        generateDayTemplate(task, index, enableDnD, user, currToday, setTasks);
+                    });
+                    return tasks[currToday].length;
+                } else {
+                    // no tasks for this date
+                    let list = document.querySelector(UISelectors.tasks);
+                    let li = createLi('list-group-item d-flex justify-content-center align-items-center');
+                    let p = document.createElement('p');
+                    p.className = 'lead text-center m-0';
+                    p.appendChild(document.createTextNode('No tasks to display'));
+                    li.appendChild(p);
+                    list.appendChild(li);
+                    return 0;
+                }
             }
             else {
                 // no tasks for this date
@@ -391,6 +414,16 @@ const UICtrl = (function() {
                 list.appendChild(li);
                 return 0;
             }
+        } else {
+            // no tasks for this date
+            let list = document.querySelector(UISelectors.tasks);
+            let li = createLi('list-group-item d-flex justify-content-center align-items-center');
+            let p = document.createElement('p');
+            p.className = 'lead text-center m-0';
+            p.appendChild(document.createTextNode('No tasks to display'));
+            li.appendChild(p);
+            list.appendChild(li);
+            return 0;
         }
     }
 
@@ -435,6 +468,115 @@ const UICtrl = (function() {
         return true;
     }
 
+    const setTheme = function(main, secondary, td, currWeekHover, rowHover, currDay, badge, bg, text) {
+		const root = document.documentElement;
+		//
+		root.style.setProperty('--theme1-main-color', main);
+		root.style.setProperty('--theme1-secondary-color', secondary);
+		root.style.setProperty('--theme1-td-color', td);
+		root.style.setProperty('--theme1-currweek-hover-color', currWeekHover);
+		root.style.setProperty('--theme1-row-hover-color', rowHover);
+		root.style.setProperty('--theme1-currday-color', currDay);
+		root.style.setProperty('--theme1-badge-color', badge);
+		root.style.setProperty('--theme1-bg-color', bg);
+		root.style.setProperty('--theme1-text-color', text);
+    }
+
+    const chooseTheme = function(theme) {
+        console.log('jestem w chooseTheme');
+		switch (theme) {
+			case 'theme-1':
+				setTheme('#343a40', '#6c757d', '#454d55', '#dee2e6', '#dee2e6', '#000000', '#007bff', '#000000', '#ffffff');
+                document.querySelector('#' + theme).classList.add('theme-active');
+                console.log('tu tez powinienem byc');
+				break;
+			case 'theme-2':
+				setTheme('#666a86', '#788aa3', '#ffc800', '#b2c9ab', '#b2c9ab', '#788aa3', '#ff8427', '#92b6b1', '#e8ddb5');
+				document.querySelector('#' + theme).classList.add('theme-active');
+				break;
+			case 'theme-3':
+				setTheme('#507dbc', '#a1c6ea', '#bbd1ea', '#ffa62b', '#ffa62b', '#a1c6ea', '#dae3e5', '#be6e46', '#04080f');
+				document.querySelector('#' + theme).classList.add('theme-active');
+				break;
+			case 'theme-4':
+				setTheme('#291528', '#9e829c', '#3a3e3b', '#9e829c', '#9e829c', '#93b7be', '#000000', '#93b7be', '#f1fffa');
+				document.querySelector('#' + theme).classList.add('theme-active');
+				break;
+			case 'theme-5':
+				setTheme('#f7a9a8', '#ef798a', '#087ca7', '#05b2dc', '#988b8e', '#05b2dc', '#e5c3d1', '#988b8e', '#613f75');
+				document.querySelector('#' + theme).classList.add('theme-active');
+				break;
+			case 'theme-6':
+				setTheme('#3d315b', '#444b6e', '#708b75', '#eee5e5', '#9ab87a', '#ddcecd', '#444b6e', '#ddcecd', '#f8f991');
+				document.querySelector('#' + theme).classList.add('theme-active');
+				break;
+		}
+    }
+    
+    const chooseAvatar = function(avatar) {
+		switch (avatar) {
+			case 'avatar-1':
+                document.querySelector('#' + avatar).classList.add('avatar-active');
+				break;
+			case 'avatar-2':
+				document.querySelector('#' + avatar).classList.add('avatar-active');
+				break;
+			case 'avatar-3':
+				document.querySelector('#' + avatar).classList.add('avatar-active');
+				break;
+			case 'avatar-4':
+				document.querySelector('#' + avatar).classList.add('avatar-active');
+				break;
+			case 'avatar-5':
+				document.querySelector('#' + avatar).classList.add('avatar-active');
+				break;
+			case 'avatar-6':
+				document.querySelector('#' + avatar).classList.add('avatar-active');
+				break;
+			case 'avatar-7':
+				document.querySelector('#' + avatar).classList.add('avatar-active');
+				break;
+			case 'avatar-8':
+				document.querySelector('#' + avatar).classList.add('avatar-active');
+				break;
+			case 'avatar-9':
+				document.querySelector('#' + avatar).classList.add('avatar-active');
+				break;
+			case 'avatar-10':
+				document.querySelector('#' + avatar).classList.add('avatar-active');
+				break;
+			case 'avatar-11':
+				document.querySelector('#' + avatar).classList.add('avatar-active');
+				break;
+			case 'avatar-12':
+				document.querySelector('#' + avatar).classList.add('avatar-active');
+				break;
+			case 'avatar-13':
+				document.querySelector('#' + avatar).classList.add('avatar-active');
+				break;
+			case 'avatar-14':
+				document.querySelector('#' + avatar).classList.add('avatar-active');
+				break;
+		}
+    }
+    
+    const chooseToast = function(toast) {
+		switch (toast) {
+			case 'toast-change-1':
+                document.querySelector('#' + toast).classList.add('toast-active');
+				break;
+			case 'toast-change-2':
+				document.querySelector('#' + toast).classList.add('toast-active');
+				break;
+			case 'toast-change-3':
+				document.querySelector('#' + toast).classList.add('toast-active');
+				break;
+			case 'toast-change-4':
+				document.querySelector('#' + toast).classList.add('toast-active');
+				break;
+		}
+	}
+
     return {
         getSelectors: function() {
             return UISelectors;
@@ -451,7 +593,10 @@ const UICtrl = (function() {
         setTableBodyHead,
         renderTableUI,
         displayTasks,
-        errorTasks
+        errorTasks,
+        chooseTheme,
+        chooseAvatar,
+        chooseToast
     }
 
 })();

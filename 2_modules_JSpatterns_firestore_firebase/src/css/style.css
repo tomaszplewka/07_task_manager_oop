@@ -127,6 +127,7 @@
 	display: inline-block;
 	overflow: hidden;
 	background: var(--theme1-bg-color);
+	background: transparent;
 }
 
 .ldio-voeg20dzl7 {
@@ -187,6 +188,7 @@ nav {
 
 nav a {
 	color: var(--theme1-text-color);
+	cursor: pointer;
 }
 
 nav a:hover {
@@ -382,11 +384,12 @@ div.lead {
 
 #login-loader {
 	width: 40vw;
-	background-color: var(--theme1-bg-color);
+	/* background-color: var(--theme1-bg-color); */
+	background-color: transparent;
 	position: absolute;
 	top: 0;
 	left: 0;
-	transition: transform 0.5s ease;
+	transition: all 0.5s ease;
 	z-index: 100;
 	display: flex;
 	justify-content: center;
@@ -499,9 +502,9 @@ td:hover.invalid-day {
 .theme-active,
 .avatar-active,
 .toast-active {
-	background-color: var(--theme1-secondary-color);
-	border-color: var(--theme1-secondary-color);
-	color: var(--theme1-text-color);
+	background-color: var(--theme1-secondary-color) !important;
+	border-color: var(--theme1-secondary-color) !important;
+	color: var(--theme1-text-color) !important;
 }
 
 .avatar {
@@ -666,7 +669,7 @@ p.invalid {
 /* Alert Msg */
 .alert-message-wrapper,
 .toast-message-wrapper,
-.settings-wrapper {
+#settings-wrapper {
 	position: fixed;
 	top: 0;
 	right: 0;
@@ -697,7 +700,7 @@ p.invalid {
 
 .alert-close-btn,
 .toast-close-btn,
-.settings-close-btn {
+#settings-close-btn {
 	position: absolute;
 	top: 10px;
 	right: 16px;
