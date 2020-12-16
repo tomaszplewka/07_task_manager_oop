@@ -669,7 +669,8 @@ p.invalid {
 /* Alert Msg */
 .alert-message-wrapper,
 .toast-message-wrapper,
-#settings-wrapper {
+#settings-wrapper,
+#delete-account-wrapper {
 	position: fixed;
 	top: 0;
 	right: 0;
@@ -685,7 +686,8 @@ p.invalid {
 
 .alert-message,
 .toast-message,
-.settings {
+.settings,
+.delete-account {
 	border: 2px solid var(--theme1-bg-color);
 	border-radius: 10px;
 	position: relative;
@@ -694,13 +696,15 @@ p.invalid {
 
 .alert-message .lead,
 .toast-message .lead,
-.settings .lead {
+.settings .lead,
+.delete-account .lead {
 	color: var(--theme1-bg-color);
 }
 
 .alert-close-btn,
 .toast-close-btn,
-#settings-close-btn {
+#settings-close-btn,
+#delete-account-close-btn {
 	position: absolute;
 	top: 10px;
 	right: 16px;

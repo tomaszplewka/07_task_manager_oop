@@ -80,7 +80,16 @@ const UICtrl = (function() {
         toastBtns: '.toast-change',
         avatarBtnsWrapper: '#avatar-btns-wrapper',
         userAvatar: '#user-avatar',
-        toastBtnsWrapper: '#toast-btns-wrapper'
+        toastBtnsWrapper: '#toast-btns-wrapper',
+        deleteAccountBtn: '#delete-account',
+        deleteAccountWrapper: '#delete-account-wrapper',
+        deleteAccountCloseBtn: '#delete-account-close-btn',
+        deleteAccountBtnsWrapper: '#delete-account-btns-wrapper',
+        deleteAccountConfirmBtn: '#delete-account-confirm-btn',
+        deleteAccountForm: '#delete-account-form',
+        deleteAccountEmail: '#delete-email',
+        deleteAccountPassword: '#delete-password',
+        deleteAccountErrorPara: '#delete-account-form .error'
     }
 
     const createHeading = function(cssClass, headingTitle) {
@@ -150,12 +159,12 @@ const UICtrl = (function() {
                     <i class="fas ${iconClass}"></i>
                 </span>
             </div>
-            <input type="${inputType}" class="form-control text-center" id="${inputID}" name="${inputID}"
+            <input type="${inputType}" class="validate form-control text-center" id="${inputID}" name="${inputID}"
                 placeholder="${placeholder}" ${prepend ? 'tabindex="-1"' : ''}>
             `;
         } else {
             html = `
-            <input type="${inputType}" class="form-control text-center" id="${inputID}" name="${inputID}"
+            <input type="${inputType}" class="validate form-control text-center" id="${inputID}" name="${inputID}"
                 placeholder="${placeholder}" ${prepend ? 'tabindex="-1"' : ''}>
             `;
         }
@@ -260,28 +269,6 @@ const UICtrl = (function() {
         loginMainDiv.after(div);
         console.log('appended remove mode');
     }
-
-    // const confirmRemove = function() {
-    //     const loginMainDiv = document.querySelector(UISelectors.loginMainDiv);
-    //     // Create confirm remove div
-    //     let div = document.createElement('div');
-    //     div.className = `login-remove-confirm px-4 pt-3 pb-4`;
-    //     div.appendChild(createHeading('welcome-heading', 'Are You Sure?'));
-    //     div.appendChild(createUl('login-confirm-account')); 
-    //     div.appendChild(createForm('login-form'));
-    //     div.lastElementChild.appendChild(createInputGroup('login-email', 'fa-key', 'text', 'email', 'email', false));
-    //     div.lastElementChild.appendChild(createInputGroup('login-password', 'fa-key', 'password', 'password', 'password', false));
-    //     div.lastElementChild.appendChild(createShowHidePassword('login-show-password-wrapper'));
-    //     div.lastElementChild.appendChild(createErrMsg());
-    //     div.lastElementChild.appendChild(createBtnGroup(createBtn('login-confirm-back-btn', 'button', 'Go Back', 'fa-chevron-left'), createBtn('login-confirm-login-btn', 'submit', 'Log In', 'fa-chevron-right', false)));
-
-    //     // div.querySelector(UISelectors.logInConfirmBtn).setAttribute('disabled', true);
-    //     // append add div to dom
-    //     loginMainDiv.after(div);
-    //     // 
-    //     document.querySelector(UISelectors.logInConfirmAccount).appendChild(renderLiAccount(id,  'mb-n4'));
-    //     console.log('confirm remove mode');
-    // }
 
     const logInMode = function(id) {
         const loginMainDiv = document.querySelector(UISelectors.loginMainDiv);
@@ -584,7 +571,6 @@ const UICtrl = (function() {
         createAddMode: addMode,
         createConfirmMode: confirmMode,
         createRemoveMode: removeMode,
-        // createConfirmRemove: confirmRemove,
         createLoginLoader: loginLoader,
         createLogInMode: logInMode,
         showHidePass,

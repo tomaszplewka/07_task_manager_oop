@@ -1,29 +1,3 @@
-// Intro to Modules
-
-// import './script_name'
-
-// to import a particular function, variable, etc. from another file put export keyword in front of it in that file and then in index.js
-// import { function_name, another_function } from './script'
-
-// you can export things in the same file
-// export const contact = 'sdsd';
-// or
-// export { function, function, variable }
-
-// export default
-// export default function
-// and import in index.js
-// import test from './script'
-// import default_export, { regular_function } from './script'
-// export { regular_function, default_export as default }
-
-// firebase
-// import firebase from "firebase/app";
-// // Add the Firebase products that you want to use
-// import "firebase/auth";
-// import "firebase/firestore";
-// import "firebase/functions";
-
 import './css/style.css';
 import UICtrl from './js/UICtrl';
 import StoreCtrl from './js/StoreCtrl';
@@ -84,7 +58,7 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                         document.querySelector(UISelectors.password).removeAttribute('tabindex');
                     }, 100)
                     // Validate username, email & password
-                    Array.from(document.querySelectorAll('input')).forEach(input => input.addEventListener('keyup', e => {
+                    Array.from(document.querySelectorAll('.login-wrapper input')).forEach(input => input.addEventListener('keyup', e => {
                         DataCtrl.validate(e.target);
                         enableDisableCreateBtn();
                     }));
@@ -592,9 +566,112 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                     FirebaseCtrl.updateUser(globalUser, 'toast', e.target.id);
                     // globalUser.theme = e.target.id;
                 }
+                // Delete account
+                if (`#${e.target.id}` === UISelectors.deleteAccountBtn) {
+                    document.querySelector(UISelectors.deleteAccountWrapper).style.display = 'flex';
+                    document.querySelector(UISelectors.deleteAccountWrapper).style.opacity = 1;
+                    document.querySelector('body').style.overflow = 'hidden';
+                }
+                // Delete account wrapper & delete account close btn
+                if (`#${e.target.id}` === UISelectors.deleteAccountWrapper || document.querySelector(UISelectors.deleteAccountCloseBtn).contains(e.target) || `#${e.target.id}` === UISelectors.deleteNo) {
+                    document.querySelector(UISelectors.deleteAccountWrapper).style.display = 'none';
+                    document.querySelector(UISelectors.deleteAccountWrapper).style.opacity = 0;
+                    document.querySelector('body').style.overflow = 'auto';
+                    // 
+                    // listPastTasks.innerHTML = '';
+                }
+            });
+            // Delete account submit event
+            document.querySelector(UISelectors.deleteAccountForm).addEventListener('submit', e => {
+                const emailValue = document.querySelector(UISelectors.deleteAccountEmail);
+                const passValue = document.querySelector(UISelectors.deleteAccountPassword);
+                const errorPara = document.querySelector(UISelectors.deleteAccountErrorPara);
+                FirebaseCtrl.reauthenticate(emailValue.value, passValue.value)
+                .then(() => {
+                    console.log('reauthenticated');
+                    return FirebaseCtrl.deleteUser();
+                })
+                .then(() => {
+                    console.log('user logged out');
+                    document.querySelector(UISelectors.loginWrapper).classList.remove('roll-up');
+                    document.querySelector(UISelectors.welcomeHeader).textContent = '';
+                    document.querySelector(UISelectors.leadTodayDate).textContent = '';
+                    document.querySelector(UISelectors.deleteAccountWrapper).style.display = 'none';
+                    document.querySelector(UISelectors.deleteAccountWrapper).style.opacity = 0;
+                    console.log('user deleted');
+                    // 
+                    setTimeout(() => {
+                        // Adjust UI
+                        document.querySelector(UISelectors.loginMainDiv).classList.remove('move-x-left');
+                    }, 2000);
+                })
+                .catch(error => {
+                    console.log(error);
+                    const { msg, email, pass } = DataCtrl.errorHandling(error.code);
+                    switch (true) {
+                        case emailValue.value === '' && passValue.value === '':
+                            errorPara.innerHTML = "No email and password provided.";
+                            errorPara.classList.remove('hide');
+                            emailValue.classList.add('invalid');
+                            passValue.classList.add('invalid');
+                            emailValue.disabled = true;
+                            passValue.disabled = true;
+                            setTimeout(() => {
+                                errorPara.classList.add('hide');
+                                emailValue.classList.remove('invalid');
+                                passValue.classList.remove('invalid');
+                                emailValue.disabled = false;
+                                passValue.disabled = false;
+                            }, 3000);
+                            break;
+                        case email === 1 && pass === 1:
+                            errorPara.innerHTML = msg;
+                            errorPara.classList.remove('hide');
+                            emailValue.classList.add('invalid');
+                            passValue.classList.add('invalid');
+                            emailValue.disabled = true;
+                            passValue.disabled = true;
+                            setTimeout(() => {
+                                errorPara.classList.add('hide');
+                                emailValue.classList.remove('invalid');
+                                passValue.classList.remove('invalid');
+                                emailValue.disabled = false;
+                                passValue.disabled = false;
+                            }, 3000);
+                            break;
+                        case email === 1:
+                            errorPara.innerHTML = msg;
+                            errorPara.classList.remove('hide');
+                            emailValue.classList.add('invalid');
+                            emailValue.disabled = true;
+                            passValue.disabled = true;
+                            setTimeout(() => {
+                                errorPara.classList.add('hide');
+                                emailValue.classList.remove('invalid');
+                                emailValue.disabled = false;
+                                passValue.disabled = false;
+                            }, 3000);
+                            break;
+                        case pass === 1:
+                            errorPara.innerHTML = msg;
+                            errorPara.classList.remove('hide');
+                            passValue.classList.add('invalid');
+                            emailValue.disabled = true;
+                            passValue.disabled = true;
+                            setTimeout(() => {
+                                errorPara.classList.add('hide');
+                                passValue.classList.remove('invalid');
+                                emailValue.disabled = false;
+                                passValue.disabled = false;
+                            }, 3000);
+                            break;
+                    }
+                });
+                // 
+                e.preventDefault();
             });
             // Add form submit event
-            document.querySelector(UISelectors.addForm).addEventListener('submit', (e) => {
+            document.querySelector(UISelectors.addForm).addEventListener('submit', e => {
                 e.preventDefault();
                 // 
                 const task = document.querySelector(UISelectors.addForm).add.value.trim();
@@ -681,6 +758,8 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                 // Set theme, avatar & toasts
                 UICtrl.chooseTheme(data.info.theme);
                 UICtrl.chooseAvatar(data.info.avatar);
+                document.querySelector(UISelectors.userAvatar).setAttribute('class', document.querySelector(`#${data.info.avatar}`).firstElementChild.classList.value);
+                document.querySelector(UISelectors.userAvatar).classList.add('position-relative');
                 UICtrl.chooseToast(data.info.toast);
                 // 
                 setTimeout(() => {
@@ -1018,17 +1097,6 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                 renderDayModeCalendar,
                 currToday: new Date()
             });
-            // console.log(globalUser);
-            
-            // console.log(FirebaseCtrl.checkIfLoggedIn());
-            // If no accounts, disable remove btn
-            if (!1) {
-                document.querySelector(UISelectors.removeUserBtn).disabled = true;
-            } else {
-                document.querySelector(UISelectors.removeUserBtn).disabled = false;
-            }
-            // Render login accounts
-            // UICtrl.renderLoginAccounts(0, [], UISelectors.loginAccounts) // change that later
             // Load event listeners
             loadEventListeners();
 		}

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +9,6 @@
         integrity="sha512-xA6Hp6oezhjd6LiLZynuukm80f8BoZ3OpcEYaqKoCV3HKQDrYjDE1Gu8ocxgxoXmwmSzM4iqPvCsOkQNiu41GA=="
         crossorigin="anonymous" />
 </head>
-
 <body>
     <div class="login-wrapper" style="display: none;">
         <h1 class="display-3 mb-4 mx-2 brand-header">
@@ -19,7 +17,7 @@
         </h1>
         <div class="login-inner-wrapper">
             <div class="login-main-div px-4 pt-3 pb-4">
-                <button class="call">Say hello</button>
+                <!-- <button class="call">Say hello</button> -->
                 <h2 class="display-4 welcome-heading text-center">Choose an Account</h2>
                 <ul class="list-group login-accounts mx-auto w-100 mt-4"></ul>
                 <div class="btn-group d-flex pt-4">
@@ -27,35 +25,8 @@
                         <i class="fas fa-user-plus mr-1"></i>
                         Add
                     </button>
-                    <button id="login-remove-btn" type="button" class="btn btn-outline-light" tabindex="-1">
-                        Remove
-                        <i class="fas fa-user-times ml-1"></i>
-                    </button>
                 </div>
             </div>
-            <!-- 
-            <div class="login-remove-confirm px-4 pt-3 pb-4">
-                <h2 class="display-4 welcome-heading text-center">Are You Sure?</h2>
-                <ul class="list-group login-remove-confirm-account mx-auto w-100 mt-4"></ul>
-                <div class="btn-group d-flex pt-4">
-                    <button id="login-remove-back-confirm-btn" type="button" class="btn btn-outline-light" tabindex="-1">
-                        <i class="fas fa-chevron-left"></i>
-                        <i class="fas fa-chevron-left ml-n2 mr-1"></i>
-                        Go Back
-                    </button>
-                    <button id="login-remove-confirm-btn" type="button" class="btn btn-outline-light" tabindex="-1">
-                        <i class="fas fa-user-times mr-1"></i>
-                        Confirm
-                    </button>
-                </div>
-            </div>
-            <div class="login-remove-confirm-message px-4 pt-3 pb-4">
-                <h2 class="display-4 welcome-heading text-center">Account Deleted</h2>
-                <p class="lead text-center">Account for user <span id="confirm-remove-username"
-                        class="stand-out"></span>
-                    has been deleted</p>
-            </div>
-             -->
         </div>
     </div>
     <div class="container" id="main-navbar" style="display: none;">
@@ -81,6 +52,9 @@
                     </a>
                     <a class="dropdown-item" id="log-out">
                         Log Out
+                    </a>
+                    <a class="dropdown-item" id="delete-account">
+                        Delecte Account
                     </a>
                 </div>
             </div>
@@ -392,7 +366,30 @@
             <small class="text-muted">NOTE: Tasks older than 30 days will be automatically deleted!</small>
         </div>
     </div>
+    <div id="delete-account-wrapper" style="opacity: 0;">
+        <div class="delete-account text-center p-3">
+            <span id="delete-account-close-btn"><i class="fas fa-window-close"></i></span>
+            <h2 class="display-4 px-5">Delete Account</h2>
+            <div class="dropdown-divider"></div>
+            <form id="delete-account-form" autocomplete="off">
+                <p class="lead">Please confirm your user credentials</p>
+                <div class="input-group form-group mb-0 delete-account-email">
+                    <input id="delete-email" type="text" class="validate form-control text-center" name="delete-email" placeholder="confirm email" tabindex="-1">
+                </div>
+                <div class="input-group form-group mb-0 delete-account-password">
+                    <input id="delete-password" type="password" class="validate form-control text-center" name="delete-password" placeholder="confirm password" tabindex="-1">
+                </div>
+                <p class="lead text-center error invalid hide mb-0"></p>
+                <div class="dropdown-divider"></div>
+                <p class="lead">Are you sure you want to permanently delete the current account and every entry related to it from the database?</p>
+                <div id="delete-account-btns-wrapper">
+                    <div class="btn-group d-flex" role="group">
+                        <button type="submit" id="delete-account-confirm-btn" class="btn btn-outline-dark" tabindex="-1">Delete</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
     <script src="assets/bundle.js"></script>
 </body>
-
 </html>
