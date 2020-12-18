@@ -17,7 +17,8 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
     // Initialize global user
     let globalUser = '';
     // Initialize global tasks
-    let globalTasks = '';
+    let globalTasksOngoing = [];
+    let globalTasksCompleted = [];
     // Initialize global variables
     const globalVars = {
         currToday: new Date(),
@@ -114,6 +115,8 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                             UICtrl.chooseTheme(user.theme);
                             UICtrl.chooseAvatar(user.avatar);
                             UICtrl.chooseTheme(user.toast);
+                            // Calculate progress
+                            calculateProgress(format(new Date(), "d'-'MMM'-'yyyy"));
                             // 
                             setTimeout(() => {
                                 // Adjust UI to show main app screen
@@ -326,39 +329,37 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                 }
                 // Left arrow in day mode clicked
                 if (`#${e.target.id}` === UISelectors.lDayArrow || document.querySelector(UISelectors.lDayArrow).contains(e.target)) {
-                    console.log(FirebaseCtrl.checkIfLoggedIn().uid);
                     // 
                     console.log('left arrow here');
                     const todayContent = document.querySelector(UISelectors.dayModeContent).textContent.trim();
                     let today = parse(todayContent, "d MMMM yyyy, EEEE", new Date());
-                    console.log(today);
                     const prevToday = subDays(today, 1);
                     let currToday = prevToday;
-                    console.log(prevToday);
-                    // currToday = format(currToday, "d'-'MMM'-'yyyy");
-                    console.log(currToday);
-                    // console.log(globalUser);
-                    // console.log(globalTasks);
                     // 
-                    renderDayModeCalendar(currToday, globalTasks, globalUser, FirebaseCtrl.updateTasks2);
+                    if (document.querySelector(UISelectors.taskTabsOngoing).classList.contains('active')) {
+                        renderDayModeCalendar(currToday, globalTasksOngoing, globalUser, FirebaseCtrl.updateTasks2);
+                    } else {
+                        renderDayModeCalendar(currToday, globalTasksCompleted, globalUser, FirebaseCtrl.updateTasks2, false);
+                    }
+                    // Calculate progress
+                    calculateProgress(format(currToday, "d'-'MMM'-'yyyy"));
                 }
                 // Right arrow in day mode clicked
                 if (`#${e.target.id}` === UISelectors.rDayArrow || document.querySelector(UISelectors.rDayArrow).contains(e.target)) {
-                    // console.log(FirebaseCtrl.checkIfLoggedIn().uid);
                     // 
                     console.log('right arrow here');
                     const todayContent = document.querySelector(UISelectors.dayModeContent).textContent.trim();
                     let today = parse(todayContent, "d MMMM yyyy, EEEE", new Date());
-                    console.log(today);
                     const nextToday = addDays(today, 1);
                     let currToday = nextToday;
-                    console.log(nextToday);
-                    // currToday = format(currToday, "d'-'MMM'-'yyyy");
-                    console.log(currToday);
-                    // console.log(globalUser);
-                    // console.log(globalTasks);
                     // 
-                    renderDayModeCalendar(currToday, globalTasks, globalUser, FirebaseCtrl.updateTasks2);
+                    if (document.querySelector(UISelectors.taskTabsOngoing).classList.contains('active')) {
+                        renderDayModeCalendar(currToday, globalTasksOngoing, globalUser, FirebaseCtrl.updateTasks2);
+                    } else {
+                        renderDayModeCalendar(currToday, globalTasksCompleted, globalUser, FirebaseCtrl.updateTasks2, false);
+                    }
+                    // Calculate progress
+                    calculateProgress(format(currToday, "d'-'MMM'-'yyyy"));
                 }
                 // Switch to week mode
                 if (`#${e.target.id}` === UISelectors.weekModeView) {
@@ -374,7 +375,10 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                 if (`#${e.target.id}` === UISelectors.dayModeView) {
                     console.log('day mode clicked');
                     // Check if day mdoe is already active
-                    renderDayModeCalendar(new Date(), globalTasks, globalUser, FirebaseCtrl.updateTasks2);
+                    // ???
+                    renderDayModeCalendar(new Date(), globalTasksOngoing, globalUser, FirebaseCtrl.updateTasks2);
+                    // Calculate progress
+                    calculateProgress(format(new Date(), "d'-'MMM'-'yyyy"));
                 }
                 // // Left arrow in week mode clicked
                 if (`#${e.target.id}` === UISelectors.lWeekArrow || document.querySelector(UISelectors.lWeekArrow).contains(e.target)) {
@@ -449,9 +453,11 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                         const todayContent = document.querySelector(UISelectors.dayModeContent).textContent.trim();
                         let today = parse(todayContent, "d MMMM yyyy, EEEE", new Date());
                         let currToday = today;
-                        renderDayModeCalendar(currToday, globalTasks, globalUser, FirebaseCtrl.updateTasks2);
                         e.target.classList.add('active');
                         e.target.nextElementSibling.classList.remove('active');
+                        console.log('switch to ongoing tasks');
+                        console.log(globalTasksOngoing);
+                        renderDayModeCalendar(currToday, globalTasksOngoing, globalUser, FirebaseCtrl.updateTasks2);
                         // 
                         document.querySelector(UISelectors.leadTaskNum).parentElement.parentElement.classList.remove('hide');
                         document.querySelector(UISelectors.leadTaskNum).parentElement.parentElement.nextElementSibling.classList.add('hide');
@@ -463,30 +469,34 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                         const todayContent = document.querySelector(UISelectors.dayModeContent).textContent.trim();
                         let today = parse(todayContent, "d MMMM yyyy, EEEE", new Date());
                         let currToday = today;
-                        // grab completed tasks from firestore
-                        FirebaseCtrl.tasksOnSnapshotCompleted(globalUser)
-                            .then(snapshot => {
-                                UICtrl.renderTableUI();
-                                const taskNum = UICtrl.displayTasks(snapshot.data(), currToday, DnDCtrl.enableDnD, globalUser, FirebaseCtrl.updateTasks2);
-                                if (taskNum) {
-                                    document.querySelector(UISelectors.leadTaskNum).textContent = taskNum;
-                                } else {
-                                    document.querySelector(UISelectors.leadTaskNum).textContent = 0;
-                                }
-                                // Day mode is active
-                                // document.querySelector('body').setAttribute('class', 'day-mode-active');
-                                // Disable searching if no tasks to display
-                                if (!(snapshot.data() === undefined)) {
-                                    if (snapshot.data()[format(currToday, "d'-'MMM'-'yyyy")] === undefined || snapshot.data()[format(currToday, "d'-'MMM'-'yyyy")].length === 0) {
-                                        document.querySelector(UISelectors.searchTasks).disabled = true;
-                                    } else {
-                                        document.querySelector(UISelectors.searchTasks).disabled = false;
-                                    }
-                                }
-                                // renderDayModeCalendar(currToday, snapshot.data(), globalUser, FirebaseCtrl.updateTasks2);
-                            });
+                        // Grab completed tasks from firestore
+                        // FirebaseCtrl.tasksOnSnapshotCompleted(globalUser)
+                        //     .then(snapshot => {
+                        //         // UICtrl.renderTableUI();
+                        //         // const taskNum = UICtrl.displayTasks(snapshot.data(), currToday, DnDCtrl.enableDnD, globalUser, FirebaseCtrl.updateTasks2, false);
+                        //         // if (taskNum) {
+                        //         //     document.querySelector(UISelectors.leadTaskNum).textContent = taskNum;
+                        //         // } else {
+                        //         //     document.querySelector(UISelectors.leadTaskNum).textContent = 0;
+                        //         // }
+                        //         // Day mode is active
+                        //         // document.querySelector('body').setAttribute('class', 'day-mode-active');
+                        //         // Disable searching if no tasks to display
+                        //         if (!(snapshot.data() === undefined)) {
+                        //             if (snapshot.data()[format(currToday, "d'-'MMM'-'yyyy")] === undefined || snapshot.data()[format(currToday, "d'-'MMM'-'yyyy")].length === 0) {
+                        //                 document.querySelector(UISelectors.searchTasks).disabled = true;
+                        //             } else {
+                        //                 document.querySelector(UISelectors.searchTasks).disabled = false;
+                        //             }
+                        //         }
+                        //     });
+                        // 
                         e.target.classList.add('active');
                         e.target.previousElementSibling.classList.remove('active');
+                        // 
+                        console.log('switch to completed tasks');
+                        console.log(globalTasksCompleted);
+                        renderDayModeCalendar(currToday, globalTasksCompleted, globalUser, FirebaseCtrl.updateTasks2, false);
                         // 
                         document.querySelector(UISelectors.leadTaskCompletedNum).parentElement.parentElement.classList.remove('hide');
                         document.querySelector(UISelectors.leadTaskCompletedNum).parentElement.parentElement.previousElementSibling.classList.add('hide');
@@ -580,6 +590,207 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                     // 
                     // listPastTasks.innerHTML = '';
                 }
+                // Delete task
+                if (e.target.classList.contains('delete')) {
+                    if (!e.target.parentElement.firstElementChild.classList.contains('hide')) {
+                        const today = document.querySelector(UISelectors.dayModeContent).textContent.trim();
+                        const currToday = format(parse(today, "d MMMM yyyy, EEEE", new Date()), "d'-'MMM'-'yyyy");
+                        // Remove task from UI
+                        e.target.parentElement.parentElement.remove();
+                        // Get current tasks & reassign task ids
+                        const tasks = document.querySelectorAll('.tasks li');
+                        let todayTasks = [];
+                        [].forEach.call(tasks, (li, index) => {
+                            li.id = 'task' + index;
+                            todayTasks.push(li.textContent.trim());
+                        });
+                        // Ongoing / completed
+                        if (document.querySelector(UISelectors.taskTabsOngoing).classList.contains('active')) {
+                            // Update globalTasks
+                            globalTasksOngoing[currToday] = todayTasks;
+                            // Delete from firestore
+                            FirebaseCtrl.deleteTask(currToday, todayTasks, 'ongoing');
+                            // Update task number
+                            document.querySelector(UISelectors.leadTaskNum).textContent = todayTasks.length;
+                        } else if (document.querySelector(UISelectors.taskTabsCompleted).classList.contains('active')) {
+                            // Update globalTasks
+                            globalTasksCompleted[currToday] = todayTasks;
+                            // Delete from firestore
+                            FirebaseCtrl.deleteTask(currToday, todayTasks, 'completed');
+                            // Update task number
+                            document.querySelector(UISelectors.leadTaskCompletedNum).textContent = todayTasks.length;
+                        }
+                        // Calculate progress
+                        calculateProgress(currToday);
+                    }
+                }
+                // Edit task
+                // CONSIDER DISABLING TABINDEX ON BUTTONS & ENABLING IT ON EDIT ICON
+                if (e.target.classList.contains('edit')) {
+                    // Save current task & enable edit mode
+                    // startTask = e.target.parentElement.parentElement.firstElementChild.nextElementSibling.textContent;
+                    e.target.parentElement.parentElement.firstElementChild.nextElementSibling.setAttribute(
+                        'contenteditable',
+                        'true'
+                    );
+                    // Disable DnD
+                    document.querySelectorAll('.tasks li').forEach((curr) => {
+				        curr.draggable = false;
+                    });
+                    const el = e.target.parentElement.parentElement.firstElementChild.nextElementSibling;
+                    let range = document.createRange();
+                    let sel = window.getSelection();
+                    console.log(el.textContent.length);
+                    range.setStart(el.childNodes[0], el.textContent.length);
+                    range.collapse(true);
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                    el.focus();
+                    el.parentElement.classList.add('editable');
+                    // Switch icons
+                    e.target.classList.add('hide');
+                    e.target.nextElementSibling.classList.remove('hide');
+                    // Disable buttons (consider writing function for this!!!)
+                    document.querySelector(UISelectors.searchTasks).disabled = true;
+                    document.querySelector(UISelectors.addOption).disabled = true;
+                    document.querySelector(UISelectors.moreOptionsBtn).disabled = true;
+                    document.querySelector(UISelectors.lDayArrow).disabled = true;
+                    document.querySelector(UISelectors.rDayArrow).disabled = true;
+                    document.querySelector(UISelectors.dayModeView).disabled = true;
+                    document.querySelector(UISelectors.weekModeView).disabled = true;
+                    document.querySelector(UISelectors.monthModeView).disabled = true;
+                    document.querySelector(UISelectors.userNavbar).disabled = true;
+                    document.querySelector(UISelectors.taskTabsOngoing).disabled = true;
+                    document.querySelector(UISelectors.taskTabsCompleted).disabled = true;
+                    document.querySelector(UISelectors.searchForm).disabled = true;
+                    // Disable enter
+                    e.target.parentElement.parentElement.firstElementChild.nextElementSibling.addEventListener('keydown', (evt) => {
+                        if (evt.key === 'Enter' || evt.key === 'Tab') {
+                            evt.preventDefault();
+                        }
+                    });
+                }
+                // Complete task
+                if (e.target.classList.contains('uncompleted')) {
+                    if (
+                        !e.target.parentElement.parentElement.lastElementChild.firstElementChild.classList.contains('hide') &&
+                        document.querySelector(UISelectors.taskTabsOngoing).classList.contains('active')
+                    ) {
+                        // Switch icons
+                        e.target.classList.toggle('hide');
+                        e.target.nextElementSibling.classList.toggle('hide');
+                        // Store deleted task
+                        const taskDeleted = e.target.parentElement.parentElement.textContent.trim();
+                        // Remove from UI
+                        e.target.parentElement.nextElementSibling.nextElementSibling.remove();
+                        e.target.parentElement.nextElementSibling.classList.add('hide');
+                        const completedMsg = document.createElement('p');
+                        completedMsg.classList.add('m-0');
+                        completedMsg.appendChild(document.createTextNode('Task Completed'));
+                        e.target.parentElement.parentElement.appendChild(completedMsg);
+                        e.target.parentElement.parentElement.classList.add('fade-out');
+                        // 
+                        setTimeout(() => {
+                            // Adjust firestore data
+                            const today = document.querySelector(UISelectors.dayModeContent).textContent.trim();
+                            const currToday = format(parse(today, "d MMMM yyyy, EEEE", new Date()), "d'-'MMM'-'yyyy");
+                            // Remove it from UI
+                            e.target.parentElement.parentElement.remove();
+                            // Get current tasks & reassign task ids
+                            const tasks = document.querySelectorAll('.tasks li');
+                            let todayTasks = [];
+                            [].forEach.call(tasks, (li, index) => {
+                                li.id = 'task' + index;
+                                todayTasks.push(li.textContent.trim());
+                                console.log(todayTasks);
+                            });
+                            // Update globalTasks
+                            console.log('todayTasks');
+                            // console.log(todayTasks);
+                            console.log(todayTasks);
+                            console.log(globalTasksOngoing[currToday]);
+                            globalTasksOngoing[currToday] = todayTasks;
+                            console.log(globalTasksOngoing[currToday]);
+                            console.log(todayTasks);
+                            console.log(globalTasksCompleted[currToday]);
+                            if (globalTasksCompleted[currToday] === undefined) {
+                                globalTasksCompleted[currToday] = [];
+                            }
+                            globalTasksCompleted[currToday].push(taskDeleted);
+                            // Remove task from firestore 'ongoing' collection
+                            // console.log(todayTasks);
+                            console.log(globalTasksCompleted[currToday]);
+                            // 
+                            // FirebaseCtrl.markAsCompletedDelete(currToday, todayTasks)
+                            // .then(() => {
+                            //     FirebaseCtrl.markAsCompletedAdd(currToday, taskDeleted)
+                            // })
+                            // .then(() => {
+                            //     console.log('done here !!!');
+                            // })
+                            FirebaseCtrl.markAsCompleted(currToday, todayTasks, taskDeleted)
+                            .then(() => {
+                                // Update task number
+                                document.querySelector(UISelectors.leadTaskNum).textContent = todayTasks.length;
+                                // Calculate progress
+                                calculateProgress(currToday);
+                            })
+                            .catch(err => {
+                                console.log(err);
+                            });
+                        }, 1500);
+                    }
+                }
+                // Uncomplete task
+                if (e.target.classList.contains('completed')) {
+                    if (
+                        !e.target.parentElement.parentElement.lastElementChild.firstElementChild.classList.contains('hide') &&
+                        document.querySelector(UISelectors.taskTabsCompleted).classList.contains('active')
+                    ) {
+                        // Switch icons
+                        e.target.classList.toggle('hide');
+                        e.target.previousElementSibling.classList.toggle('hide');
+                        // Store deleted task
+                        const taskOngoing = e.target.parentElement.parentElement.textContent.trim();
+                        // Remove from UI
+                        e.target.parentElement.nextElementSibling.nextElementSibling.remove();
+                        e.target.parentElement.nextElementSibling.classList.add('hide');
+                        const uncompletedMsg = document.createElement('p');
+                        uncompletedMsg.classList.add('m-0');
+                        uncompletedMsg.appendChild(document.createTextNode('Moved Back to Scheduled'));
+                        e.target.parentElement.parentElement.appendChild(uncompletedMsg);
+                        e.target.parentElement.parentElement.classList.add('fade-out');
+                        // 
+                        setTimeout(() => {
+                            // Adjust firestore data
+                            const today = document.querySelector(UISelectors.dayModeContent).textContent.trim();
+                            const currToday = format(parse(today, "d MMMM yyyy, EEEE", new Date()), "d'-'MMM'-'yyyy");
+                            // Remove it from UI
+                            e.target.parentElement.parentElement.remove();
+                            // Get current tasks & reassign task ids
+                            const tasks = document.querySelectorAll('.tasks li');
+                            let todayTasks = [];
+                            [].forEach.call(tasks, (li, index) => {
+                                li.id = 'task' + index;
+                                todayTasks.push(li.textContent.trim());
+                            });
+                            // Update globalTasks
+                            globalTasksCompleted[currToday] = todayTasks;
+                            if (globalTasksOngoing[currToday] === undefined) {
+                                globalTasksOngoing[currToday] = [];
+                                globalTasksOngoing[currToday].push(taskOngoing);
+                            } else {
+                                globalTasksOngoing[currToday].push(taskOngoing);
+                            }
+                            // Remove task from firestore 'completed' collection
+                            FirebaseCtrl.markAsUncompleted(currToday, todayTasks, taskOngoing);
+                            // Update task number
+                            document.querySelector(UISelectors.leadTaskCompletedNum).textContent = todayTasks.length;
+                            // Calculate progress
+                            calculateProgress(currToday);
+                        }, 1000);
+                    }
+                }
             });
             // Delete account submit event
             document.querySelector(UISelectors.deleteAccountForm).addEventListener('submit', e => {
@@ -671,39 +882,31 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                 e.preventDefault();
             });
             // Add form submit event
-            document.querySelector(UISelectors.addForm).addEventListener('submit', e => {
-                e.preventDefault();
-                // 
+            document.querySelector(UISelectors.addForm).addEventListener('submit', e => { 
                 const task = document.querySelector(UISelectors.addForm).add.value.trim();
                 // Check if task has length
                 if (task.length) {  // YES
                     // Check if particular day field exist in 'tasks' collection
                     const today = document.querySelector(UISelectors.dayModeContent).textContent.trim();
-                    console.log(today);
                     const currToday = format(parse(today, "d MMMM yyyy, EEEE", new Date()), "d'-'MMM'-'yyyy");
-                    console.log(currToday);
-                    console.log(task);
-                    console.log(globalTasks);
                     FirebaseCtrl.addTasks({
                         currToday,
                         task,
                         error: UICtrl.errorTasks,
                         updateUI: renderDayModeCalendar
                     })
-                        .then(response => {
-                            console.log("let's seee...");
-                            console.log(response);
-                        })
-                        .catch(err => {
-                            console.log('Error getting document', err);
-                        });
-    
+                    .then(() => {
+                        // Calculate progress
+                        calculateProgress(currToday);
+                    })
+                    .catch(err => {
+                        console.log('Error getting document', err);
+                    });
                 } else {    // NO
     
                 }
-    
-    
-                
+                // 
+                e.preventDefault();
             });
             // Search form keyup event
             document.querySelector(UISelectors.searchForm).searchInput.addEventListener('keyup', () => {
@@ -748,10 +951,6 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                 document.querySelector(UISelectors.mainNavbar).style.display = 'block';
                 document.querySelector(UISelectors.mainBody).style.display = 'block';
                 // Set UI for a particular user
-                console.log(user.displayName);
-                console.log(user.email);
-                console.log(user.metadata);
-                console.log(data);
                 document.querySelector(UISelectors.welcomeHeader).textContent = data.info.name;
                 document.querySelector(UISelectors.leadTodayDate).textContent = format(data.date, "do 'of' MMMM yyyy");
                 // document.querySelector(UISelectors.leadTaskNum).textContent = 
@@ -761,6 +960,8 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                 document.querySelector(UISelectors.userAvatar).setAttribute('class', document.querySelector(`#${data.info.avatar}`).firstElementChild.classList.value);
                 document.querySelector(UISelectors.userAvatar).classList.add('position-relative');
                 UICtrl.chooseToast(data.info.toast);
+                // Calculate progress
+                calculateProgress(format(new Date(), "d'-'MMM'-'yyyy"));
                 // 
                 setTimeout(() => {
                     document.querySelector(UISelectors.loginLoader).remove();
@@ -788,11 +989,17 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
         }
     }
 
-    
-
-    const renderDayModeCalendar = function(currToday, tasks, user, setTasks) {
+    const renderDayModeCalendar = function(currToday, tasks, user, setTasks, ongoing = true) {
         // Set global tasks
-        globalTasks = tasks;
+        if (document.querySelector(UISelectors.taskTabsOngoing).classList.contains('active')) {
+            console.log('ongoing tasks are active');
+            globalTasksOngoing = tasks;
+            console.log(globalTasksOngoing);
+        } else {
+            console.log('completed tasks are active');
+            globalTasksCompleted = tasks;
+            console.log(globalTasksCompleted);
+        }
         // adjust UI
         document.querySelector(UISelectors.monthModeWrapper).setAttribute('style', 'display: none !important');
 		document.querySelector(UISelectors.weekModeWrapper).setAttribute('style', 'display: none !important');
@@ -816,11 +1023,20 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
         UICtrl.renderTableUI();
         // 
         console.log('renderDayMode');
-        const taskNum = UICtrl.displayTasks(tasks, currToday, DnDCtrl.enableDnD, user, setTasks);
-        if (taskNum) {
-            document.querySelector(UISelectors.leadTaskNum).textContent = taskNum;
+        if (ongoing) {
+            const taskNum = UICtrl.displayTasks(tasks, currToday, DnDCtrl.enableDnD, user, setTasks);
+            if (taskNum) {
+                document.querySelector(UISelectors.leadTaskNum).textContent = taskNum;
+            } else {
+                document.querySelector(UISelectors.leadTaskNum).textContent = 0;
+            }
         } else {
-            document.querySelector(UISelectors.leadTaskNum).textContent = 0;
+            const taskNum = UICtrl.displayTasks(tasks, currToday, DnDCtrl.enableDnD, user, setTasks, false);
+            if (taskNum) {
+                document.querySelector(UISelectors.leadTaskCompletedNum).textContent = taskNum;
+            } else {
+                document.querySelector(UISelectors.leadTaskCompletedNum).textContent = 0;
+            }
         }
         // Day mode is active
         document.querySelector('body').setAttribute('class', 'day-mode-active');
@@ -1080,6 +1296,33 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
 		// UI.addClass(pickDatePickMode, 'btn-outline-light');
     }
 
+    const calculateProgress = function(currToday) {
+        console.log('jestem w calculateProgress');
+        const progressBar = document.querySelector(UISelectors.taskProgress).firstElementChild.firstElementChild;
+        let ongoingNum = 0;
+        let completedNum = 0;
+        console.log(globalTasksOngoing);
+        console.log(globalTasksCompleted);
+        if (!(globalTasksOngoing[currToday] === undefined)) {
+            ongoingNum = globalTasksOngoing[currToday].length;
+        }
+        if (!(globalTasksCompleted[currToday] === undefined)) {
+            completedNum = globalTasksCompleted[currToday].length;
+        }
+        let completePerCent = 0;
+        if (!(ongoingNum === 0 && completedNum === 0)) {
+            completePerCent = Number(Math.ceil(completedNum / (completedNum + ongoingNum) * 100).toFixed());
+        }
+        progressBar.firstElementChild.style.width = completePerCent + '%';
+        progressBar.firstElementChild.innerHTML = 'Progress: ' + completePerCent * 1 + '%';
+    };
+
+    const setCompletedTasks = function(tasks) {
+        globalTasksCompleted = tasks;
+        console.log('setCompletedTasks');
+        console.log(globalTasksCompleted);
+    }
+
 	return {
 		init: function() {
             console.log('Initializing App...');
@@ -1095,7 +1338,8 @@ const AppCtrl = (function(UICtrl, UserCtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                 renderLoginAccounts: UICtrl.renderLoginAccounts,
                 uiListSelector: UISelectors.loginAccounts,
                 renderDayModeCalendar,
-                currToday: new Date()
+                currToday: new Date(),
+                setCompletedTasks
             });
             // Load event listeners
             loadEventListeners();

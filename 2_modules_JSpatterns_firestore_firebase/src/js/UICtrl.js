@@ -89,7 +89,11 @@ const UICtrl = (function() {
         deleteAccountForm: '#delete-account-form',
         deleteAccountEmail: '#delete-email',
         deleteAccountPassword: '#delete-password',
-        deleteAccountErrorPara: '#delete-account-form .error'
+        deleteAccountErrorPara: '#delete-account-form .error',
+        delete: '.delete',
+        moreOptionsBtn: '#more-options-btn',
+        userNavbar: '#user-btn',
+        taskProgress: '#task-progress'
     }
 
     const createHeading = function(cssClass, headingTitle) {
@@ -368,14 +372,14 @@ const UICtrl = (function() {
 		// document.querySelector(UISelectors.tableBody).setAttribute('class', 'day-mode');
     }
 
-    const displayTasks = function(tasks, currToday, enableDnD, user, setTasks) {
+    const displayTasks = function(tasks, currToday, enableDnD, user, setTasks, ongoing = true) {
         currToday = format(currToday, "d'-'MMM'-'yyyy");
         console.log(tasks);
         if (!(tasks === undefined)) {
             if (tasks[currToday] !== undefined ) {
                 if (tasks[currToday].length !== 0) {
                     tasks[currToday].forEach((task, index) => {
-                        generateDayTemplate(task, index, enableDnD, user, currToday, setTasks);
+                        generateDayTemplate(task, index, enableDnD, user, currToday, setTasks, ongoing);
                     });
                     return tasks[currToday].length;
                 } else {
@@ -414,14 +418,19 @@ const UICtrl = (function() {
         }
     }
 
-    const generateDayTemplate = function(task, index, enableDnD, user, currToday, setTasks) {
+    const generateDayTemplate = function(task, index, enableDnD, user, currToday, setTasks, ongoing = true) {
         let list = document.querySelector(UISelectors.tasks);
         let li = createLi('list-group-item d-flex justify-content-between align-items-center', `task${index}`);
         // 
         let divIconComplete = document.createElement('div');
-		divIconComplete.className = 'd-flex justify-content-between align-items-center';
-		divIconComplete.appendChild(createIcon('far fa-circle uncompleted'));
-		divIconComplete.appendChild(createIcon('far fa-check-circle completed hide'));
+        divIconComplete.className = 'd-flex justify-content-between align-items-center';
+        if (ongoing) {
+            divIconComplete.appendChild(createIcon('far fa-circle uncompleted'));
+            divIconComplete.appendChild(createIcon('far fa-check-circle completed hide'));
+        } else {
+            divIconComplete.appendChild(createIcon('far fa-circle uncompleted hide'));
+            divIconComplete.appendChild(createIcon('far fa-check-circle completed'));
+        }
         li.appendChild(divIconComplete);
         // 
         let divText = document.createElement('div');
@@ -430,9 +439,11 @@ const UICtrl = (function() {
         li.appendChild(divText);
         // 
         let divIcon = document.createElement('div');
-		divIcon.className = 'd-flex justify-content-between align-items-center';
-		divIcon.appendChild(createIcon('fas fa-edit mr-1 edit'));
-		divIcon.appendChild(createIcon('fas fa-keyboard mr-2 fa-2x ongoing-edit text-danger hide'));
+        divIcon.className = 'd-flex justify-content-between align-items-center';
+        if (ongoing) {
+            divIcon.appendChild(createIcon('fas fa-edit mr-1 edit'));
+            divIcon.appendChild(createIcon('fas fa-keyboard mr-2 fa-2x ongoing-edit text-danger hide'));
+        }
 		divIcon.appendChild(createIcon('far fa-trash-alt delete'));
         li.appendChild(divIcon);
         // 
