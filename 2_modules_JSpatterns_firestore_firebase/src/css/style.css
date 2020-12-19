@@ -287,16 +287,18 @@ div.lead {
 }
 
 .toast {
-	max-width: 125px;
+	width: 100% !important;
+	max-width: 100px !important;
 }
 
 .toast:not(:last-child) {
 	margin: 0;
 }
 
-.toast-header {
+/* .toast-header {
 	padding: 0.25rem;
-}
+	
+} */
 
 #task-tabs .btn.active {
 	z-index: 0 !important;
@@ -448,17 +450,20 @@ td:hover.invalid-day {
 /* #main-options-btn, */
 #select-all-options {
 	max-height: 0px;
+	padding: 0 !important;
 	overflow: hidden;
-	transition: all 0s ease;
+	transition: all 0.1s ease;
 }
 
-.search-form-open,
-.add-form-open,
-.pick-date-form-open,
+#search-form-wrapper.search-form-open,
+#add-form-wrapper.add-form-open,
+#pick-date-form-wrapper.pick-date-form-open,
 .main-options-btn-open,
-.select-all-options-open {
+#select-all-options.select-all-options-open {
 	max-height: 700px !important;
 	overflow: visible !important;
+	padding: 0.5rem 1rem !important;
+	transition: all 0.1s ease;
 }
 
 .disabled {
@@ -668,7 +673,7 @@ p.invalid {
 
 /* Alert Msg */
 .alert-message-wrapper,
-.toast-message-wrapper,
+#toast-message-wrapper,
 #settings-wrapper,
 #delete-account-wrapper {
 	position: fixed;
@@ -702,7 +707,7 @@ p.invalid {
 }
 
 .alert-close-btn,
-.toast-close-btn,
+#toast-close-btn,
 #settings-close-btn,
 #delete-account-close-btn {
 	position: absolute;

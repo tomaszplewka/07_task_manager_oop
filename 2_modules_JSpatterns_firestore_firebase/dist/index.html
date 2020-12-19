@@ -199,7 +199,7 @@
                         <i class="fas fa-ellipsis-v"></i>
                     </button>
                     <div class="dropdown-menu dropdown-menu-lg-right w-100">
-                        <a class="dropdown-item" href="#" tabindex="-1" id="select-all-btn">Select All</a>
+                        <a class="dropdown-item" tabindex="-1" id="select-all-btn">Select All</a>
                     </div>
                 </div>
             </div>
@@ -229,15 +229,14 @@
                 <p class="lead text-center error-task-msg invalid"></p>
             </div>
         </div>
-        <!-- <div id="pick-date-form-wrapper">
-            <div
-                class="row calendar text-center py-2 px-3 input-group d-flex justify-content-center align-items-center">
-                <div class="date-toasts row d-flex justify-content-center align-items-center"></div>
+        <div id="pick-date-form-wrapper" class="row py-2 px-3 mx-0">
+            <div class="calendar col-12 text-center input-group d-flex justify-content-center align-items-center p-0">
+                <div class="date-toasts d-flex flex-wrap justify-content-center align-items-center p-0"></div>
                 <div class="input-group-prepend">
                     <span class="input-group-text">schedule a task</span>
                 </div>
             </div>
-            <div class="row d-flex justify-content-center align-items-center py-2 px-3">
+            <div class="col-12 d-flex justify-content-center align-items-center p-0 pt-3">
                 <div class="btn-group" role="group">
                     <button id="pick-date-today-btn" type="button" class="btn btn-outline-light btn-sm">Today</button>
                     <button id="pick-date-pick-mode" type="button" class="btn btn-outline-light btn-sm">Pick
@@ -245,26 +244,24 @@
                 </div>
             </div>
         </div>
-        <div id="select-all-options">
-            <div class="d-flex justify-content-end align-items-center py-2 px-3 row">
-                <div class="btn-group col-12 row" role="group">
-                    <button type="button" class="btn btn-outline-light col-12 col-sm-4 py-2" id="mark-as-btn">
-                    </button>
-                    <button type="button" class="btn btn-outline-light col-12 col-sm-4 py-2" id="delete-btn">
-                        Delete
-                    </button>
-                    <button type="button" class="btn btn-outline-light col-12 col-sm-4 py-2" id="deselect-btn">
-                        Deselect
-                    </button>
-                </div>
+        <div id="select-all-options" class="mx-0 py-2 px-3 row">
+            <div class="btn-group col-12 p-0 d-flex justify-content-center" role="group">
+                <button type="button" class="btn btn-outline-light col-12 col-sm-4" id="mark-as-btn">
+                </button>
+                <button type="button" class="btn btn-outline-light col-12 col-sm-4" id="delete-btn">
+                    Delete
+                </button>
+                <button type="button" class="btn btn-outline-light col-12 col-sm-4" id="deselect-btn">
+                    Deselect
+                </button>
             </div>
-        </div> -->
+        </div>
         <div class="m-0 py-2 px-3 row" id="task-tabs">
             <div class="btn-group col-12 p-0 d-flex justify-content-center" role="group">
-                <button type="button" class="btn btn-outline-light col-12 col-sm-6 py-2 active" id="task-tabs-ongoing">
+                <button type="button" class="btn btn-outline-light col-12 col-sm-6 active" id="task-tabs-ongoing">
                     Scheduled
                 </button>
-                <button type="button" class="btn btn-outline-light col-12 col-sm-6 py-2" id="task-tabs-completed">
+                <button type="button" class="btn btn-outline-light col-12 col-sm-6" id="task-tabs-completed">
                     Completed
                 </button>
             </div>
@@ -303,16 +300,16 @@
             <small class="text-muted">NOTE: Tasks older than 30 days will be automatically deleted from the system!</small>
         </div>
     </div> -->
-    <!-- <div class="toast-message-wrapper">
+    <div id="toast-message-wrapper" style="opacity: 0;">
         <div class="toast-message text-center p-3">
-            <span class="toast-close-btn"><i class="fas fa-window-close"></i></span>
-            <h2 class="display-4 px-5">Toast Alert!</h2>
+            <span id="toast-close-btn"><i class="fas fa-window-close"></i></span>
+            <h2 class="display-4 px-5">Day Toast Alert!</h2>
             <div class="dropdown-divider"></div>
-            <p class="lead">You have just specified maximum number of toasts!</p>
+            <p class="lead">Maximum number of day toasts has been reached!</p>
             <p class="lead">Go to Settings to adjust it.</p>
-            <small class="text-muted">NOTE: Tasks older than 30 days will be automatically deleted from the system!</small>
+            <small class="text-muted">NOTE: Tasks older than 30 days will be automatically deleted!</small>
         </div>
-    </div> -->
+    </div>
     <div id="settings-wrapper" style="opacity: 0;">
         <div class="settings text-center p-3">
             <span id="settings-close-btn"><i class="fas fa-window-close"></i></span>
@@ -353,7 +350,7 @@
                 </div>
             </div>
             <div class="dropdown-divider"></div>
-            <p class="lead">Toast</p>
+            <p class="lead">Day Toasts</p>
             <div id="toast-btns-wrapper">
                 <div class="btn-group" role="group">
                     <button type="button" id="toast-change-1" class="btn btn-outline-dark toast-change">5</button>

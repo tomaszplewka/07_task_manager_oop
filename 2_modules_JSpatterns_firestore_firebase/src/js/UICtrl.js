@@ -93,7 +93,19 @@ const UICtrl = (function() {
         delete: '.delete',
         moreOptionsBtn: '#more-options-btn',
         userNavbar: '#user-btn',
-        taskProgress: '#task-progress'
+        taskProgress: '#task-progress',
+        selectAllOptions: '#select-all-options',
+        selectAllBtn: '#select-all-btn',
+        markAsBtn: '#mark-as-btn',
+        deleteBtn: '#delete-btn',
+        deselectBtn: '#deselect-btn',
+        pickDate: '#pick-date',
+        pickDateFormWrapper: '#pick-date-form-wrapper',
+        pickDatePickMode: '#pick-date-pick-mode',
+        dateToasts: '.date-toasts',
+        pickDateTodayBtn: '#pick-date-today-btn',
+        toastMsgWrapper: '#toast-message-wrapper',
+        toastCloseBtn: '#toast-close-btn'
     }
 
     const createHeading = function(cssClass, headingTitle) {
@@ -225,7 +237,6 @@ const UICtrl = (function() {
         Array.from(target.parentElement.children).forEach((child) => {
 			child.classList.toggle('hide');
 		});
-		//
 		password.type === 'password' ? (password.type = 'text') : (password.type = 'password');
     }
 
@@ -420,7 +431,7 @@ const UICtrl = (function() {
 
     const generateDayTemplate = function(task, index, enableDnD, user, currToday, setTasks, ongoing = true) {
         let list = document.querySelector(UISelectors.tasks);
-        let li = createLi('list-group-item d-flex justify-content-between align-items-center', `task${index}`);
+        let li = createLi('list-group-item d-flex justify-content-between align-items-center task-item', `task${index}`);
         // 
         let divIconComplete = document.createElement('div');
         divIconComplete.className = 'd-flex justify-content-between align-items-center';
@@ -573,7 +584,21 @@ const UICtrl = (function() {
 				document.querySelector('#' + toast).classList.add('toast-active');
 				break;
 		}
-	}
+    }
+    
+    const addToast = function(date, selector) {
+        document.querySelector(UISelectors.dateToasts).innerHTML += 
+        `
+            <div class="toast m-0" id="${selector}" role="status" aria-live="polite" aria-atomic="true" data-autohide="false">
+                <div class="toast-header p-1 pr-0">
+                    <span>${date}</span>
+                    <button type="button" class="ml-auto mb-1 close" data-dismiss="toast" aria-label="Close">
+                        <span class="x p-0" aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+        `;
+    }
 
     return {
         getSelectors: function() {
@@ -593,7 +618,8 @@ const UICtrl = (function() {
         errorTasks,
         chooseTheme,
         chooseAvatar,
-        chooseToast
+        chooseToast,
+        addToast
     }
 
 })();
