@@ -105,7 +105,15 @@ const UICtrl = (function() {
         dateToasts: '.date-toasts',
         pickDateTodayBtn: '#pick-date-today-btn',
         toastMsgWrapper: '#toast-message-wrapper',
-        toastCloseBtn: '#toast-close-btn'
+        toastCloseBtn: '#toast-close-btn',
+        alertMsgWrapper: '#alert-message-wrapper',
+        listPastTasks: '.past-tasks',
+        alertCloseBtn: '#alert-close-btn',
+        notifications: '#notifications',
+        navNotifications: '.nav-notifications',
+        alertAppendBtn: '#alert-append-btn',
+        alertCompleteBtn: '#alert-complete-btn',
+        alertDisposeBtn: '#alert-dispose-btn'
     }
 
     const createHeading = function(cssClass, headingTitle) {
@@ -600,6 +608,15 @@ const UICtrl = (function() {
         `;
     }
 
+    const addBadge = function(td, number) {
+        let span = document.createElement('span');
+        td.classList.add('task-marker-td');
+        span.className = 'badge badge-pill task-marker';
+        span.textContent = number;
+        td.appendChild(span);
+        return td
+    }
+
     return {
         getSelectors: function() {
             return UISelectors;
@@ -619,7 +636,8 @@ const UICtrl = (function() {
         chooseTheme,
         chooseAvatar,
         chooseToast,
-        addToast
+        addToast,
+        addBadge
     }
 
 })();

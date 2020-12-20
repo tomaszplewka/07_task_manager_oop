@@ -672,7 +672,7 @@ p.invalid {
 }
 
 /* Alert Msg */
-.alert-message-wrapper,
+#alert-message-wrapper,
 #toast-message-wrapper,
 #settings-wrapper,
 #delete-account-wrapper {
@@ -706,7 +706,7 @@ p.invalid {
 	color: var(--theme1-bg-color);
 }
 
-.alert-close-btn,
+#alert-close-btn,
 #toast-close-btn,
 #settings-close-btn,
 #delete-account-close-btn {
