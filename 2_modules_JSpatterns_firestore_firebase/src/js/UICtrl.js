@@ -1,9 +1,7 @@
-import { format } from 'date-fns';
-
-
 // UI Controller
+import { format, getDate, isToday, subDays } from 'date-fns';
+// 
 const UICtrl = (function() {
-
     const UISelectors = {
         addUserBtn: '#login-add-btn',
         loginMainDiv: '.login-main-div',
@@ -115,63 +113,61 @@ const UICtrl = (function() {
         alertCompleteBtn: '#alert-complete-btn',
         alertDisposeBtn: '#alert-dispose-btn'
     }
-
     const createHeading = function(cssClass, headingTitle) {
         let heading = document.createElement('h2');
         heading.className = `display-4 text-center ${cssClass}`;
         heading.textContent = headingTitle;
-
         return heading;
     }
-
     const createPara = function(spanID, pText) {
         let p = document.createElement('p');
         p.className = 'lead text-center';
         p.innerHTML = `
             Account for user <span id="${spanID}" class="stand-out"></span> has been ${pText}
         `;
-
         return p;
     }
-
-    const createErrMsg = function() {
+    const createErrPara = function() {
         let p = document.createElement('p');
-        p.className = 'lead text-center error invalid hide mb-0';
-
+        p.className = 'text-center error invalid hide mb-0';
         return p;
     }
-
     const createUl = function(ulClass) {
         let ul = document.createElement('ul');
         ul.className = `list-group ${ulClass} mx-auto w-100 my-4`;
 
         return ul;
     }
-
     const createLi = function(className, liId) {
         let li = document.createElement('li');
 		li.className = className;
         li.id = liId !== undefined ? liId : '';
-        
 		return li;
     }
-
+    const renderLiAccount = function(liID, liClass = '') {
+        let li = createLi(
+            `list-group-item list-group-item-action d-flex justify-content-between align-items-center py-2 ${liClass}`,
+            liID
+        );
+        li.appendChild(createIcon('fas fa-user show'));
+        li.appendChild(createIcon('fas fa-user-times hide'));
+        li.appendChild(document.createTextNode(liID));
+        li.appendChild(createIcon('fas fa-chevron-right show'));
+        li.appendChild(createIcon('fas fa-times hide'));
+        return li;
+    }
     const createIcon = function(className) {
         const icon = document.createElement('i');
         icon.className = className;
-        
 		return icon;
     }
-
     const createForm = function(formID) {
         let form = document.createElement('form');
         form.className = 'mt-4';
         form.setAttribute('id', formID);
         form.setAttribute('autocomplete', 'off');
-
         return form;
     }
-
     const createInputGroup = function(inputClass, iconClass, inputType, inputID, placeholder, prepend = true) {
         let div = document.createElement('div');
         div.className = `input-group form-group mb-0 ${inputClass}`;
@@ -193,10 +189,8 @@ const UICtrl = (function() {
             `;
         }
         div.innerHTML = html;
-
         return div;
     }
-
     const createShowHidePassword = function(wrapperClass) {
         let div = document.createElement('div');
         div.className = `d-flex justify-content-end align-items-center ${wrapperClass}`;
@@ -206,18 +200,14 @@ const UICtrl = (function() {
         <small class="show-password">Show Password</small>
         <small class="show-password hide">Hide Password</small>
         `;
-
         return div;
     }
-
     const createBtnGroup = function(...btns) {
         let div = document.createElement('div');
         div.className = 'btn-group d-flex pt-4';
         btns.forEach(btn => div.appendChild(btn));
-        
         return div;
     }
-
     const createBtn = function(btnID, btnType, btnText, iconClass, left = true) {
         let btn = document.createElement('button');
         btn.className = 'btn btn-outline-light';
@@ -237,20 +227,17 @@ const UICtrl = (function() {
                 <i class="fas ${iconClass} ml-n2"></i>
             `;
         }
-
         return btn;
     }
-
     const showHidePass = function(target, password) {
         Array.from(target.parentElement.children).forEach((child) => {
 			child.classList.toggle('hide');
 		});
 		password.type === 'password' ? (password.type = 'text') : (password.type = 'password');
     }
-
-    const addMode = function() {
+    const createAddMode = function() {
         const loginMainDiv = document.querySelector(UISelectors.loginMainDiv);
-        // create add div
+        // 
         let div = document.createElement('div');
         div.className = `login-add-mode px-4 pt-3 pb-4`;
         div.appendChild(createHeading('welcome-heading', 'Create an Account'));
@@ -259,43 +246,25 @@ const UICtrl = (function() {
         div.lastElementChild.appendChild(createInputGroup('add-email', 'fa-envelope', 'text', 'email', 'email'));
         div.lastElementChild.appendChild(createInputGroup('add-password', 'fa-key', 'password', 'password', 'password'));
         div.lastElementChild.appendChild(createShowHidePassword('create-account-show-password-wrapper'));
-        div.lastElementChild.appendChild(createErrMsg());
+        div.lastElementChild.appendChild(createErrPara());
         div.lastElementChild.appendChild(createBtnGroup(createBtn('login-add-back-btn', 'button', 'Go Back', 'fa-chevron-left'), createBtn('login-add-create-btn', 'submit', 'Create', 'fa-chevron-right', false)));
-
         div.querySelector(UISelectors.addCreateBtn).setAttribute('disabled', true);
-        // append add div to dom
+        // 
         loginMainDiv.after(div);
-        console.log('appended');
     }
-
-    const confirmMode = function() {
+    const createConfirmMode = function() {
         const loginAddMode = document.querySelector(UISelectors.loginAddMode);
-        // Create confirmation div
+        // 
         let div = document.createElement('div');
         div.className = `login-add-confirm-message px-4 pt-3 pb-4`;
         div.appendChild(createHeading('welcome-heading', 'Account Created'));
         div.appendChild(createPara('confirm-username', 'created'));
         // 
         loginAddMode.after(div);
-        console.log('appended confirm mode');
     }
-
-    const removeMode = function() {
+    const createLogInMode = function(id) {
         const loginMainDiv = document.querySelector(UISelectors.loginMainDiv);
-        // Create remove div
-        let div = document.createElement('div');
-        div.className = `login-remove-choose px-4 pt-3 pb-4`;
-        div.appendChild(createHeading('welcome-heading', 'Remove an Account'));
-        div.appendChild(createUl('login-remove-accounts'));
-        div.appendChild(createBtnGroup(createBtn('login-remove-back-btn', 'button', 'Go Back', 'fa-chevron-left')));
         // 
-        loginMainDiv.after(div);
-        console.log('appended remove mode');
-    }
-
-    const logInMode = function(id) {
-        const loginMainDiv = document.querySelector(UISelectors.loginMainDiv);
-        // Create login div
         let div = document.createElement('div');
         div.className = `login-confirm px-4 pt-3 pb-4`;
         div.appendChild(createHeading('welcome-heading', 'Log In'));
@@ -304,19 +273,16 @@ const UICtrl = (function() {
         div.lastElementChild.appendChild(createInputGroup('login-email', 'fa-key', 'text', 'email', 'email', false));
         div.lastElementChild.appendChild(createInputGroup('login-password', 'fa-key', 'password', 'password', 'password', false));
         div.lastElementChild.appendChild(createShowHidePassword('login-show-password-wrapper'));
-        div.lastElementChild.appendChild(createErrMsg());
+        div.lastElementChild.appendChild(createErrPara());
         div.lastElementChild.appendChild(createBtnGroup(createBtn('login-confirm-back-btn', 'button', 'Go Back', 'fa-chevron-left'), createBtn('login-confirm-login-btn', 'submit', 'Log In', 'fa-chevron-right', false)));
-
-        // div.querySelector(UISelectors.logInConfirmBtn).setAttribute('disabled', true);
-        // append add div to dom
+        // 
         loginMainDiv.after(div);
         // 
         document.querySelector(UISelectors.logInConfirmAccount).appendChild(renderLiAccount(id,  'mb-n4'));
-        console.log('login mode');
     }
-
-    const loginLoader = function() {
+    const createLoginLoader = function() {
         const loginMainDiv = document.querySelector(UISelectors.loginMainDiv);
+        // 
         let div = document.createElement('div');
         div.setAttribute('id', 'login-loader');
         div.innerHTML = `
@@ -333,37 +299,104 @@ const UICtrl = (function() {
                     </div>
                 </div>
         `;
+        // 
         loginMainDiv.after(div);
-        console.log('login loader');
     }
-
-    const renderLiAccount = function(liID, liClass = '') {
-        let li = createLi(
-            `list-group-item list-group-item-action d-flex justify-content-between align-items-center py-2 ${liClass}`,
-            liID
-        );
-        li.appendChild(createIcon('fas fa-user show'));
-        li.appendChild(createIcon('fas fa-user-times hide'));
-        li.appendChild(document.createTextNode(liID));
-        li.appendChild(createIcon('fas fa-chevron-right show'));
-        li.appendChild(createIcon('fas fa-times hide'));
-
-        return li;
-    }
-
     const renderLoginAccounts = function(accNum, accArr, listSelector) {
+        // Clear ul
+        document.querySelector(UISelectors.loginAccounts).innerHTML = '';
+        // 
         if (accNum) {
-			accArr.forEach((account) => {
+            accArr.forEach((account) => {
                 const accountObj = account.data();
-				document.querySelector(listSelector).appendChild(renderLiAccount(accountObj.name));
-			});
-		} else {
-			let li = createLi('list-group-item py-2');
-			li.appendChild(document.createTextNode(`No accounts in the database`));
-			document.querySelector(listSelector).appendChild(li);
-			document.querySelector(listSelector).classList.add('empty');
+                document.querySelector(listSelector).appendChild(renderLiAccount(accountObj.name));
+            });
+        } else {
+            let li = createLi('list-group-item py-2');
+            li.appendChild(document.createTextNode(`No accounts in the database`));
+            document.querySelector(listSelector).appendChild(li);
+            document.querySelector(listSelector).classList.add('empty');
         }
     }
+    const setTableBodyHead = function(head = true) {
+        let tableHead;
+        if (!head) {
+            tableHead = 
+            `
+            <tr>
+                <th>Sun</th>
+                <th>Mon</th>
+                <th>Tue</th>
+                <th>Wed</th>
+                <th>Thu</th>
+                <th>Fri</th>
+                <th>Sat</th>
+            </tr>
+            `;
+        } else {
+            tableHead = '';
+        }
+        document.querySelector(UISelectors.tableBody).innerHTML = '';
+        document.querySelector(UISelectors.tableHead).innerHTML = tableHead;
+    }
+
+
+
+
+
+
+    const generateWeekTemplate = function(firstDayCurrWeek, firstDayNextWeek, week, taskList) {
+        // Adjust UI display
+        document.querySelector(UISelectors.weekModeContent).textContent = `
+            ${getDate(firstDayCurrWeek)} ${format(firstDayCurrWeek, 'MMMM yyyy')} - 
+            ${getDate(subDays(firstDayNextWeek, 1))} ${format(subDays(firstDayNextWeek, 1), 'MMMM yyyy')}
+        `;
+        // Create template
+        let row = document.createElement('tr');
+        console.log('generateWeekTemplate');
+        week.forEach(day => {
+            let td = document.createElement('td');
+            td.innerHTML = `${format(day, "d MMM yyyy")}`;
+            if (isToday(day)) {
+                td.classList.add('current-day');
+                row.classList.add('current-week');
+            }
+            if (day.getMonth() < subDays(new Date(), 30).getMonth() ||
+				day.getFullYear() < subDays(new Date(), 30).getFullYear() ||
+				(day.getMonth() === subDays(new Date(), 30).getMonth() &&
+					day.getFullYear() === subDays(new Date(), 30).getFullYear() &&
+					day.getDate() < subDays(new Date(), 30).getDate())) {
+                td.classList.add('invalid-day');
+                row.classList.add('invalid-week');
+			} else { td.classList.add('valid-day'); }
+            // Add badge
+            if (taskList[format(day, "d'-'MMM'-'yyyy")] !== undefined && taskList[format(day, "d'-'MMM'-'yyyy")].length) {
+                td = addBadge(td, taskList[format(day, "d'-'MMM'-'yyyy")].length);
+            }
+			// Append day
+            row.append(td);
+        });
+        // Append week
+		document.querySelector(UISelectors.tableBody).append(row);
+		document.querySelector('body').setAttribute('class', 'week-mode-active');
+		// Enable/disable left week arrow
+		if (row.classList.contains('invalid-week')) {
+            document.querySelector(UISelectors.lWeekArrow).disabled = true;
+		} else {
+			document.querySelector(UISelectors.lWeekArrow).disabled = false;
+		}
+    }
+
+
+    
+
+
+
+
+
+
+
+
 
     const renderListElements = function(listStart, listEnd) {
         Array.from(document.querySelector(listStart).children).forEach((li) => {
@@ -380,16 +413,13 @@ const UICtrl = (function() {
 		});
     }
 
-    const setTableBodyHead = function(body = '', head = '') {
-		document.querySelector(UISelectors.tableBody).innerHTML = body;
-		document.querySelector(UISelectors.tableHead).innerHTML = head;
-	}
 
     const renderTableUI = function() {
         setTableBodyHead();
         document.querySelector(UISelectors.tableBody).append(createUl('tasks text-light p-3'));
 		// document.querySelector(UISelectors.tableBody).setAttribute('class', 'day-mode');
     }
+    
 
     const displayTasks = function(tasks, currToday, enableDnD, user, setTasks, ongoing = true) {
         currToday = format(currToday, "d'-'MMM'-'yyyy");
@@ -485,9 +515,18 @@ const UICtrl = (function() {
         return true;
     }
 
+
+
+
+
+
+
+
+
+
+
     const setTheme = function(main, secondary, td, currWeekHover, rowHover, currDay, badge, bg, text) {
 		const root = document.documentElement;
-		//
 		root.style.setProperty('--theme1-main-color', main);
 		root.style.setProperty('--theme1-secondary-color', secondary);
 		root.style.setProperty('--theme1-td-color', td);
@@ -498,9 +537,7 @@ const UICtrl = (function() {
 		root.style.setProperty('--theme1-bg-color', bg);
 		root.style.setProperty('--theme1-text-color', text);
     }
-
     const chooseTheme = function(theme) {
-        console.log('jestem w chooseTheme');
 		switch (theme) {
 			case 'theme-1':
 				setTheme('#343a40', '#6c757d', '#454d55', '#dee2e6', '#dee2e6', '#000000', '#007bff', '#000000', '#ffffff');
@@ -529,7 +566,6 @@ const UICtrl = (function() {
 				break;
 		}
     }
-    
     const chooseAvatar = function(avatar) {
 		switch (avatar) {
 			case 'avatar-1':
@@ -576,7 +612,6 @@ const UICtrl = (function() {
 				break;
 		}
     }
-    
     const chooseToast = function(toast) {
 		switch (toast) {
 			case 'toast-change-1':
@@ -594,6 +629,12 @@ const UICtrl = (function() {
 		}
     }
     
+
+
+
+
+
+
     const addToast = function(date, selector) {
         document.querySelector(UISelectors.dateToasts).innerHTML += 
         `
@@ -607,7 +648,6 @@ const UICtrl = (function() {
             </div>
         `;
     }
-
     const addBadge = function(td, number) {
         let span = document.createElement('span');
         td.classList.add('task-marker-td');
@@ -617,15 +657,189 @@ const UICtrl = (function() {
         return td
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+    const enableDisableCreateBtn = function() {
+        if (document.querySelector(UISelectors.username).classList.contains('valid') &&
+            document.querySelector(UISelectors.email).classList.contains('valid') &&
+            document.querySelector(UISelectors.password).classList.contains('valid')) {
+            document.querySelector(UISelectors.addCreateBtn).disabled = false;
+        } else {
+            document.querySelector(UISelectors.addCreateBtn).disabled = true;
+        }
+    }
+
+    const errorSignUpAll = function(error, errorHandler, data) {
+        const { errorMsg, errorUsername, errorEmail, errorPass } = errorHandler(error.code);
+        switch (true) {
+            case (errorUsername === 1 && errorEmail === 1 && errorPass === 1):
+                data.errorPara.innerHTML = errorMsg;
+                data.errorPara.classList.remove('hide');
+                data.username.classList.add('invalid');
+                data.email.classList.add('invalid');
+                data.pass.classList.add('invalid');
+                data.username.disabled = true;
+                data.email.disabled = true;
+                data.pass.disabled = true;
+                setTimeout(() => {
+                    data.errorPara.classList.add('hide');
+                    data.username.classList.remove('invalid');
+                    data.email.classList.remove('invalid');
+                    data.pass.classList.remove('invalid');
+                    data.username.classList.remove('valid');
+                    data.email.classList.remove('valid');
+                    data.pass.classList.remove('valid');
+                    data.username.disabled = false;
+                    data.email.disabled = false;
+                    data.pass.disabled = false;
+                }, 3000);
+                break;
+            case errorEmail === 1:
+                data.errorPara.innerHTML = errorMsg;
+                data.errorPara.classList.remove('hide');
+                data.email.classList.add('invalid');
+                data.username.disabled = true;
+                data.email.disabled = true;
+                data.pass.disabled = true;
+                setTimeout(() => {
+                    data.errorPara.classList.add('hide');
+                    data.username.classList.remove('invalid');
+                    data.email.classList.remove('invalid');
+                    data.pass.classList.remove('invalid');
+                    data.username.classList.remove('valid');
+                    data.email.classList.remove('valid');
+                    data.pass.classList.remove('valid');
+                    data.username.disabled = false;
+                    data.email.disabled = false;
+                    data.pass.disabled = false;
+                }, 3000);
+                break;
+            case pass === 1:
+                data.errorPara.innerHTML = errorMsg;
+                data.errorPara.classList.remove('hide');
+                data.pass.classList.add('invalid');
+                data.username.disabled = true;
+                data.email.disabled = true;
+                data.pass.disabled = true;
+                setTimeout(() => {
+                    data.errorPara.classList.add('hide');
+                    data.username.classList.remove('invalid');
+                    data.email.classList.remove('invalid');
+                    data.pass.classList.remove('invalid');
+                    data.username.classList.remove('valid');
+                    data.email.classList.remove('valid');
+                    data.pass.classList.remove('valid');
+                    data.username.disabled = false;
+                    data.email.disabled = false;
+                    data.pass.disabled = false;
+                }, 3000);
+                break;
+        }
+    }
+
+    const errorSignUpSingleInput = function(data, msg) {
+        let p = document.createElement('p');
+        p.className = "text-center invalid mb-0"
+        p.textContent = msg;
+        data.errorPara.appendChild(p);
+        data.errorPara.classList.remove('hide');
+        data.username.disabled = true;
+        data.email.disabled = true;
+        data.pass.disabled = true;
+        setTimeout(() => {
+            data.errorPara.classList.add('hide');
+            data.username.classList.remove('invalid');
+            data.email.classList.remove('invalid');
+            data.pass.classList.remove('invalid');
+            data.username.classList.remove('valid');
+            data.email.classList.remove('valid');
+            data.pass.classList.remove('valid');
+            data.username.disabled = false;
+            data.email.disabled = false;
+            data.pass.disabled = false;
+        }, 5000);
+    }
+
+    const errorLogInAll = function(error, errorHandler, data) {
+        const { errorMsg, errorEmail, errorPass } = errorHandler(error.code);
+        switch (true) {
+            case data.email.value === '' && data.pass.value === '':
+                data.errorPara.innerHTML = "No email and password provided.";
+                data.errorPara.classList.remove('hide');
+                data.email.classList.add('invalid');
+                data.pass.classList.add('invalid');
+                data.email.disabled = true;
+                data.pass.disabled = true;
+                setTimeout(() => {
+                    data.errorPara.classList.add('hide');
+                    data.email.classList.remove('invalid');
+                    data.pass.classList.remove('invalid');
+                    data.email.disabled = false;
+                    data.pass.disabled = false;
+                }, 3000);
+                break;
+            case errorEmail === 1 && errorPass === 1:
+                data.errorPara.innerHTML = errorMsg;
+                data.errorPara.classList.remove('hide');
+                data.email.classList.add('invalid');
+                data.pass.classList.add('invalid');
+                data.email.disabled = true;
+                data.pass.disabled = true;
+                setTimeout(() => {
+                    data.errorPara.classList.add('hide');
+                    data.email.classList.remove('invalid');
+                    data.pass.classList.remove('invalid');
+                    data.email.disabled = false;
+                    data.pass.disabled = false;
+                }, 3000);
+                break;
+            case errorEmail === 1:
+                data.errorPara.innerHTML = errorMsg;
+                data.errorPara.classList.remove('hide');
+                data.email.classList.add('invalid');
+                data.email.disabled = true;
+                data.pass.disabled = true;
+                setTimeout(() => {
+                    data.errorPara.classList.add('hide');
+                    data.email.classList.remove('invalid');
+                    data.email.disabled = false;
+                    data.pass.disabled = false;
+                }, 3000);
+                break;
+            case errorPass === 1:
+                data.errorPara.innerHTML = errorMsg;
+                data.errorPara.classList.remove('hide');
+                data.pass.classList.add('invalid');
+                data.email.disabled = true;
+                data.pass.disabled = true;
+                setTimeout(() => {
+                    data.errorPara.classList.add('hide');
+                    data.pass.classList.remove('invalid');
+                    data.email.disabled = false;
+                    data.pass.disabled = false;
+                }, 3000);
+                break;
+        }
+    }
+
     return {
         getSelectors: function() {
             return UISelectors;
         },
-        createAddMode: addMode,
-        createConfirmMode: confirmMode,
-        createRemoveMode: removeMode,
-        createLoginLoader: loginLoader,
-        createLogInMode: logInMode,
+        createAddMode,
+        createConfirmMode,
+        createLoginLoader,
+        createLogInMode,
         showHidePass,
         renderLoginAccounts,
         renderListElements,
@@ -637,7 +851,12 @@ const UICtrl = (function() {
         chooseAvatar,
         chooseToast,
         addToast,
-        addBadge
+        addBadge,
+        enableDisableCreateBtn,
+        errorSignUpAll,
+        errorSignUpSingleInput,
+        errorLogInAll,
+        generateWeekTemplate
     }
 
 })();
