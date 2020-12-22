@@ -472,6 +472,11 @@ td:hover.invalid-day {
 	color: var(--theme1-td-color);
 	pointer-events: none;
 }
+.disabled-li {
+	cursor: auto;
+	filter: brightness(80%);
+	pointer-events: none;
+}
 
 .disabled:hover {
 	background-color: var(--theme1-td-color);

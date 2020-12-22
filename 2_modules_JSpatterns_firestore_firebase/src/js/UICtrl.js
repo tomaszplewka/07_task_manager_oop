@@ -361,11 +361,7 @@ const UICtrl = (function() {
                 td.classList.add('current-day');
                 row.classList.add('current-week');
             }
-            if (day.getMonth() < subDays(new Date(), 30).getMonth() ||
-				day.getFullYear() < subDays(new Date(), 30).getFullYear() ||
-				(day.getMonth() === subDays(new Date(), 30).getMonth() &&
-					day.getFullYear() === subDays(new Date(), 30).getFullYear() &&
-					day.getDate() < subDays(new Date(), 30).getDate())) {
+            if (new Date(day.getFullYear(), day.getMonth(), day.getDate()) < subDays(new Date(), 31)) {
                 td.classList.add('invalid-day');
                 row.classList.add('invalid-week');
 			} else { td.classList.add('valid-day'); }
@@ -416,7 +412,7 @@ const UICtrl = (function() {
 
     const renderTableUI = function() {
         setTableBodyHead();
-        document.querySelector(UISelectors.tableBody).append(createUl('tasks text-light p-3'));
+        document.querySelector(UISelectors.tableBody).append(createUl('tasks text-light'));
 		// document.querySelector(UISelectors.tableBody).setAttribute('class', 'day-mode');
     }
     
@@ -832,6 +828,13 @@ const UICtrl = (function() {
         }
     }
 
+    const createMsg = function(text) {
+        const msg = document.createElement('p');
+        msg.classList.add('m-0');
+        msg.appendChild(document.createTextNode(text));
+        return msg;
+    }
+
     return {
         getSelectors: function() {
             return UISelectors;
@@ -856,7 +859,8 @@ const UICtrl = (function() {
         errorSignUpAll,
         errorSignUpSingleInput,
         errorLogInAll,
-        generateWeekTemplate
+        generateWeekTemplate,
+        createMsg
     }
 
 })();

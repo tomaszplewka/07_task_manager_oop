@@ -39,7 +39,7 @@
             </div>
             <div class="btn-group ml-auto" role="group">
                 <button id="user-btn" type="button" class="btn btn-outline-light dropdown-toggle"
-                    data-toggle="dropdown">
+                    data-toggle="dropdown" disabled>
                     <i class="fas fa-user fa-2x position-relative" id="user-avatar"><span
                             class="badge badge-pill nav-notifications"></span></i>
                 </button>
@@ -77,7 +77,7 @@
                 <div class="row justify-content-between align-items-center">
                     <div class="month-mode-arrow col-2 order-1 py-2">
                         <div class="d-flex justify-content-start">
-                            <button id="l-month-arrow" type="button" class="btn btn-outline-light d-flex align-items-baseline">
+                            <button id="l-month-arrow" type="button" class="btn btn-outline-light d-flex align-items-baseline" disabled>
                                 <i class="fas fa-chevron-left"></i>
                                 <i class="fas fa-chevron-left"></i>
                                 <span class="float-right"></span>
@@ -86,7 +86,7 @@
                     </div>
                     <div class="d-flex justify-content-center col-12 col-sm-7 order-3 order-sm-2 py-2">
                         <div class="row w-100 align-items-baseline">
-                            <select class="custom-select col-9 lead" id="month-mode-month">
+                            <select class="custom-select col-9 lead" id="month-mode-month" disabled>
                                 <option value="0">January</option>
                                 <option value="1">February</option>
                                 <option value="2">March</option>
@@ -105,7 +105,7 @@
                     </div>
                     <div class="month-mode-arrow col-2 order-2 order-sm-3 py-2">
                         <div class="d-flex justify-content-end">
-                            <button id="r-month-arrow" type="button" class="btn btn-outline-light d-flex align-items-baseline">
+                            <button id="r-month-arrow" type="button" class="btn btn-outline-light d-flex align-items-baseline" disabled>
                                 <span class="float-left"></span>
                                 <i class="fas fa-chevron-right"></i>
                                 <i class="fas fa-chevron-right"></i>
@@ -118,7 +118,7 @@
                 <div class="row justify-content-between align-items-center">
                     <div class="week-mode-arrow col-2 order-1 py-2">
                         <div class="d-flex justify-content-start">
-                            <button id="l-week-arrow" type="button" class="btn btn-outline-light d-flex align-items-center">
+                            <button id="l-week-arrow" type="button" class="btn btn-outline-light d-flex align-items-center" disabled>
                                 <i class="fas fa-chevron-left"></i>
                                 <i class="fas fa-chevron-left"></i>
                             </button>
@@ -128,7 +128,7 @@
                         class="text-center w-100 col-12 col-sm-8 order-3 order-sm-2 py-2 lead"></span>
                     <div class="week-mode-arrow col-2 order-2 order-sm-3 py-2">
                         <div class="d-flex justify-content-end">
-                            <button id="r-week-arrow" type="button" class="btn btn-outline-light d-flex align-items-center">
+                            <button id="r-week-arrow" type="button" class="btn btn-outline-light d-flex align-items-center" disabled>
                                 <i class="fas fa-chevron-right"></i>
                                 <i class="fas fa-chevron-right"></i>
                             </button>
@@ -140,7 +140,7 @@
                 <div class="row justify-content-between align-items-center">
                     <div class="day-mode-arrow col-2 order-1 py-2">
                         <div class="d-flex justify-content-start">
-                            <button id="l-day-arrow" type="button" class="btn btn-outline-light d-flex align-items-center">
+                            <button id="l-day-arrow" type="button" class="btn btn-outline-light d-flex align-items-center" disabled>
                                 <i class="fas fa-chevron-left"></i>
                                 <i class="fas fa-chevron-left"></i>
                             </button>
@@ -150,7 +150,7 @@
                         class="text-center w-100 col-12 col-sm-8 order-3 order-sm-2 py-2 lead"></span>
                     <div class="day-mode-arrow col-2 order-2 order-sm-3 py-2">
                         <div class="d-flex justify-content-end">
-                            <button id="r-day-arrow" type="button" class="btn btn-outline-light d-flex align-items-center">
+                            <button id="r-day-arrow" type="button" class="btn btn-outline-light d-flex align-items-center" disabled>
                                 <i class="fas fa-chevron-right"></i>
                                 <i class="fas fa-chevron-right"></i>
                             </button>
@@ -177,25 +177,27 @@
         </div>
         <div class="row py-2 px-3 mx-0" id="mode-btns">
             <div class="btn-group col-12 p-0 d-flex justify-content-center" role="group">
-                <button id="day-mode-btn" type="button" class="btn btn-outline-light">Day
-                    Mode</button>
-                <button id="week-mode-btn" type="button" class="btn btn-outline-light">Week
-                    Mode</button>
-                <button id="month-mode-btn" type="button" class="btn btn-outline-light">Month
-                    Mode</button>
+                <button id="day-mode-btn" type="button" class="btn btn-outline-light" disabled>
+                    Day Mode
+                </button>
+                <button id="week-mode-btn" type="button" class="btn btn-outline-light" disabled>
+                    Week Mode
+                </button>
+                <button id="month-mode-btn" type="button" class="btn btn-outline-light" disabled>
+                    Month Mode
+                </button>
             </div>
         </div>
         <div class="row py-2 px-3 mx-0" id="main-options-btn">
             <div class="btn-group col-12 p-0 d-flex justify-content-center" role="group">
-                <button type="button" class="btn btn-outline-light" id="search-icon-primary">
+                <button type="button" class="btn btn-outline-light" id="search-icon-primary" disabled>
                     <i class="fas fa-search"></i>
                 </button>
-                <button type="button" class="btn btn-outline-light" id="add-icon-primary">
+                <button type="button" class="btn btn-outline-light" id="add-icon-primary" disabled>
                     <i class="fas fa-plus"></i>
                 </button>
                 <div class="btn-group" role="group">
-                    <button id="more-options-btn" type="button" class="btn btn-outline-light dropdown-toggle py-1"
-                        data-toggle="dropdown">
+                    <button id="more-options-btn" type="button" class="btn btn-outline-light dropdown-toggle py-1" data-toggle="dropdown" disabled>
                         <i class="fas fa-ellipsis-v"></i>
                     </button>
                     <div class="dropdown-menu dropdown-menu-lg-right w-100">
@@ -207,19 +209,19 @@
         <div id="search-form-wrapper">
             <form class="search-form py-2" autocomplete="off">
                 <div class="input-group">
-                    <input class="form-control m-auto" type="text" name="searchInput" placeholder="search tasks..." />
+                    <input class="form-control m-auto" type="text" name="searchInput" placeholder="search tasks..." disabled/>
                 </div>
             </form>
         </div>
         <div id="add-form-wrapper">
             <form class="add text-center py-2" autocomplete="off">
                 <div class="input-group d-flex">
-                    <input class="form-control m-auto" type="text" name="add" placeholder="add a new task..." maxlength = "100"/>
+                    <input class="form-control m-auto" type="text" name="add" placeholder="add a new task..." maxlength = "100" disabled />
                     <div class="input-group-append">
-                        <button class="btn btn-outline-light" type="button" id="pick-date">
+                        <button class="btn btn-outline-light" type="button" id="pick-date" disabled>
                             <i class="fas fa-calendar-alt"></i>
                         </button>
-                        <button class="btn btn-outline-light" type="submit">
+                        <button class="btn btn-outline-light" type="submit" name="submit" disabled>
                             <i class="fas fa-chevron-right"></i>
                         </button>
                     </div>
@@ -238,30 +240,32 @@
             </div>
             <div class="col-12 d-flex justify-content-center align-items-center p-0 pt-3">
                 <div class="btn-group" role="group">
-                    <button id="pick-date-today-btn" type="button" class="btn btn-outline-light btn-sm">Today</button>
-                    <button id="pick-date-pick-mode" type="button" class="btn btn-outline-light btn-sm">Pick
-                        Mode</button>
+                    <button id="pick-date-today-btn" type="button" class="btn btn-outline-light btn-sm" disabled>
+                        Today
+                    </button>
+                    <button id="pick-date-pick-mode" type="button" class="btn btn-outline-light btn-sm" disabled>
+                        Pick Mode
+                    </button>
                 </div>
             </div>
         </div>
         <div id="select-all-options" class="mx-0 py-2 px-3 row">
             <div class="btn-group col-12 p-0 d-flex justify-content-center" role="group">
-                <button type="button" class="btn btn-outline-light col-12 col-sm-4" id="mark-as-btn">
-                </button>
-                <button type="button" class="btn btn-outline-light col-12 col-sm-4" id="delete-btn">
+                <button type="button" class="btn btn-outline-light col-12 col-sm-4" id="mark-as-btn" disabled></button>
+                <button type="button" class="btn btn-outline-light col-12 col-sm-4" id="delete-btn" disabled>
                     Delete
                 </button>
-                <button type="button" class="btn btn-outline-light col-12 col-sm-4" id="deselect-btn">
+                <button type="button" class="btn btn-outline-light col-12 col-sm-4" id="deselect-btn" disabled>
                     Deselect
                 </button>
             </div>
         </div>
         <div class="m-0 py-2 px-3 row" id="task-tabs">
             <div class="btn-group col-12 p-0 d-flex justify-content-center" role="group">
-                <button type="button" class="btn btn-outline-light col-12 col-sm-6 active" id="task-tabs-ongoing">
+                <button type="button" class="btn btn-outline-light col-12 col-sm-6 active" id="task-tabs-ongoing" disabled>
                     Scheduled
                 </button>
-                <button type="button" class="btn btn-outline-light col-12 col-sm-6" id="task-tabs-completed">
+                <button type="button" class="btn btn-outline-light col-12 col-sm-6" id="task-tabs-completed" disabled>
                     Completed
                 </button>
             </div>
@@ -282,11 +286,15 @@
             </ul>
             <p class="lead">What do you want me to do with them?</p>
             <div class="d-flex flex-column">
-                <button id="alert-append-btn" type="button" class="btn btn-outline-dark">Append to today's
-                    tasks</button>
-                <button id="alert-complete-btn" type="button" class="btn btn-outline-dark">Mark as
-                    completed</button>
-                <button id="alert-dispose-btn" type="button" class="btn btn-outline-dark">Dispose of them</button>
+                <button id="alert-append-btn" type="button" class="btn btn-outline-dark">
+                    Append to today's tasks
+                </button>
+                <button id="alert-complete-btn" type="button" class="btn btn-outline-dark">
+                    Mark as completed
+                </button>
+                <button id="alert-dispose-btn" type="button" class="btn btn-outline-dark">
+                    Dispose of them
+                </button>
             </div>
             <small class="text-muted">NOTE: Tasks older than 30 days will be automatically deleted!</small>
         </div>
