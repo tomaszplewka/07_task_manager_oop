@@ -487,7 +487,7 @@ td:hover.invalid-day {
 	color: var(--theme1-text-color);
 }
 
-.filtered {
+.task-item.filtered {
 	display: none !important;
 }
 
@@ -702,6 +702,8 @@ p.invalid {
 	border-radius: 10px;
 	position: relative;
 	background-color: var(--theme1-text-color);
+	width: 100%;
+	max-width: 75%;
 }
 
 .alert-message .lead,

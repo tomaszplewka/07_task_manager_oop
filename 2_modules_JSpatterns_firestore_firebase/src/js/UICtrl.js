@@ -1,5 +1,5 @@
 // UI Controller
-import { format, getDate, isToday, subDays } from 'date-fns';
+import { format, getDate, isToday, subDays, parse } from 'date-fns';
 // 
 const UICtrl = (function() {
     const UISelectors = {
@@ -423,7 +423,7 @@ const UICtrl = (function() {
         if (!(tasks === undefined)) {
             if (tasks[currToday] !== undefined ) {
                 if (tasks[currToday].length !== 0) {
-                    tasks[currToday].forEach((task, index) => {
+                    Array.from(tasks[currToday]).forEach((task, index) => {
                         generateDayTemplate(task, index, enableDnD, user, currToday, setTasks, ongoing);
                     });
                     return tasks[currToday].length;
@@ -538,7 +538,6 @@ const UICtrl = (function() {
 			case 'theme-1':
 				setTheme('#343a40', '#6c757d', '#454d55', '#dee2e6', '#dee2e6', '#000000', '#007bff', '#000000', '#ffffff');
                 document.querySelector('#' + theme).classList.add('theme-active');
-                console.log('tu tez powinienem byc');
 				break;
 			case 'theme-2':
 				setTheme('#666a86', '#788aa3', '#ffc800', '#b2c9ab', '#b2c9ab', '#788aa3', '#ff8427', '#92b6b1', '#e8ddb5');
@@ -835,6 +834,40 @@ const UICtrl = (function() {
         return msg;
     }
 
+
+    const checkPastOngoingTasks = function(tasks) {
+        let pastDates = [];
+        let pastTasks = [];
+        for (const key in tasks) {
+            // Get current date
+            const date = parse(key, "d'-'MMM'-'yyyy", new Date());
+            if (date < new Date((new Date).getFullYear(), (new Date).getMonth(), (new Date).getDate()) && tasks[key].length) {
+                // Append past date
+                pastDates.push(date);
+            }
+        }
+        // Sort in ascending order
+        pastDates.sort((a, b) => a - b);
+        // Loop through past dates & append list item
+        pastDates.forEach(pastDate => {
+            pastTasks.push(format(pastDate, "d'-'MMM'-'yyyy"));
+            let li = document.createElement('li');
+            li.className = 'list-group-item d-flex justify-content-center align-items-center task-item';
+            li.textContent = format(pastDate, "d'-'MMM'-'yyyy");
+            document.querySelector(UISelectors.listPastTasks).appendChild(li);
+        });
+        // Show alert if there are any past tasks
+        if (pastTasks.length) {
+            document.querySelector(UISelectors.alertMsgWrapper).style.display = 'flex';
+            document.querySelector(UISelectors.alertMsgWrapper).style.opacity = 1;
+            document.querySelector('body').style.overflow = 'hidden';
+            document.querySelector(UISelectors.notifications).lastElementChild.textContent = 1;
+            document.querySelector(UISelectors.navNotifications).textContent = 1;
+            document.querySelector(UISelectors.notifications).classList.remove('disabled');
+        }
+        return pastTasks;
+    }
+
     return {
         getSelectors: function() {
             return UISelectors;
@@ -860,7 +893,8 @@ const UICtrl = (function() {
         errorSignUpSingleInput,
         errorLogInAll,
         generateWeekTemplate,
-        createMsg
+        createMsg,
+        checkPastOngoingTasks
     }
 
 })();

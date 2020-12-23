@@ -77,8 +77,15 @@ const DataCtrl = (function() {
                     errorPass: 1
                 };
             case "auth/operation-not-allowed":
+            case "auth/invalid-credential":
                 return {
                     errorMsg: "Server error, please try again later.",
+                    errorEmail: 1,
+                    errorPass: 1
+                };
+            case "auth/user-mismatch":
+                return {
+                    errorMsg: "Given credential does not correspond to the user.",
                     errorEmail: 1,
                     errorPass: 1
                 };
@@ -103,24 +110,15 @@ const DataCtrl = (function() {
             }
     }
     const filterTasks = function(term, selector) {
+        // Get list reference
         const list = document.querySelector(selector);
-        console.log(list);
-		//
+        // Filter
 		Array.from(list.children)
 			.filter(task => !task.textContent.toLowerCase().includes(term))
-			.forEach(task => {
-                task.classList.remove('d-flex');
-                task.classList.add('filtered');
-                console.log(task);
-            });
-        //
+			.forEach(task => { task.classList.add('filtered') });
         Array.from(list.children)
         .filter(task => task.textContent.toLowerCase().includes(term))
-        .forEach(task => {
-            task.classList.add('d-flex');
-            task.classList.remove('filtered');
-            console.log(task);
-        });
+        .forEach(task => { task.classList.remove('filtered') });
     }
     return {
         validate,
