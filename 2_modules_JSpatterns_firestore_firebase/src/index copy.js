@@ -38,9 +38,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
         // UI event listeners
         document.querySelector('body').addEventListener('click', e => {
             // Add user - sign up & log in using firebase
-            if (`#${e.target.id}` === UISelectors.addUserBtn || document.querySelector(UISelectors.addUserBtn).contains(e.target)) {
-                // Handle tabindex
-                UICtrl.handleTabindex(UISelectors.loginMainDiv, "-1");
+            if (`#${e.target.id}` === UISelectors.addUserBtn) {
                 // Create add user mode
                 UICtrl.createAddMode();
                 // Adjust UI
@@ -66,9 +64,6 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                 // Go Back from add user
                 document.querySelector(UISelectors.addBackBtn)
                 .addEventListener('click', () => {
-                    // Handle tabindex
-                    UICtrl.handleTabindex(UISelectors.loginMainDiv, "0");
-                    // Adjust UI display
                     document.querySelector(UISelectors.loginMainDiv).classList.remove('move-y-up');
                     document.querySelector(UISelectors.loginAddMode).classList.remove('move-y-zero');
                     setTimeout(() => {
@@ -85,35 +80,55 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                     if (DataCtrl.validate(username) && DataCtrl.validate(email) && DataCtrl.validate(pass)) { // YES
                         // Create and store new user in Firebase
                         const user = {
-                            name: username.value,
+                            name: document.querySelector(UISelectors.username).value,
                             avatar: 'avatar-1',
                             theme: 'theme-1',
                             toast: 'toast-change-1'
                         }
-                        FirebaseCtrl.signUp(email.value, pass.value, user)
+                        FirebaseCtrl.signUp(document.querySelector(UISelectors.email).value, document.querySelector(UISelectors.password).value, user)
                         .then(() => {
-                            // Adjust UI display
+                            // Create confirm user mode
+                            // UICtrl.createConfirmMode();
+                            // document.querySelector(UISelectors.confirmUser).textContent = user.name;
+                            // 
+                            // Adjust UI to show confirm mode
                             document.querySelector(UISelectors.loginAddMode).classList.remove('move-y-zero'); 
                             document.querySelector(UISelectors.loginAddMode).classList.add('move-y-up');
+                            // document.querySelector(UISelectors.loginConfirmMode).classList.add('move-y-zero');
                             setTimeout(() => {
+                                // 
                                 // Adjust UI
-                                document.querySelector(UISelectors.loginMainDiv).classList.remove('move-y-up');
-                                document.querySelector(UISelectors.loginAddMode).remove();
-                                // Set theme, avatar & toasts
-                                UICtrl.chooseTheme(user.theme);
-                                UICtrl.chooseAvatar(user.avatar);
-                                UICtrl.chooseToast(user.toast);
-                                // Calculate progress
-                                calculateProgress(new Date());
-                                // Adjust UI
+                                // document.querySelector(UISelectors.loginConfirmMode).classList.remove('move-y-zero');
                                 setTimeout(() => {
-                                    document.querySelector(UISelectors.loginWrapper).classList.add('roll-up');
-                                    document.querySelector('body').style.overflow = 'auto';
-                                    // Set vars on welcome page
-                                    document.querySelector(UISelectors.welcomeHeader).textContent = user.name;
-                                    document.querySelector(UISelectors.leadTodayDate).textContent = format(new Date(), "do 'of' MMMM yyyy");
+                                    // Show login loader
+                                    // UICtrl.createLoginLoader();
+                                    // document.querySelector(UISelectors.loginLoader).style.height = document.querySelector(UISelectors.loginMainDiv).offsetHeight + 'px';
+                                    // Adjust UI
+                                    document.querySelector(UISelectors.loginMainDiv).classList.remove('move-y-up');
+                                    document.querySelector(UISelectors.loginAddMode).remove();
+                                    // document.querySelector(UISelectors.loginConfirmMode).remove();
+                                    // Clear login accounts
+                                    document.querySelector(UISelectors.loginAccounts).innerHTML = '';
+                                    // Set theme, avatar & toasts
+                                    UICtrl.chooseTheme(user.theme);
+                                    UICtrl.chooseAvatar(user.avatar);
+                                    UICtrl.chooseToast(user.toast);
+                                    // Calculate progress
+                                    calculateProgress(format(new Date(), "d'-'MMM'-'yyyy"));
+                                    // Adjust UI
+                                    setTimeout(() => {
+                                        document.querySelector(UISelectors.loginWrapper).classList.add('roll-up');
+                                        document.querySelector('body').style.overflow = 'auto';
+                                        // Set vars on welcome page
+                                        document.querySelector(UISelectors.welcomeHeader).textContent = user.name;
+                                        document.querySelector(UISelectors.leadTodayDate).textContent = format(new Date(), "do 'of' MMMM yyyy");
+                                        // Remove loader
+                                        // setTimeout(() => {
+                                        //     document.querySelector(UISelectors.loginLoader).remove();
+                                        // }, 500);
+                                    }, 2000);
                                 }, 2000);
-                            }, 2000);
+                            }, 750)
                             // 
                         })
                         .catch(error => {
@@ -133,19 +148,18 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                             UICtrl.errorSignUpSingleInput({ username, email, pass, errorPara }, "Password must be at least 8 characters long, consist of letters, numbers and include at least one capital letter and one special character [!@#$%^&*].");
                         }
                     }
+                    // 
                     e.preventDefault();
                 })
             }
             // Log in
-            if (`#${e.target.id}` === UISelectors.loginBtn || document.querySelector(UISelectors.loginBtn).contains(e.target)) {
+            if (document.querySelector(UISelectors.loginAccounts).contains(e.target) && !document.querySelector(UISelectors.loginAccounts).classList.contains('empty')) {
                 let id = '';
                 if (e.target.tagName.toLowerCase() === 'i') {
                     id = e.target.parentElement.id;
                 } else if(e.target.tagName.toLowerCase() === 'li') {
                     id = e.target.id;
                 }
-                // Handle tabindex
-                UICtrl.handleTabindex(UISelectors.loginMainDiv, "-1");
                 // Create log in mode
                 UICtrl.createLogInMode(id);
                 // Adjust UI
@@ -156,8 +170,6 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                 }, 100)
                 // Go back from user log in
                 document.querySelector(UISelectors.logInConfirmBackBtn).addEventListener('click', () => {
-                    // Handle tabindex
-                    UICtrl.handleTabindex(UISelectors.loginMainDiv, "0");
                     // Adjust UI
                     document.querySelector(UISelectors.loginMainDiv).classList.remove('move-x-left');
                     document.querySelector(UISelectors.logInConfirmMode).classList.remove('move-x-zero');
@@ -171,7 +183,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                     const pass = document.querySelector(UISelectors.password);
                     const errorPara = document.querySelector(UISelectors.errorPara);
                     FirebaseCtrl.logIn(email.value, pass.value)
-                    .then(() => {
+                    .then(credentials => {
                         // Adjust UI
                         document.querySelector(UISelectors.logInConfirmMode).remove();
                     })
@@ -187,77 +199,102 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
             if (`#${e.target.id}` === UISelectors.logOut) {
                 FirebaseCtrl.logOut()
                     .then(() => {
-                        // Handle buttons
-                        UICtrl.handleDisabledState(["userNavbar", "lDayArrow", "rDayArrow", "lWeekArrow", "rWeekArrow", "lMonthArrow", "rMonthArrow", "dayModeView", "weekModeView", "monthModeView", "searchTasks", "addOption", "pickDate", "addForm", "pickDateTodayBtn", "pickDatePickMode", "moreOptionsBtn", "markAsBtn", "deleteBtn", "deselectBtn", "taskTabsOngoing", "taskTabsCompleted"]);
                         // Adjust UI
                         document.querySelector(UISelectors.loginWrapper).classList.remove('roll-up');
+                        // 
+                        // Disable buttons (consider writing function for this!!!)
+                        document.querySelector(UISelectors.userNavbar).disabled = true;
+                        document.querySelector(UISelectors.lDayArrow).disabled = true;
+                        document.querySelector(UISelectors.rDayArrow).disabled = true;
+                        document.querySelector(UISelectors.dayModeView).disabled = true;
+                        document.querySelector(UISelectors.weekModeView).disabled = true;
+                        document.querySelector(UISelectors.monthModeView).disabled = true;
+                        document.querySelector(UISelectors.searchTasks).disabled = true;
+                        document.querySelector(UISelectors.searchForm).searchInput.disabled = true;
+                        document.querySelector(UISelectors.addOption).disabled = true;
+                        document.querySelector(UISelectors.addForm).add.disabled = true;
+                        document.querySelector(UISelectors.pickDate).disabled = true;
+                        document.querySelector(UISelectors.addForm).submit.disabled = true;
+                        document.querySelector(UISelectors.pickDateTodayBtn).disabled = true;
+                        document.querySelector(UISelectors.pickDatePickMode).disabled = true;
+                        document.querySelector(UISelectors.moreOptionsBtn).disabled = true;
+                        document.querySelector(UISelectors.markAsBtn).disabled = true;
+                        document.querySelector(UISelectors.deleteBtn).disabled = true;
+                        document.querySelector(UISelectors.deselectBtn).disabled = true;
+                        document.querySelector(UISelectors.taskTabsOngoing).disabled = true;
+                        document.querySelector(UISelectors.taskTabsCompleted).disabled = true;
+                        // 
                         setTimeout(() => {
                             document.querySelector(UISelectors.welcomeHeader).textContent = '';
                             document.querySelector(UISelectors.leadTodayDate).textContent = '';
                             document.querySelector(UISelectors.loginMainDiv).classList.remove('move-x-left');
-                            // Handle tabindex
-                            UICtrl.handleTabindex(UISelectors.loginMainDiv, "0");
                         }, 1000);
                     })
                     .catch(error => {
-                        console.log(error);
+
                     });
             }
             // Switch to day mode
             if (`#${e.target.id}` === UISelectors.dayModeView) {
                 // Render day mode
                 if (document.querySelector(UISelectors.taskTabsOngoing).classList.contains('active')) {
-                    renderDayModeCalendar(new Date(), vars.globalTasksOngoing, FirebaseCtrl.updateAllTasks);
+                    renderDayModeCalendar(new Date(), vars.globalTasksOngoing, vars.globalUser, FirebaseCtrl.updateAllTasks);
                 } else {
-                    renderDayModeCalendar(new Date(), vars.globalTasksCompleted, FirebaseCtrl.updateAllTasks, false);
+                    renderDayModeCalendar(new Date(), vars.globalTasksCompleted, vars.globalUser, FirebaseCtrl.updateAllTasks, false);
                 }
                 // Clear search string
                 if (document.querySelector(UISelectors.searchFormWrapper).classList.contains('search-form-open')) {
                     document.querySelector(UISelectors.searchForm).searchInput.value = '';
                 }
                 // Calculate progress
-                calculateProgress(new Date());
+                calculateProgress(format(new Date(), "d'-'MMM'-'yyyy"));
             }
             // Left arrow in day mode clicked
             if (`#${e.target.id}` === UISelectors.lDayArrow || document.querySelector(UISelectors.lDayArrow).contains(e.target)) {
                 // Get correct date
-                const prevToday = subDays(UICtrl.retrieveDayDate(), 1);
+                const todayContent = document.querySelector(UISelectors.dayModeContent).textContent.trim();
+                let today = parse(todayContent, "d MMMM yyyy, EEEE", new Date());
+                const prevToday = subDays(today, 1);
                 let currToday = prevToday;
                 // Render day mode
                 if (document.querySelector(UISelectors.taskTabsOngoing).classList.contains('active')) {
-                    renderDayModeCalendar(currToday, vars.globalTasksOngoing, FirebaseCtrl.updateAllTasks);
+                    renderDayModeCalendar(currToday, vars.globalTasksOngoing, vars.globalUser, FirebaseCtrl.updateAllTasks);
                 } else {
-                    renderDayModeCalendar(currToday, vars.globalTasksCompleted, FirebaseCtrl.updateAllTasks, false);
+                    renderDayModeCalendar(currToday, vars.globalTasksCompleted, vars.globalUser, FirebaseCtrl.updateAllTasks, false);
                 }
                 // Clear search string
                 if (document.querySelector(UISelectors.searchFormWrapper).classList.contains('search-form-open')) {
                     document.querySelector(UISelectors.searchForm).searchInput.value = '';
                 }
                 // Calculate progress
-                calculateProgress(currToday);
+                calculateProgress(format(currToday, "d'-'MMM'-'yyyy"));
             }
             // Right arrow in day mode clicked
             if (`#${e.target.id}` === UISelectors.rDayArrow || document.querySelector(UISelectors.rDayArrow).contains(e.target)) {
                 // Get correct date
-                const nextToday = addDays(UICtrl.retrieveDayDate(), 1);
+                const todayContent = document.querySelector(UISelectors.dayModeContent).textContent.trim();
+                let today = parse(todayContent, "d MMMM yyyy, EEEE", new Date());
+                const nextToday = addDays(today, 1);
                 let currToday = nextToday;
                 // Render day mode
                 if (document.querySelector(UISelectors.taskTabsOngoing).classList.contains('active')) {
-                    renderDayModeCalendar(currToday, vars.globalTasksOngoing, FirebaseCtrl.updateAllTasks);
+                    renderDayModeCalendar(currToday, vars.globalTasksOngoing, vars.globalUser, FirebaseCtrl.updateAllTasks);
                 } else {
-                    renderDayModeCalendar(currToday, vars.globalTasksCompleted, FirebaseCtrl.updateAllTasks, false);
+                    renderDayModeCalendar(currToday, vars.globalTasksCompleted, vars.globalUser, FirebaseCtrl.updateAllTasks, false);
                 }
                 // Clear search string
                 if (document.querySelector(UISelectors.searchFormWrapper).classList.contains('search-form-open')) {
                     document.querySelector(UISelectors.searchForm).searchInput.value = '';
                 }
                 // Calculate progress
-                calculateProgress(currToday);
+                calculateProgress(format(currToday, "d'-'MMM'-'yyyy"));
             }
             // Switch to week mode
             if (`#${e.target.id}` === UISelectors.weekModeView) {
                 // Get correct week
-                const currFirstDayOfWeek = startOfWeek(UICtrl.retrieveDayDate());
+                const todayContent = document.querySelector(UISelectors.dayModeContent).textContent.trim();
+                let today = parse(todayContent, "d MMMM yyyy, EEEE", new Date());
+                const currFirstDayOfWeek = startOfWeek(today);
                 // Render week mode
                 renderWeekModeCalendar(currFirstDayOfWeek);
             }
@@ -333,9 +370,9 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                         const year = Number(document.querySelector(UISelectors.monthModeYear).textContent.trim());
                         const currToday = new Date(year, month, day);
                         // Render day mode
-                        renderDayModeCalendar(currToday, vars.globalTasksOngoing, FirebaseCtrl.updateAllTasks);
+                        renderDayModeCalendar(currToday, vars.globalTasksOngoing, vars.globalUser, FirebaseCtrl.updateAllTasks);
                         // Calculate progress
-                        calculateProgress(currToday);
+                        calculateProgress(format(currToday, "d'-'MMM'-'yyyy"));
                     }
                 } else if (document.querySelector('body').classList.contains('week-mode-active')) {
                     if (!e.target.classList.contains('disabled') && !e.target.classList.contains('invalid-day')) {
@@ -343,9 +380,9 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                         const day = e.target.textContent.trim();
                         const currToday = parse(day, "d MMM yyyy", new Date())
                         // Render day mode
-                        renderDayModeCalendar(currToday, vars.globalTasksOngoing, FirebaseCtrl.updateAllTasks);
+                        renderDayModeCalendar(currToday, vars.globalTasksOngoing, vars.globalUser, FirebaseCtrl.updateAllTasks);
                         // Calculate progress
-                        calculateProgress(currToday);
+                        calculateProgress(format(currToday, "d'-'MMM'-'yyyy"));
                     }
                 }
             }
@@ -353,7 +390,9 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
             if (`#${e.target.id}` === UISelectors.taskTabsOngoing) {
                 if (!e.target.classList.contains('active')) {
                     // Get current date
-                    let currToday = UICtrl.retrieveDayDate();
+                    const todayContent = document.querySelector(UISelectors.dayModeContent).textContent.trim();
+                    let today = parse(todayContent, "d MMMM yyyy, EEEE", new Date());
+                    let currToday = today;
                     // Adjust UI display
                     e.target.classList.add('active');
                     e.target.nextElementSibling.classList.remove('active');
@@ -369,14 +408,16 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                     // Render day mode
                     console.log('w switch to ongoing jestem');
                     console.log(vars.globalTasksOngoing);
-                    renderDayModeCalendar(currToday, vars.globalTasksOngoing, FirebaseCtrl.updateAllTasks);
+                    renderDayModeCalendar(currToday, vars.globalTasksOngoing, vars.globalUser, FirebaseCtrl.updateAllTasks);
                 }
             }
             // Switch to completed tasks
             if (`#${e.target.id}` === UISelectors.taskTabsCompleted) {
                 if (!e.target.classList.contains('active')) {
                     // Get current date
-                    let currToday = UICtrl.retrieveDayDate();
+                    const todayContent = document.querySelector(UISelectors.dayModeContent).textContent.trim();
+                    let today = parse(todayContent, "d MMMM yyyy, EEEE", new Date());
+                    let currToday = today;
                     // Adjust UI display
                     e.target.classList.add('active');
                     e.target.previousElementSibling.classList.remove('active');
@@ -388,7 +429,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                         document.querySelector(UISelectors.searchForm).searchInput.value = '';
                     }
                     // Render day mode
-                    renderDayModeCalendar(currToday, vars.globalTasksCompleted, FirebaseCtrl.updateAllTasks, false);
+                    renderDayModeCalendar(currToday, vars.globalTasksCompleted, vars.globalUser, FirebaseCtrl.updateAllTasks, false);
                 }
             }
             // Task-related event listeners
@@ -434,8 +475,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                 if (!e.target.parentElement.firstElementChild.classList.contains('hide')) {
                     // Get current date
                     const today = document.querySelector(UISelectors.dayModeContent).textContent.trim();
-                    const date = parse(today, "d MMMM yyyy, EEEE", new Date());
-                    const currToday = format(date, "d'-'MMM'-'yyyy");
+                    const currToday = format(parse(today, "d MMMM yyyy, EEEE", new Date()), "d'-'MMM'-'yyyy");
                     // Store deleted task
                     const taskDeleted = e.target.parentElement.parentElement.textContent.trim();
                     // Get all tasks
@@ -484,7 +524,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                                     document.querySelector(UISelectors.notifications).classList.add('disabled');
                                 }
                                 // Calculate progress
-                                calculateProgress(date);
+                                calculateProgress(currToday);
                             }, 1000);
                         })
                         .catch(error => {
@@ -516,7 +556,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                                 // Update task number
                                 document.querySelector(UISelectors.leadTaskCompletedNum).textContent = allTasks.length;
                                 // Calculate progress
-                                calculateProgress(date);
+                                calculateProgress(currToday);
                             }, 1000);
                         })
                         .catch(error => {
@@ -630,8 +670,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                 ) {
                     // Get current date
                     const today = document.querySelector(UISelectors.dayModeContent).textContent.trim();
-                    const date = parse(today, "d MMMM yyyy, EEEE", new Date());
-                    const currToday = format(date, "d'-'MMM'-'yyyy");
+                    const currToday = format(parse(today, "d MMMM yyyy, EEEE", new Date()), "d'-'MMM'-'yyyy");
                     // Store completed task
                     const taskCompleted = e.target.parentElement.parentElement.textContent.trim();
                     // Get all tasks
@@ -712,7 +751,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                             // Update task number
                             document.querySelector(UISelectors.leadTaskNum).textContent = allTasks.length;
                             // Calculate progress
-                            calculateProgress(date);
+                            calculateProgress(currToday);
                         }, 1500);
                     })
                     .catch(err => {
@@ -728,8 +767,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                 ) {
                     // Get current date
                     const today = document.querySelector(UISelectors.dayModeContent).textContent.trim();
-                    const date = parse(today, "d MMMM yyyy, EEEE", new Date());
-                    const currToday = format(date, "d'-'MMM'-'yyyy");
+                    const currToday = format(parse(today, "d MMMM yyyy, EEEE", new Date()), "d'-'MMM'-'yyyy");
                     // Store task
                     const taskOngoing = e.target.parentElement.parentElement.textContent.trim();
                     // Get all tasks
@@ -812,7 +850,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                             // Update task number
                             document.querySelector(UISelectors.leadTaskCompletedNum).textContent = allTasks.length;
                             // Calculate progress
-                            calculateProgress(date);
+                            calculateProgress(currToday);
                         }, 1000);
                     })
                     .catch(err => {
@@ -895,8 +933,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
             if (`#${e.target.id}` === UISelectors.markAsBtn) {
                 // Get current date
                 const today = document.querySelector(UISelectors.dayModeContent).textContent.trim();
-                const date = parse(today, "d MMMM yyyy, EEEE", new Date());
-                const currToday = format(date, "d'-'MMM'-'yyyy");
+                const currToday = format(parse(today, "d MMMM yyyy, EEEE", new Date()), "d'-'MMM'-'yyyy");
                 // 
                 if (document.querySelector(UISelectors.taskTabsOngoing).classList.contains('active')) {
                     // Get current tasks
@@ -943,7 +980,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                         // Update task number
                         document.querySelector(UISelectors.leadTaskNum).textContent = 0;
                         // Calculate progress
-                        calculateProgress(date);
+                        calculateProgress(currToday);
                         // Adjust UI display
                         document.querySelector(UISelectors.selectAllOptions).classList.toggle('select-all-options-open');
                         // Disable buttons (consider writing function for this!!!)
@@ -1010,7 +1047,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                         // Update task number
                         document.querySelector(UISelectors.leadTaskCompletedNum).textContent = 0;
                         // Calculate progress
-                        calculateProgress(date);
+                        calculateProgress(currToday);
                         // Adjust UI display
                         document.querySelector(UISelectors.selectAllOptions).classList.toggle('select-all-options-open');
                         // Disable buttons (consider writing function for this!!!)
@@ -1035,8 +1072,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
             if (`#${e.target.id}` === UISelectors.deleteBtn) {
                 // Get current date
                 const today = document.querySelector(UISelectors.dayModeContent).textContent.trim();
-                const date = parse(today, "d MMMM yyyy, EEEE", new Date());
-                const currToday = format(date, "d'-'MMM'-'yyyy");
+                const currToday = format(parse(today, "d MMMM yyyy, EEEE", new Date()), "d'-'MMM'-'yyyy");
                 // Get current tasks
                 const taskItems = document.querySelectorAll('.tasks .task-item');
                 // 
@@ -1067,7 +1103,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                         // Update task number
                         document.querySelector(UISelectors.leadTaskNum).textContent = 0;
                         // Calculate progress
-                        calculateProgress(date);
+                        calculateProgress(currToday);
                         // Adjust UI display
                         document.querySelector(UISelectors.selectAllOptions).classList.toggle('select-all-options-open');
                         // Disable buttons (consider writing function for this!!!)
@@ -1102,7 +1138,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                         // Update task number
                         document.querySelector(UISelectors.leadTaskCompletedNum).textContent = 0;
                         // Calculate progress
-                        calculateProgress(date);
+                        calculateProgress(currToday);
                         // Adjust UI display
                         document.querySelector(UISelectors.selectAllOptions).classList.toggle('select-all-options-open');
                         // Disable buttons (consider writing function for this!!!)
@@ -1139,7 +1175,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
             if (`#${e.target.id}` === UISelectors.pickDatePickMode) {
                 if (document.querySelector(UISelectors.tableBody).classList.contains('pick-date-mode')) {
                     // Render day mode
-                    renderDayModeCalendar(new Date(), vars.globalTasksOngoing, FirebaseCtrl.updateAllTasks);
+                    renderDayModeCalendar(new Date(), vars.globalTasksOngoing, vars.globalUser, FirebaseCtrl.updateAllTasks);
                     // Disable buttons (consider writing function for this!!!)
                     document.querySelector(UISelectors.dayModeView).disabled = false;
                     document.querySelector(UISelectors.searchTasks).disabled = true;
@@ -1307,9 +1343,9 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                     document.querySelector('body').style.overflow = 'auto';
                     document.querySelector(UISelectors.listPastTasks).innerHTML = '';
                     // Render day mode
-                    renderDayModeCalendar(new Date(), vars.globalTasksOngoing, FirebaseCtrl.updateAllTasks);
+                    renderDayModeCalendar(new Date(), vars.globalTasksOngoing, vars.globalUser, FirebaseCtrl.updateAllTasks);
                     // Calculate progress
-                    calculateProgress(new Date());
+                    calculateProgress(format(new Date(), "d'-'MMM'-'yyyy"));
                 })
                 .catch(error => {
                     console.log(error);
@@ -1362,9 +1398,9 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                 document.querySelector('body').style.overflow = 'auto';
                 document.querySelector(UISelectors.listPastTasks).innerHTML = '';
                 // Render day mode
-                renderDayModeCalendar(new Date(), vars.globalTasksOngoing, FirebaseCtrl.updateAllTasks);
+                renderDayModeCalendar(new Date(), vars.globalTasksOngoing, vars.globalUser, FirebaseCtrl.updateAllTasks);
                 // Calculate progress
-                calculateProgress(new Date());
+                calculateProgress(format(new Date(), "d'-'MMM'-'yyyy"));
             }
                 // Past tasks wrapper - delete tasks
             if (`#${e.target.id}` === UISelectors.alertDisposeBtn) {
@@ -1494,8 +1530,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
             const task = document.querySelector(UISelectors.addForm).add.value.trim();
             // Get current date
             const today = document.querySelector(UISelectors.dayModeContent).textContent.trim();
-            const date = parse(today, "d MMMM yyyy, EEEE", new Date());
-            const currToday = format(date, "d'-'MMM'-'yyyy");
+            const currToday = format(parse(today, "d MMMM yyyy, EEEE", new Date()), "d'-'MMM'-'yyyy");
             // Lock tasks
             const tasks = document.querySelectorAll('.tasks .task-item');
             Array.from(tasks).forEach(task => {
@@ -1513,7 +1548,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                 .then(response => {
                     // Update UI
                     const date = parse(currToday, "d'-'MMM'-'yyyy", new Date());
-                    renderDayModeCalendar(date, response.data(), FirebaseCtrl.updateAllTasks);
+                    renderDayModeCalendar(date, response.data(), vars.globalUser, FirebaseCtrl.updateAllTasks);
                     // Unlock tasks
                     Array.from(tasks).forEach(task => {
                         task.classList.remove('disabled-li');
@@ -1521,7 +1556,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                     // Adjust UI display
                     document.querySelector(UISelectors.addForm).reset();
                     // Calculate progress
-                    calculateProgress(date);
+                    calculateProgress(currToday);
                     // Update notifications
                     if (date < new Date((new Date).getFullYear(), (new Date).getMonth(), (new Date).getDate())) {
                         // Check if currToday is in pastTaskKeys
@@ -1585,9 +1620,9 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                     // Show success message
                     // 
                     // Render day mode 
-                    renderDayModeCalendar(new Date(), vars.globalTasksOngoing, FirebaseCtrl.updateAllTasks);
+                    renderDayModeCalendar(new Date(), vars.globalTasksOngoing, vars.globalUser, FirebaseCtrl.updateAllTasks);
                     // Calculate progress
-                    calculateProgress(new Date());
+                    calculateProgress(format(new Date(), "d'-'MMM'-'yyyy"));
                     // Adjust UI
                     document.querySelector(UISelectors.dateToasts).innerHTML = '';
                     document.querySelector(UISelectors.addForm).reset();
@@ -1681,7 +1716,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
                 document.querySelector(UISelectors.userAvatar).classList.add('position-relative');
                 UICtrl.chooseToast(data.info.toast);
                 // Calculate progress
-                calculateProgress(new Date());
+                calculateProgress(format(new Date(), "d'-'MMM'-'yyyy"));
                 // Disable buttons (consider writing function for this!!!)
                 document.querySelector(UISelectors.userNavbar).disabled = false;
                 document.querySelector(UISelectors.lDayArrow).disabled = false;
@@ -1725,10 +1760,13 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
             }, 2000);
         }
     }
-    const renderDayModeCalendar = function(currToday, tasks, updateAllTasks, ongoing = true) {
+    const renderDayModeCalendar = function(currToday, tasks, user, updateAllTasks, ongoing = true) {
         // Set global tasks
-        if (ongoing) { vars.globalTasksOngoing = tasks }
-        else { vars.globalTasksCompleted = tasks }
+        if (document.querySelector(UISelectors.taskTabsOngoing).classList.contains('active')) {
+            vars.globalTasksOngoing = tasks;
+        } else {
+            vars.globalTasksCompleted = tasks;
+        }
         // Adjust UI display
         document.querySelector(UISelectors.monthModeWrapper).setAttribute('style', 'display: none !important');
 		document.querySelector(UISelectors.weekModeWrapper).setAttribute('style', 'display: none !important');
@@ -1742,34 +1780,38 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
         if (document.querySelector(UISelectors.mainOptionsBtns).classList.contains('hide')) {
             document.querySelector(UISelectors.mainOptionsBtns).classList.remove('hide');
             document.querySelector(UISelectors.taskTabs).classList.remove('hide');
-            // Handle buttons
-            UICtrl.handleDisabledState(["lWeekArrow", "rWeekArrow", "lMonthArrow", "monthModeMonth", "rMonthArrow"]);
-            UICtrl.handleDisabledState(["lDayArrow", "rDayArrow", "searchTasks", "addOption", "moreOptionsBtn", "taskTabsOngoing", "taskTabsCompleted"], false);
+            // this is when day mode is clicked after week mode or month mode is active
+            // Disable buttons (consider writing function for this!!!)
+            document.querySelector(UISelectors.lDayArrow).disabled = false;
+            document.querySelector(UISelectors.rDayArrow).disabled = false;
+            document.querySelector(UISelectors.lWeekArrow).disabled = true;
+            document.querySelector(UISelectors.rWeekArrow).disabled = true;
+            document.querySelector(UISelectors.lMonthArrow).disabled = true;
+            document.querySelector(UISelectors.monthModeMonth).disabled = true;
+            document.querySelector(UISelectors.rMonthArrow).disabled = true;
+            document.querySelector(UISelectors.searchTasks).disabled = false;
+            document.querySelector(UISelectors.addOption).disabled = false;
+            document.querySelector(UISelectors.moreOptionsBtn).disabled = false;
+            document.querySelector(UISelectors.taskTabsOngoing).disabled = false;
+            document.querySelector(UISelectors.taskTabsCompleted).disabled = false;
         }
-        // Set vars on welcome screen
+        // 
         document.querySelector(UISelectors.dayModeContent).textContent = `
             ${format(currToday, "d MMMM yyyy, EEEE")}
         `;
-        // Adjust table head & body
+        // 
         UICtrl.renderTableUI();
-        // Display tasks
+        // 
+        console.log('renderDayMode');
         if (ongoing) {
-            const taskNum = UICtrl.displayTasks(currToday, tasks, updateAllTasks, DnDCtrl.enableDnD);
+            const taskNum = UICtrl.displayTasks(tasks, currToday, DnDCtrl.enableDnD, updateAllTasks);
             if (taskNum) {
                 document.querySelector(UISelectors.leadTaskNum).textContent = taskNum;
             } else {
                 document.querySelector(UISelectors.leadTaskNum).textContent = 0;
             }
-            // Disable searching if no tasks to display
-            if (!(tasks === undefined)) {
-                if (tasks[format(currToday, "d'-'MMM'-'yyyy")] === undefined) {
-                    document.querySelector(UISelectors.searchForm).searchInput.classList.add('disabled');
-                } else {
-                    document.querySelector(UISelectors.searchForm).searchInput.classList.remove('disabled');
-                }
-            }
         } else {
-            const taskNum = UICtrl.displayTasks(currToday, tasks, updateAllTasks, DnDCtrl.enableDnD, false);
+            const taskNum = UICtrl.displayTasks(tasks, currToday, DnDCtrl.enableDnD, updateAllTasks, false);
             if (taskNum) {
                 document.querySelector(UISelectors.leadTaskCompletedNum).textContent = taskNum;
             } else {
@@ -1778,6 +1820,14 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
         }
         // Day mode is active
         document.querySelector('body').setAttribute('class', 'day-mode-active');
+        // Disable searching if no tasks to display
+        if (!(tasks === undefined)) {
+            if (tasks[format(currToday, "d'-'MMM'-'yyyy")] === undefined) {
+                document.querySelector(UISelectors.searchForm).searchInput.classList.add('disabled');
+            } else {
+                document.querySelector(UISelectors.searchForm).searchInput.classList.remove('disabled');
+            }
+        }
     }
     const renderWeekModeCalendar = function(currFirstDayOfWeek) {
         // Adjust week mode display
@@ -1794,9 +1844,22 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
             document.querySelector(UISelectors.mainOptionsBtns).classList.add('hide');
             document.querySelector(UISelectors.taskTabs).classList.add('hide');
         }
-        // Handle buttons
-        UICtrl.handleDisabledState(["lDayArrow", "rDayArrow", "lMonthArrow", "monthModeMonth", "rMonthArrow", "searchTasks", "addOption", "moreOptionsBtn", "taskTabsOngoing", "taskTabsCompleted"]);
-        UICtrl.handleDisabledState(["lWeekArrow", "rWeekArrow"], false);
+        // Disable buttons (consider writing function for this!!!)
+        document.querySelector(UISelectors.lDayArrow).disabled = true;
+        document.querySelector(UISelectors.rDayArrow).disabled = true;
+        document.querySelector(UISelectors.lWeekArrow).disabled = false;
+        document.querySelector(UISelectors.rWeekArrow).disabled = false;
+        document.querySelector(UISelectors.lMonthArrow).disabled = true;
+        document.querySelector(UISelectors.monthModeMonth).disabled = true;
+        document.querySelector(UISelectors.rMonthArrow).disabled = true;
+        document.querySelector(UISelectors.searchTasks).disabled = true;
+        document.querySelector(UISelectors.addOption).disabled = true;
+        document.querySelector(UISelectors.moreOptionsBtn).disabled = true;
+        document.querySelector(UISelectors.taskTabsOngoing).disabled = true;
+        document.querySelector(UISelectors.taskTabsCompleted).disabled = true;
+        // You're disabling it earlier - consider deleting...
+        document.querySelector(UISelectors.searchFormWrapper).classList.remove('search-form-open');
+        document.querySelector(UISelectors.addFormWrapper).classList.remove('add-form-open');
         // Generate correct week
         const firstDayNextWeek = addWeeks(currFirstDayOfWeek, 1);
         const week = eachDayOfInterval({
@@ -1828,9 +1891,20 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
             document.querySelector(UISelectors.mainOptionsBtns).classList.add('hide');
             document.querySelector(UISelectors.taskTabs).classList.add('hide');
         }
-        // Handle buttons
-        UICtrl.handleDisabledState(["lDayArrow", "rDayArrow", "lWeekArrow", "rWeekArrow", "searchTasks", "addOption", "moreOptionsBtn", "taskTabsOngoing", "taskTabsCompleted"]);
-        UICtrl.handleDisabledState(["lMonthArrow", "monthModeMonth", "rMonthArrow"], false);
+        // Disable forms & buttons
+        // Disable buttons (consider writing function for this!!!)
+        document.querySelector(UISelectors.lDayArrow).disabled = true;
+        document.querySelector(UISelectors.rDayArrow).disabled = true;
+        document.querySelector(UISelectors.lWeekArrow).disabled = true;
+        document.querySelector(UISelectors.rWeekArrow).disabled = true;
+        document.querySelector(UISelectors.lMonthArrow).disabled = false;
+        document.querySelector(UISelectors.monthModeMonth).disabled = false;
+        document.querySelector(UISelectors.rMonthArrow).disabled = false;
+        document.querySelector(UISelectors.searchTasks).disabled = true;
+        document.querySelector(UISelectors.addOption).disabled = true;
+        document.querySelector(UISelectors.moreOptionsBtn).disabled = true;
+        document.querySelector(UISelectors.taskTabsOngoing).disabled = true;
+        document.querySelector(UISelectors.taskTabsCompleted).disabled = true;
         // Adjust current date
         document.querySelector(UISelectors.monthModeMonth).options[month].selected = true;
         document.querySelector(UISelectors.monthModeYear).textContent = year;
@@ -1918,8 +1992,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
 			document.querySelector(UISelectors.lMonthArrow).disabled = true;
 		} else { document.querySelector(UISelectors.lMonthArrow).disabled = false }
     }
-    const calculateProgress = function(date) {
-        const currToday = format(date, "d'-'MMM'-'yyyy");
+    const calculateProgress = function(currToday) {
         const progressBar = document.querySelector(UISelectors.taskProgress).firstElementChild.firstElementChild;
         let ongoingNum = 0;
         let completedNum = 0;
@@ -1967,6 +2040,8 @@ const AppCtrl = (function(UICtrl, DataCtrl, DnDCtrl, FirebaseCtrl) {
             // Set listener for authentication change
             FirebaseCtrl.authStatus({
                 setUI,
+                renderLoginAccounts: UICtrl.renderLoginAccounts,
+                uiListSelector: UISelectors.loginAccounts,
                 renderDayModeCalendar,
                 currToday: new Date(),
                 setCompletedTasks

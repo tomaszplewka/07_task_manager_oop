@@ -1,4 +1,6 @@
+// 
 // Data Controller
+// 
 const DataCtrl = (function() {
     const regExPatterns = {
         username:  /^\w{1,}$/,

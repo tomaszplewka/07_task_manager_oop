@@ -1,9 +1,12 @@
+// 
 // UI Controller
-import { format, getDate, isToday, subDays, parse } from 'date-fns';
+// 
+import { format, isToday, subDays, parse } from 'date-fns';
 // 
 const UICtrl = (function() {
     const UISelectors = {
-        addUserBtn: '#login-add-btn',
+        addUserBtn: '#add-user-btn',
+        loginBtn: '#login-btn',
         loginMainDiv: '.login-main-div',
         loginAddMode: '.login-add-mode',
         username: '#username',
@@ -135,26 +138,22 @@ const UICtrl = (function() {
     const createUl = function(ulClass) {
         let ul = document.createElement('ul');
         ul.className = `list-group ${ulClass} mx-auto w-100 my-4`;
-
         return ul;
+    }
+    const createListWithMsg = function(selector, message) {
+        let list = document.querySelector(selector);
+        let li = createLi('list-group-item d-flex justify-content-center align-items-center');
+        let p = document.createElement('p');
+        p.className = 'lead text-center m-0';
+        p.appendChild(document.createTextNode(message));
+        li.appendChild(p);
+        list.appendChild(li);
     }
     const createLi = function(className, liId) {
         let li = document.createElement('li');
 		li.className = className;
         li.id = liId !== undefined ? liId : '';
 		return li;
-    }
-    const renderLiAccount = function(liID, liClass = '') {
-        let li = createLi(
-            `list-group-item list-group-item-action d-flex justify-content-between align-items-center py-2 ${liClass}`,
-            liID
-        );
-        li.appendChild(createIcon('fas fa-user show'));
-        li.appendChild(createIcon('fas fa-user-times hide'));
-        li.appendChild(document.createTextNode(liID));
-        li.appendChild(createIcon('fas fa-chevron-right show'));
-        li.appendChild(createIcon('fas fa-times hide'));
-        return li;
     }
     const createIcon = function(className) {
         const icon = document.createElement('i');
@@ -174,18 +173,16 @@ const UICtrl = (function() {
         let html = '';
         if (prepend) {
             html = `
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="">
-                    <i class="fas ${iconClass}"></i>
-                </span>
-            </div>
-            <input type="${inputType}" class="validate form-control text-center" id="${inputID}" name="${inputID}"
-                placeholder="${placeholder}" ${prepend ? 'tabindex="-1"' : ''}>
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="">
+                        <i class="fas ${iconClass}"></i>
+                    </span>
+                </div>
+                <input type="${inputType}" class="validate form-control text-center" id="${inputID}" name="${inputID}" placeholder="${placeholder}">
             `;
         } else {
             html = `
-            <input type="${inputType}" class="validate form-control text-center" id="${inputID}" name="${inputID}"
-                placeholder="${placeholder}" ${prepend ? 'tabindex="-1"' : ''}>
+                <input type="${inputType}" class="validate form-control text-center" id="${inputID}" name="${inputID}" placeholder="${placeholder}">
             `;
         }
         div.innerHTML = html;
@@ -195,10 +192,10 @@ const UICtrl = (function() {
         let div = document.createElement('div');
         div.className = `d-flex justify-content-end align-items-center ${wrapperClass}`;
         div.innerHTML = `
-        <i class="far fa-circle mr-1 show-password"></i>
-        <i class="far fa-check-circle mr-1 show-password hide"></i>
-        <small class="show-password">Show Password</small>
-        <small class="show-password hide">Hide Password</small>
+            <i class="far fa-circle mr-1 show-password"></i>
+            <i class="far fa-check-circle mr-1 show-password hide"></i>
+            <small class="show-password">Show Password</small>
+            <small class="show-password hide">Hide Password</small>
         `;
         return div;
     }
@@ -213,7 +210,6 @@ const UICtrl = (function() {
         btn.className = 'btn btn-outline-light';
         btn.setAttribute('id', btnID);
         btn.setAttribute('type', btnType);
-        btn.setAttribute('tabindex', '-1');
         if (left) {
             btn.innerHTML = `
                 <i class="fas ${iconClass}"></i>
@@ -228,12 +224,6 @@ const UICtrl = (function() {
             `;
         }
         return btn;
-    }
-    const showHidePass = function(target, password) {
-        Array.from(target.parentElement.children).forEach((child) => {
-			child.classList.toggle('hide');
-		});
-		password.type === 'password' ? (password.type = 'text') : (password.type = 'password');
     }
     const createAddMode = function() {
         const loginMainDiv = document.querySelector(UISelectors.loginMainDiv);
@@ -268,17 +258,14 @@ const UICtrl = (function() {
         let div = document.createElement('div');
         div.className = `login-confirm px-4 pt-3 pb-4`;
         div.appendChild(createHeading('welcome-heading', 'Log In'));
-        div.appendChild(createUl('login-confirm-account')); 
         div.appendChild(createForm('login-form'));
-        div.lastElementChild.appendChild(createInputGroup('login-email', 'fa-key', 'text', 'email', 'email', false));
-        div.lastElementChild.appendChild(createInputGroup('login-password', 'fa-key', 'password', 'password', 'password', false));
+        div.lastElementChild.appendChild(createInputGroup('login-email', 'fa-envelope', 'text', 'email', 'email'));
+        div.lastElementChild.appendChild(createInputGroup('login-password', 'fa-key', 'password', 'password', 'password'));
         div.lastElementChild.appendChild(createShowHidePassword('login-show-password-wrapper'));
         div.lastElementChild.appendChild(createErrPara());
         div.lastElementChild.appendChild(createBtnGroup(createBtn('login-confirm-back-btn', 'button', 'Go Back', 'fa-chevron-left'), createBtn('login-confirm-login-btn', 'submit', 'Log In', 'fa-chevron-right', false)));
         // 
         loginMainDiv.after(div);
-        // 
-        document.querySelector(UISelectors.logInConfirmAccount).appendChild(renderLiAccount(id,  'mb-n4'));
     }
     const createLoginLoader = function() {
         const loginMainDiv = document.querySelector(UISelectors.loginMainDiv);
@@ -302,36 +289,20 @@ const UICtrl = (function() {
         // 
         loginMainDiv.after(div);
     }
-    const renderLoginAccounts = function(accNum, accArr, listSelector) {
-        // Clear ul
-        document.querySelector(UISelectors.loginAccounts).innerHTML = '';
-        // 
-        if (accNum) {
-            accArr.forEach((account) => {
-                const accountObj = account.data();
-                document.querySelector(listSelector).appendChild(renderLiAccount(accountObj.name));
-            });
-        } else {
-            let li = createLi('list-group-item py-2');
-            li.appendChild(document.createTextNode(`No accounts in the database`));
-            document.querySelector(listSelector).appendChild(li);
-            document.querySelector(listSelector).classList.add('empty');
-        }
-    }
     const setTableBodyHead = function(head = true) {
         let tableHead;
         if (!head) {
             tableHead = 
             `
-            <tr>
-                <th>Sun</th>
-                <th>Mon</th>
-                <th>Tue</th>
-                <th>Wed</th>
-                <th>Thu</th>
-                <th>Fri</th>
-                <th>Sat</th>
-            </tr>
+                <tr>
+                    <th>Sun</th>
+                    <th>Mon</th>
+                    <th>Tue</th>
+                    <th>Wed</th>
+                    <th>Thu</th>
+                    <th>Fri</th>
+                    <th>Sat</th>
+                </tr>
             `;
         } else {
             tableHead = '';
@@ -339,21 +310,67 @@ const UICtrl = (function() {
         document.querySelector(UISelectors.tableBody).innerHTML = '';
         document.querySelector(UISelectors.tableHead).innerHTML = tableHead;
     }
-
-
-
-
-
-
-    const generateWeekTemplate = function(firstDayCurrWeek, firstDayNextWeek, week, taskList) {
-        // Adjust UI display
-        document.querySelector(UISelectors.weekModeContent).textContent = `
-            ${getDate(firstDayCurrWeek)} ${format(firstDayCurrWeek, 'MMMM yyyy')} - 
-            ${getDate(subDays(firstDayNextWeek, 1))} ${format(subDays(firstDayNextWeek, 1), 'MMMM yyyy')}
-        `;
-        // Create template
+    const renderTableUI = function() {
+        setTableBodyHead();
+        document.querySelector(UISelectors.tableBody).append(createUl('tasks text-light'));
+    }
+    const showHidePass = function(target, password) {
+        Array.from(target.parentElement.children).forEach((child) => {
+			child.classList.toggle('hide');
+		});
+		password.type === 'password' ? (password.type = 'text') : (password.type = 'password');
+    }
+    const displayTasks = function(currToday, tasks, updateAllTasks, enableDnD, ongoing = true) {
+        currToday = format(currToday, "d'-'MMM'-'yyyy");
+        // Check tasks
+        if (!(tasks === undefined) && (tasks[currToday] !== undefined) && (tasks[currToday].length !== 0)) {
+            Array.from(tasks[currToday]).forEach((task, index) => {
+                generateDayTemplate(task, index, enableDnD, currToday, updateAllTasks, ongoing);
+            });
+            return tasks[currToday].length;
+        } else {
+            // No tasks to display for this date
+            createListWithMsg(UISelectors.tasks, 'No tasks to display');
+            return 0;
+        }
+    }
+    const generateDayTemplate = function(task, index, enableDnD, currToday, updateAllTasks, ongoing = true) {
+        // Create list item
+        let list = document.querySelector(UISelectors.tasks);
+        let li = createLi('list-group-item d-flex justify-content-between align-items-center task-item', `task${index}`);
+        // Create div with complete / uncomplete icons
+        let divIconComplete = document.createElement('div');
+        divIconComplete.className = 'd-flex justify-content-between align-items-center';
+        if (ongoing) {
+            divIconComplete.appendChild(createIcon('far fa-circle uncompleted'));
+            divIconComplete.appendChild(createIcon('far fa-check-circle completed hide'));
+        } else {
+            divIconComplete.appendChild(createIcon('far fa-circle uncompleted hide'));
+            divIconComplete.appendChild(createIcon('far fa-check-circle completed'));
+        }
+        li.appendChild(divIconComplete);
+        // Create div with text node (task name)
+        let divText = document.createElement('div');
+		divText.className = 'lead';
+		divText.appendChild(document.createTextNode(task));
+        li.appendChild(divText);
+        // Create div with edit & delete icons
+        let divIcon = document.createElement('div');
+        divIcon.className = 'd-flex justify-content-between align-items-center';
+        if (ongoing) {
+            divIcon.appendChild(createIcon('fas fa-edit mr-1 edit'));
+            divIcon.appendChild(createIcon('fas fa-keyboard mr-2 fa-2x ongoing-edit text-danger hide'));
+        }
+		divIcon.appendChild(createIcon('far fa-trash-alt delete'));
+        li.appendChild(divIcon);
+        // Enable DnD feature
+        enableDnD(li, currToday, updateAllTasks);
+		// Append task item
+		list.appendChild(li);
+    }
+    const generateWeekTemplate = function(week, taskList) {
+        // Create week template
         let row = document.createElement('tr');
-        console.log('generateWeekTemplate');
         week.forEach(day => {
             let td = document.createElement('td');
             td.innerHTML = `${format(day, "d MMM yyyy")}`;
@@ -382,145 +399,64 @@ const UICtrl = (function() {
 			document.querySelector(UISelectors.lWeekArrow).disabled = false;
 		}
     }
-
-
-    
-
-
-
-
-
-
-
-
-
-    const renderListElements = function(listStart, listEnd) {
-        Array.from(document.querySelector(listStart).children).forEach((li) => {
-			Array.from(li.children).forEach((i) => {
-				if (i.classList.contains('show')) {
-                    i.classList.remove('show');
-                    i.classList.add('hide');
-				} else {
-                    i.classList.remove('hide');
-                    i.classList.add('show');
-				}
-			});
-			document.querySelector(listEnd).appendChild(li);
-		});
+    const createMsg = function(text) {
+        const msg = document.createElement('p');
+        msg.classList.add('m-0');
+        msg.appendChild(document.createTextNode(text));
+        return msg;
     }
-
-
-    const renderTableUI = function() {
-        setTableBodyHead();
-        document.querySelector(UISelectors.tableBody).append(createUl('tasks text-light'));
-		// document.querySelector(UISelectors.tableBody).setAttribute('class', 'day-mode');
-    }
-    
-
-    const displayTasks = function(tasks, currToday, enableDnD, user, setTasks, ongoing = true) {
-        currToday = format(currToday, "d'-'MMM'-'yyyy");
-        console.log(tasks);
-        if (!(tasks === undefined)) {
-            if (tasks[currToday] !== undefined ) {
-                if (tasks[currToday].length !== 0) {
-                    Array.from(tasks[currToday]).forEach((task, index) => {
-                        generateDayTemplate(task, index, enableDnD, user, currToday, setTasks, ongoing);
-                    });
-                    return tasks[currToday].length;
-                } else {
-                    // no tasks for this date
-                    let list = document.querySelector(UISelectors.tasks);
-                    let li = createLi('list-group-item d-flex justify-content-center align-items-center');
-                    let p = document.createElement('p');
-                    p.className = 'lead text-center m-0';
-                    p.appendChild(document.createTextNode('No tasks to display'));
-                    li.appendChild(p);
-                    list.appendChild(li);
-                    return 0;
-                }
+    const checkPastOngoingTasks = function(tasks) {
+        let pastDates = [];
+        let pastTasks = [];
+        for (const key in tasks) {
+            // Get current date
+            const date = parse(key, "d'-'MMM'-'yyyy", new Date());
+            if (date < new Date((new Date).getFullYear(), (new Date).getMonth(), (new Date).getDate()) && tasks[key].length) {
+                // Append past date
+                pastDates.push(date);
             }
-            else {
-                // no tasks for this date
-                let list = document.querySelector(UISelectors.tasks);
-                let li = createLi('list-group-item d-flex justify-content-center align-items-center');
-                let p = document.createElement('p');
-                p.className = 'lead text-center m-0';
-                p.appendChild(document.createTextNode('No tasks to display'));
-                li.appendChild(p);
-                list.appendChild(li);
-                return 0;
-            }
-        } else {
-            // no tasks for this date
-            let list = document.querySelector(UISelectors.tasks);
-            let li = createLi('list-group-item d-flex justify-content-center align-items-center');
-            let p = document.createElement('p');
-            p.className = 'lead text-center m-0';
-            p.appendChild(document.createTextNode('No tasks to display'));
-            li.appendChild(p);
-            list.appendChild(li);
-            return 0;
         }
-    }
-
-    const generateDayTemplate = function(task, index, enableDnD, user, currToday, setTasks, ongoing = true) {
-        let list = document.querySelector(UISelectors.tasks);
-        let li = createLi('list-group-item d-flex justify-content-between align-items-center task-item', `task${index}`);
-        // 
-        let divIconComplete = document.createElement('div');
-        divIconComplete.className = 'd-flex justify-content-between align-items-center';
-        if (ongoing) {
-            divIconComplete.appendChild(createIcon('far fa-circle uncompleted'));
-            divIconComplete.appendChild(createIcon('far fa-check-circle completed hide'));
-        } else {
-            divIconComplete.appendChild(createIcon('far fa-circle uncompleted hide'));
-            divIconComplete.appendChild(createIcon('far fa-check-circle completed'));
+        // Sort in ascending order
+        pastDates.sort((a, b) => a - b);
+        // Loop through past dates & append list item
+        pastDates.forEach(pastDate => {
+            pastTasks.push(format(pastDate, "d'-'MMM'-'yyyy"));
+            let li = createLi('list-group-item d-flex justify-content-center align-items-center task-item');
+            li.textContent = format(pastDate, "d'-'MMM'-'yyyy");
+            document.querySelector(UISelectors.listPastTasks).appendChild(li);
+        });
+        // Show alert if there are any past tasks
+        if (pastTasks.length) {
+            document.querySelector(UISelectors.alertMsgWrapper).style.display = 'flex';
+            document.querySelector(UISelectors.alertMsgWrapper).style.opacity = 1;
+            document.querySelector('body').style.overflow = 'hidden';
+            document.querySelector(UISelectors.notifications).lastElementChild.textContent = 1;
+            document.querySelector(UISelectors.navNotifications).textContent = 1;
+            document.querySelector(UISelectors.notifications).classList.remove('disabled');
         }
-        li.appendChild(divIconComplete);
-        // 
-        let divText = document.createElement('div');
-		divText.className = 'lead';
-		divText.appendChild(document.createTextNode(task));
-        li.appendChild(divText);
-        // 
-        let divIcon = document.createElement('div');
-        divIcon.className = 'd-flex justify-content-between align-items-center';
-        if (ongoing) {
-            divIcon.appendChild(createIcon('fas fa-edit mr-1 edit'));
-            divIcon.appendChild(createIcon('fas fa-keyboard mr-2 fa-2x ongoing-edit text-danger hide'));
-        }
-		divIcon.appendChild(createIcon('far fa-trash-alt delete'));
-        li.appendChild(divIcon);
-        // 
-        enableDnD(li, user, currToday, setTasks);
-		//
-		list.appendChild(li);
+        return pastTasks;
     }
-
-    const errorTasks = function(text) {
-        document.querySelector(UISelectors.addForm).add.disabled = true;
-        document.querySelector(UISelectors.addForm).add.classList.toggle('invalid');
-        document.querySelector(UISelectors.errorTaskMsg).innerText = `${text}`;
-        document.querySelector(UISelectors.errorTask).classList.toggle('hide');
-        setTimeout(() => {
-            document.querySelector(UISelectors.addForm).add.disabled = false;
-            document.querySelector(UISelectors.errorTask).classList.toggle('hide');
-            document.querySelector(UISelectors.addForm).add.classList.toggle('invalid');
-        }, 1500);
-
-        return true;
+    const addToast = function(date, selector) {
+        document.querySelector(UISelectors.dateToasts).innerHTML += 
+        `
+            <div class="toast m-0" id="${selector}" role="status" aria-live="polite" aria-atomic="true" data-autohide="false">
+                <div class="toast-header p-1 pr-0">
+                    <span>${date}</span>
+                    <button type="button" class="ml-auto mb-1 close" data-dismiss="toast" aria-label="Close">
+                        <span class="x p-0" aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+        `;
     }
-
-
-
-
-
-
-
-
-
-
-
+    const addBadge = function(td, number) {
+        let span = document.createElement('span');
+        td.classList.add('task-marker-td');
+        span.className = 'badge badge-pill task-marker';
+        span.textContent = number;
+        td.appendChild(span);
+        return td
+    }
     const setTheme = function(main, secondary, td, currWeekHover, rowHover, currDay, badge, bg, text) {
 		const root = document.documentElement;
 		root.style.setProperty('--theme1-main-color', main);
@@ -623,47 +559,6 @@ const UICtrl = (function() {
 				break;
 		}
     }
-    
-
-
-
-
-
-
-    const addToast = function(date, selector) {
-        document.querySelector(UISelectors.dateToasts).innerHTML += 
-        `
-            <div class="toast m-0" id="${selector}" role="status" aria-live="polite" aria-atomic="true" data-autohide="false">
-                <div class="toast-header p-1 pr-0">
-                    <span>${date}</span>
-                    <button type="button" class="ml-auto mb-1 close" data-dismiss="toast" aria-label="Close">
-                        <span class="x p-0" aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            </div>
-        `;
-    }
-    const addBadge = function(td, number) {
-        let span = document.createElement('span');
-        td.classList.add('task-marker-td');
-        span.className = 'badge badge-pill task-marker';
-        span.textContent = number;
-        td.appendChild(span);
-        return td
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
     const enableDisableCreateBtn = function() {
         if (document.querySelector(UISelectors.username).classList.contains('valid') &&
             document.querySelector(UISelectors.email).classList.contains('valid') &&
@@ -672,6 +567,18 @@ const UICtrl = (function() {
         } else {
             document.querySelector(UISelectors.addCreateBtn).disabled = true;
         }
+    }
+    const errorTasks = function(text) {
+        document.querySelector(UISelectors.addForm).add.disabled = true;
+        document.querySelector(UISelectors.addForm).add.classList.toggle('invalid');
+        document.querySelector(UISelectors.errorTaskMsg).innerText = `${text}`;
+        document.querySelector(UISelectors.errorTask).classList.toggle('hide');
+        setTimeout(() => {
+            document.querySelector(UISelectors.addForm).add.disabled = false;
+            document.querySelector(UISelectors.errorTask).classList.toggle('hide');
+            document.querySelector(UISelectors.addForm).add.classList.toggle('invalid');
+        }, 1500);
+        return true;
     }
 
     const errorSignUpAll = function(error, errorHandler, data) {
@@ -741,7 +648,6 @@ const UICtrl = (function() {
                 break;
         }
     }
-
     const errorSignUpSingleInput = function(data, msg) {
         let p = document.createElement('p');
         p.className = "text-center invalid mb-0"
@@ -764,7 +670,6 @@ const UICtrl = (function() {
             data.pass.disabled = false;
         }, 5000);
     }
-
     const errorLogInAll = function(error, errorHandler, data) {
         const { errorMsg, errorEmail, errorPass } = errorHandler(error.code);
         switch (true) {
@@ -826,77 +731,51 @@ const UICtrl = (function() {
                 break;
         }
     }
-
-    const createMsg = function(text) {
-        const msg = document.createElement('p');
-        msg.classList.add('m-0');
-        msg.appendChild(document.createTextNode(text));
-        return msg;
-    }
-
-
-    const checkPastOngoingTasks = function(tasks) {
-        let pastDates = [];
-        let pastTasks = [];
-        for (const key in tasks) {
-            // Get current date
-            const date = parse(key, "d'-'MMM'-'yyyy", new Date());
-            if (date < new Date((new Date).getFullYear(), (new Date).getMonth(), (new Date).getDate()) && tasks[key].length) {
-                // Append past date
-                pastDates.push(date);
-            }
-        }
-        // Sort in ascending order
-        pastDates.sort((a, b) => a - b);
-        // Loop through past dates & append list item
-        pastDates.forEach(pastDate => {
-            pastTasks.push(format(pastDate, "d'-'MMM'-'yyyy"));
-            let li = document.createElement('li');
-            li.className = 'list-group-item d-flex justify-content-center align-items-center task-item';
-            li.textContent = format(pastDate, "d'-'MMM'-'yyyy");
-            document.querySelector(UISelectors.listPastTasks).appendChild(li);
+    const handleTabindex = function(selector, tabindexValue) {
+        const buttons = document.querySelectorAll(`${selector} button`);
+        Array.from(buttons).forEach(button =>{
+            button.setAttribute("tabindex", tabindexValue);
         });
-        // Show alert if there are any past tasks
-        if (pastTasks.length) {
-            document.querySelector(UISelectors.alertMsgWrapper).style.display = 'flex';
-            document.querySelector(UISelectors.alertMsgWrapper).style.opacity = 1;
-            document.querySelector('body').style.overflow = 'hidden';
-            document.querySelector(UISelectors.notifications).lastElementChild.textContent = 1;
-            document.querySelector(UISelectors.navNotifications).textContent = 1;
-            document.querySelector(UISelectors.notifications).classList.remove('disabled');
-        }
-        return pastTasks;
+        // Add focus to the first button
     }
-
+    const handleDisabledState = function(keys, disable = true) {
+        keys.forEach(key => {
+            document.querySelector(UISelectors[key]).disabled = disable;
+        });
+    }
+    const retrieveDayDate = function() {
+        const todayContent = document.querySelector(UISelectors.dayModeContent).textContent.trim();
+        let today = parse(todayContent, "d MMMM yyyy, EEEE", new Date());
+        return today;
+    }
     return {
         getSelectors: function() {
             return UISelectors;
         },
         createAddMode,
         createConfirmMode,
-        createLoginLoader,
         createLogInMode,
-        showHidePass,
-        renderLoginAccounts,
-        renderListElements,
+        createLoginLoader,
         setTableBodyHead,
+        showHidePass,
         renderTableUI,
         displayTasks,
-        errorTasks,
+        generateWeekTemplate,
+        createMsg,
+        checkPastOngoingTasks,
+        addToast,
+        addBadge,
         chooseTheme,
         chooseAvatar,
         chooseToast,
-        addToast,
-        addBadge,
         enableDisableCreateBtn,
+        errorTasks,
         errorSignUpAll,
         errorSignUpSingleInput,
         errorLogInAll,
-        generateWeekTemplate,
-        createMsg,
-        checkPastOngoingTasks
+        handleTabindex,
+        handleDisabledState,
+        retrieveDayDate
     }
-
 })();
-
 export default UICtrl;

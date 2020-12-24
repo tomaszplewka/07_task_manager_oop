@@ -1,7 +1,9 @@
+// 
 // DragAndDrop Controller
+// 
 const DnDCtrl = (function() {
+	// Initialize drag element
 	let dragSrcEl = null;
-	// 
 	const handleDragStart = function(e) {
 		if (e.target.classList.contains('list-group-item')) {
 			e.target.style.opacity = '0.1';
@@ -10,7 +12,6 @@ const DnDCtrl = (function() {
 			e.dataTransfer.setData('text/html', e.target.innerHTML);
 		}
 	}
-
 	const handleDragOver = function(e) {
 		if (e.target.classList.contains('list-group-item')) {
 			if (e.preventDefault) {
@@ -20,19 +21,16 @@ const DnDCtrl = (function() {
 			return false;
 		}
 	}
-
 	const handleDragEnter = function(e) {
 		if (e.target.classList != undefined && e.target.classList.contains('list-group-item')) {
 			e.target.classList.add('over');
 		}
 	}
-
 	const handleDragLeave = function(e) {
 		if (e.target.classList != undefined && e.target.classList.contains('list-group-item')) {
 			e.target.classList.remove('over');
 		}
 	}
-
 	const handleDrop = function(e) {
 		if (e.target.classList.contains('list-group-item')) {
 			if (e.stopPropagation) {
@@ -45,30 +43,17 @@ const DnDCtrl = (function() {
 			return false;
 		}
 	}
-
-	// const handleDragEnd = function(user) {
-	const handleDragEnd = function(user, currToday, setTasks) {
+	const handleDragEnd = function(currToday, updateAllTasks) {
 		let taskList = [];
-		console.log('drag end');
-		//
-		[].forEach.call(document.querySelectorAll('.tasks li'), (li) => {
+		[].forEach.call(document.querySelectorAll('.tasks .task-item'), (li) => {
 			li.classList.remove('over');
 			li.style.opacity = '1';
-			console.log(li.textContent);
 			taskList.push(li.textContent);
 		});
-		//
-		// if (scheduledTasks.classList.contains('active')) {
-		// 	user.tasks[dateFormat(currToday, 'MMM-D-YYYY')] = taskList;
-		// } else if (completedTasks.classList.contains('active')) {
-		// 	user.completedTasks[dateFormat(currToday, 'MMM-D-YYYY')] = taskList;
-		// }
-		// update in firestore
-		setTasks(user, currToday, taskList);
-		//
+		// Update firestore
+		updateAllTasks(currToday, taskList);
 	};
-
-	const enableDnD = function(li, user, currToday, setTasks) {
+	const enableDnD = function(li, currToday, updateAllTasks) {
 		li.draggable = true;
 		li.addEventListener('dragstart', handleDragStart, false);
 		li.addEventListener('dragenter', handleDragEnter, false);
@@ -77,17 +62,12 @@ const DnDCtrl = (function() {
 		li.addEventListener('drop', handleDrop, false);
 		li.addEventListener(
 			'dragend',
-			() => {
-				// handleDragEnd(user);
-				handleDragEnd(user, currToday, setTasks);
-			},
+			() => { handleDragEnd(currToday, updateAllTasks) },
 			false
 		);
 	}
-
 	return {
 		enableDnD
 	}
 })();
-
 export default DnDCtrl;
