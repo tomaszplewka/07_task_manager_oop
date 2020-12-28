@@ -1,9 +1,27 @@
 // 
 // UI Controller
 // 
-import { format, isToday, subDays, parse } from 'date-fns';
+import DnDCtrl from './DnDCtrl';
+import { format, isToday, subDays, parse, addWeeks, eachDayOfInterval, getDate } from 'date-fns';
 // 
-const UICtrl = (function() {
+const UICtrl = (function(DnDCtrl) {
+    // Initialize global variables
+    const vars = {
+        months: {
+            0: 'Jan',
+            1: 'Feb',
+            2: 'Mar',
+            3: 'Apr',
+            4: 'May',
+            5: 'Jun',
+            6: 'Jul',
+            7: 'Aug',
+            8: 'Sep',
+            9: 'Oct',
+            10: 'Nov',
+            11: 'Dec'
+        }
+    }
     const UISelectors = {
         addUserBtn: '#add-user-btn',
         loginBtn: '#login-btn',
@@ -114,7 +132,11 @@ const UICtrl = (function() {
         navNotifications: '.nav-notifications',
         alertAppendBtn: '#alert-append-btn',
         alertCompleteBtn: '#alert-complete-btn',
-        alertDisposeBtn: '#alert-dispose-btn'
+        alertDisposeBtn: '#alert-dispose-btn',
+        addTaskInput: '#add-task-input',
+        addTaskSubmit: '#add-task-submit',
+        searchTaskInput: '#search-task-input',
+        mainDivMsg: '#main-div-msg'
     }
     const createHeading = function(cssClass, headingTitle) {
         let heading = document.createElement('h2');
@@ -320,7 +342,64 @@ const UICtrl = (function() {
 		});
 		password.type === 'password' ? (password.type = 'text') : (password.type = 'password');
     }
+    const renderDayModeCalendar = function(currToday, tasks, updateAllTasks, ongoing = true) {
+        // Adjust UI display
+        document.querySelector(UISelectors.monthModeWrapper).setAttribute('style', 'display: none !important');
+		document.querySelector(UISelectors.weekModeWrapper).setAttribute('style', 'display: none !important');
+		document.querySelector(UISelectors.dayModeWrapper).setAttribute('style', 'display: block !important');
+		document.querySelector(UISelectors.lMonthArrow).parentElement.style.display = 'none';
+		document.querySelector(UISelectors.rMonthArrow).parentElement.style.display = 'none';
+		document.querySelector(UISelectors.lWeekArrow).parentElement.style.display = 'none';
+		document.querySelector(UISelectors.rWeekArrow).parentElement.style.display = 'none';
+		document.querySelector(UISelectors.lDayArrow).parentElement.style.display = 'flex';
+        document.querySelector(UISelectors.rDayArrow).parentElement.style.display = 'flex';
+        if (document.querySelector(UISelectors.mainOptionsBtns).classList.contains('hide')) {
+            document.querySelector(UISelectors.mainOptionsBtns).classList.remove('hide');
+            document.querySelector(UISelectors.taskTabs).classList.remove('hide');
+            // Handle buttons
+            handleDisabledStateBtn(["lWeekArrow", "rWeekArrow", "lMonthArrow", "monthModeMonth", "rMonthArrow"]);
+            handleDisabledStateBtn(["lDayArrow", "rDayArrow", "searchTasks", "addOption", "moreOptionsBtn", "taskTabsOngoing", "taskTabsCompleted"], false);
+        }
+        // Day mode is active
+        document.querySelector('body').setAttribute('class', 'day-mode-active');
+        // Set vars on welcome screen
+        document.querySelector(UISelectors.dayModeContent).textContent = `
+            ${format(currToday, "d MMMM yyyy, EEEE")}
+        `;
+        // Adjust table head & body
+        renderTableUI();
+        // Display tasks
+        if (ongoing) {
+            const taskNum = displayTasks(currToday, tasks, updateAllTasks, DnDCtrl.enableDnD);
+            if (taskNum) {
+                document.querySelector(UISelectors.leadTaskNum).textContent = taskNum;
+            } else {
+                document.querySelector(UISelectors.leadTaskNum).textContent = 0;
+            }
+            // Disable searching if no tasks to display
+            if (!(tasks === undefined)) {
+                if (tasks[format(currToday, "d'-'MMM'-'yyyy")] === undefined) {
+                    document.querySelector(UISelectors.searchForm).searchInput.classList.add('disabled');
+                } else {
+                    document.querySelector(UISelectors.searchForm).searchInput.classList.remove('disabled');
+                }
+            }
+        } else {
+            const taskNum = displayTasks(currToday, tasks, updateAllTasks, DnDCtrl.enableDnD, false);
+            if (taskNum) {
+                document.querySelector(UISelectors.leadTaskCompletedNum).textContent = taskNum;
+            } else {
+                document.querySelector(UISelectors.leadTaskCompletedNum).textContent = 0;
+            }
+        }
+        // Enable/disable left day arrow
+        const today = retrieveDayDate();
+		if (today < subDays(new Date(), 30)) {
+			document.querySelector(UISelectors.lDayArrow).disabled = true;
+		} else { document.querySelector(UISelectors.lDayArrow).disabled = false }
+    }
     const displayTasks = function(currToday, tasks, updateAllTasks, enableDnD, ongoing = true) {
+        // Format current day
         currToday = format(currToday, "d'-'MMM'-'yyyy");
         // Check tasks
         if (!(tasks === undefined) && (tasks[currToday] !== undefined) && (tasks[currToday].length !== 0)) {
@@ -368,6 +447,42 @@ const UICtrl = (function() {
 		// Append task item
 		list.appendChild(li);
     }
+    const renderWeekModeCalendar = function(currFirstDayOfWeek, tasks) {
+        // Adjust week mode display
+        document.querySelector(UISelectors.monthModeWrapper).setAttribute('style', 'display: none !important');
+        document.querySelector(UISelectors.weekModeWrapper).setAttribute('style', 'display: block !important');
+        document.querySelector(UISelectors.dayModeWrapper).setAttribute('style', 'display: none !important');
+        document.querySelector(UISelectors.lMonthArrow).parentElement.style.display = 'none';
+        document.querySelector(UISelectors.rMonthArrow).parentElement.style.display = 'none';
+        document.querySelector(UISelectors.lWeekArrow).parentElement.style.display = 'flex';
+        document.querySelector(UISelectors.rWeekArrow).parentElement.style.display = 'flex';
+        document.querySelector(UISelectors.lDayArrow).parentElement.style.display = 'none';
+        document.querySelector(UISelectors.rDayArrow).parentElement.style.display = 'none';
+        if (!document.querySelector(UISelectors.mainOptionsBtns).classList.contains('hide')) {
+            document.querySelector(UISelectors.mainOptionsBtns).classList.add('hide');
+            document.querySelector(UISelectors.taskTabs).classList.add('hide');
+        }
+        // Handle buttons
+        handleDisabledStateBtn(["lDayArrow", "rDayArrow", "lMonthArrow", "monthModeMonth", "rMonthArrow", "searchTasks", "addOption", "moreOptionsBtn", "taskTabsOngoing", "taskTabsCompleted"]);
+        handleDisabledStateBtn(["lWeekArrow", "rWeekArrow"], false);
+        // Week mode is active
+        document.querySelector('body').setAttribute('class', 'week-mode-active');
+        // Generate correct week
+        const firstDayNextWeek = addWeeks(currFirstDayOfWeek, 1);
+        const week = eachDayOfInterval({
+            start: currFirstDayOfWeek,
+            end: subDays(firstDayNextWeek, 1)
+        });
+        // Adjust table body & header
+        setTableBodyHead(false);
+        // Generate week template
+        document.querySelector(UISelectors.weekModeContent).textContent = 
+        `
+            ${getDate(currFirstDayOfWeek)} ${format(currFirstDayOfWeek, 'MMMM yyyy')} - 
+            ${getDate(subDays(firstDayNextWeek, 1))} ${format(subDays(firstDayNextWeek, 1), 'MMMM yyyy')}
+        `;
+        generateWeekTemplate(week, tasks);
+    }
     const generateWeekTemplate = function(week, taskList) {
         // Create week template
         let row = document.createElement('tr');
@@ -391,12 +506,122 @@ const UICtrl = (function() {
         });
         // Append week
 		document.querySelector(UISelectors.tableBody).append(row);
-		document.querySelector('body').setAttribute('class', 'week-mode-active');
 		// Enable/disable left week arrow
 		if (row.classList.contains('invalid-week')) {
             document.querySelector(UISelectors.lWeekArrow).disabled = true;
 		} else {
 			document.querySelector(UISelectors.lWeekArrow).disabled = false;
+		}
+    }
+    const renderMonthModeCalendar = function(year, month, today, tasks) {
+        // Adjust UI display
+        document.querySelector(UISelectors.monthModeWrapper).setAttribute('style', 'display: block !important');
+        document.querySelector(UISelectors.weekModeWrapper).setAttribute('style', 'display: none !important');
+        document.querySelector(UISelectors.dayModeWrapper).setAttribute('style', 'display: none !important');
+        document.querySelector(UISelectors.lMonthArrow).parentElement.style.display = 'flex';
+        document.querySelector(UISelectors.rMonthArrow).parentElement.style.display = 'flex';
+        document.querySelector(UISelectors.lWeekArrow).parentElement.style.display = 'none';
+        document.querySelector(UISelectors.rWeekArrow).parentElement.style.display = 'none';
+        document.querySelector(UISelectors.lDayArrow).parentElement.style.display = 'none';
+        document.querySelector(UISelectors.rDayArrow).parentElement.style.display = 'none';
+        if (!document.querySelector(UISelectors.mainOptionsBtns).classList.contains('hide')) {
+            document.querySelector(UISelectors.mainOptionsBtns).classList.add('hide');
+            document.querySelector(UISelectors.taskTabs).classList.add('hide');
+        }
+        // Handle buttons
+        handleDisabledStateBtn(["lDayArrow", "rDayArrow", "lWeekArrow", "rWeekArrow", "searchTasks", "addOption", "moreOptionsBtn", "taskTabsOngoing", "taskTabsCompleted"]);
+        handleDisabledStateBtn(["lMonthArrow", "monthModeMonth", "rMonthArrow"], false);
+        // Adjust current date
+        document.querySelector(UISelectors.monthModeMonth).options[month].selected = true;
+        document.querySelector(UISelectors.monthModeYear).textContent = year;
+        // Month mode is active
+        document.querySelector('body').setAttribute('class', 'month-mode-active');
+        // Adjust months in select
+		if (month === 0) {
+			document.querySelector(UISelectors.lMonthArrow).lastElementChild.textContent = vars.months[11];
+			document.querySelector(UISelectors.rMonthArrow).firstElementChild.textContent = vars.months[month + 1];
+		} else if (month === 11) {
+			document.querySelector(UISelectors.lMonthArrow).lastElementChild.textContent = vars.months[month - 1];
+			document.querySelector(UISelectors.rMonthArrow).firstElementChild.textContent = vars.months[0];
+		} else {
+			document.querySelector(UISelectors.lMonthArrow).lastElementChild.textContent = vars.months[month - 1];
+			document.querySelector(UISelectors.rMonthArrow).firstElementChild.textContent = vars.months[month + 1];
+		}
+		if (Number(document.querySelector(UISelectors.monthModeYear).textContent) === today.getFullYear()) {
+			Array.from(document.querySelector(UISelectors.monthModeMonth).options)
+            .filter(month => month.index < subDays(today, 30).getMonth())
+            .forEach(month => { month.classList.add('hide') });
+		} else {
+            Array.from(document.querySelector(UISelectors.monthModeMonth).options)
+            .forEach(curr => { curr.classList.remove('hide') });
+		}
+        // Adjust table body & header
+        setTableBodyHead(false);
+        // Generate month template
+        generateMonthTemplate(year, month, today, tasks);
+		// Enable/disable left month arrow
+		if (document.querySelector(UISelectors.monthModeMonth).selectedIndex === subDays(today, 30).getMonth() && (new Date()).getFullYear() === Number(document.querySelector(UISelectors.monthModeYear).textContent.trim())) {
+			document.querySelector(UISelectors.lMonthArrow).disabled = true;
+		} else { document.querySelector(UISelectors.lMonthArrow).disabled = false }
+    }
+    const generateMonthTemplate = function(year, month, today, tasks) {
+        // Set local vars
+        let startOfCurrMonth = new Date(year, month).getDay();
+		let numOfDayCurrMonth = 32 - new Date(year, month, 32).getDate();
+		let numOfDayPrevMonth = 32 - new Date(year, month - 1, 32).getDate();
+		if (numOfDayPrevMonth === -1) {
+			numOfDayPrevMonth = 1;
+		}
+		let renderDaysNumCurrMonth = 1;
+		let renderDaysNumPrevMonth = numOfDayPrevMonth - startOfCurrMonth + 1;
+		let renderDaysNumNextMonth = 1;
+        let flag = 0;
+		// Render calendar
+		let i = 0;
+		while (flag >= 0) {
+			let row = document.createElement('tr');
+			for (let j = 0; j < 7; j++) {
+				if (i === 0 && j < startOfCurrMonth) {
+                    let td = document.createElement('td');
+                    td.classList.add('disabled');
+					td.textContent = renderDaysNumPrevMonth;
+					row.append(td);
+					renderDaysNumPrevMonth++;
+				} else if (renderDaysNumCurrMonth > numOfDayCurrMonth) {
+					flag--;
+					if (j === 0) {
+						break;
+					}
+                    let td = document.createElement('td');
+                    td.classList.add('disabled');
+					td.textContent = renderDaysNumNextMonth;
+					row.append(td);
+					renderDaysNumNextMonth++;
+				} else {
+					let td = document.createElement('td');
+					td.textContent = renderDaysNumCurrMonth;
+					if (renderDaysNumCurrMonth === today.getDate() &&
+						year === today.getFullYear() &&
+						month === today.getMonth()) {
+                        td.classList.add('current-day')
+                        row.classList.add('current-week');
+					}
+					if (new Date(year, month, renderDaysNumCurrMonth) <
+						subDays(today, 31)) {
+                        td.classList.add('invalid-day');
+                    } else { td.classList.add('valid-day') }
+                    // Add badge
+                    if (tasks[format(new Date(year, month, renderDaysNumCurrMonth), "d'-'MMM'-'yyyy")] !== undefined && tasks[format(new Date(year, month, renderDaysNumCurrMonth), "d'-'MMM'-'yyyy")].length) {
+                        td = UICtrl.addBadge(td, tasks[format(new Date(year, month, renderDaysNumCurrMonth), "d'-'MMM'-'yyyy")].length);
+                    }
+					// Append day
+					row.append(td);
+					renderDaysNumCurrMonth++;
+				}
+            }
+            // Append week
+            document.querySelector(UISelectors.tableBody).append(row);
+			i++;
 		}
     }
     const createMsg = function(text) {
@@ -436,12 +661,12 @@ const UICtrl = (function() {
         }
         return pastTasks;
     }
-    const addToast = function(date, selector) {
-        document.querySelector(UISelectors.dateToasts).innerHTML += 
+    const addToast = function(text, id, selector, autohide = false) {
+        document.querySelector(UISelectors[selector]).innerHTML += 
         `
-            <div class="toast m-0" id="${selector}" role="status" aria-live="polite" aria-atomic="true" data-autohide="false">
+            <div class="toast m-0" id="${id}" role="status" aria-live="polite" aria-atomic="true" data-autohide="${autohide}" data-animation="true" data-delay="500">
                 <div class="toast-header p-1 pr-0">
-                    <span>${date}</span>
+                    <span>${text}</span>
                     <button type="button" class="ml-auto mb-1 close" data-dismiss="toast" aria-label="Close">
                         <span class="x p-0" aria-hidden="true">&times;</span>
                     </button>
@@ -738,7 +963,7 @@ const UICtrl = (function() {
         });
         // Add focus to the first button
     }
-    const handleDisabledState = function(keys, disable = true) {
+    const handleDisabledStateBtn = function(keys, disable = true) {
         keys.forEach(key => {
             document.querySelector(UISelectors[key]).disabled = disable;
         });
@@ -759,8 +984,11 @@ const UICtrl = (function() {
         setTableBodyHead,
         showHidePass,
         renderTableUI,
+        renderDayModeCalendar,
         displayTasks,
+        renderWeekModeCalendar,
         generateWeekTemplate,
+        renderMonthModeCalendar,
         createMsg,
         checkPastOngoingTasks,
         addToast,
@@ -774,8 +1002,8 @@ const UICtrl = (function() {
         errorSignUpSingleInput,
         errorLogInAll,
         handleTabindex,
-        handleDisabledState,
+        handleDisabledStateBtn,
         retrieveDayDate
     }
-})();
+})(DnDCtrl);
 export default UICtrl;

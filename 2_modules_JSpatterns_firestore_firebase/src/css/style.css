@@ -295,10 +295,10 @@ div.lead {
 	margin: 0;
 }
 
-/* .toast-header {
-	padding: 0.25rem;
-	
-} */
+#main-div-msg .toast {
+	flex-basis: 100%;
+	max-width: none !important;
+}
 
 #task-tabs .btn.active {
 	z-index: 0 !important;

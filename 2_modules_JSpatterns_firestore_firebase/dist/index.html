@@ -65,13 +65,16 @@
     <div class="container pb-5" id="main-body" style="display: none;">
         <div class="row">
             <div class="col col-sm-12">
-                <h1 class="text-center main-header pt-5 pb-3 px-3">Hello <span id="welcome-header"></span>!<br>How are
-                    you today?</h1>
+                <h1 class="text-center main-header p-3 pt-5">Hello <span id="welcome-header"></span>!<br>How are you today?</h1>
             </div>
         </div>
         <div class="row">
             <div class="col col-sm-12">
                 <p class="lead text-center px-3">Today is <span id="lead-today-date"></span></p>
+            </div>
+        </div>
+        <div class="row justify-content-between align-items-center py-2 px-3 mx-0">
+            <div id="main-div-msg" class="col-12 p-0 d-flex flex-wrap justify-content-center align-items-center p-0">
             </div>
         </div>
         <div class="row justify-content-between align-items-center py-2 px-3 mx-0">
@@ -211,19 +214,19 @@
         <div id="search-form-wrapper">
             <form class="search-form py-2" autocomplete="off">
                 <div class="input-group">
-                    <input class="form-control m-auto" type="text" name="searchInput" placeholder="search tasks..." disabled/>
+                    <input id="search-task-input" class="form-control m-auto" type="text" name="searchInput" placeholder="search tasks..." disabled/>
                 </div>
             </form>
         </div>
         <div id="add-form-wrapper">
             <form class="add text-center py-2" autocomplete="off">
                 <div class="input-group d-flex">
-                    <input class="form-control m-auto" type="text" name="add" placeholder="add a new task..." maxlength = "100" disabled />
+                    <input id="add-task-input" class="form-control m-auto" type="text" name="add" placeholder="add a new task..." maxlength = "100" disabled />
                     <div class="input-group-append">
                         <button class="btn btn-outline-light" type="button" id="pick-date" disabled>
                             <i class="fas fa-calendar-alt"></i>
                         </button>
-                        <button class="btn btn-outline-light" type="submit" name="submit" disabled>
+                        <button id="add-task-submit" class="btn btn-outline-light" type="submit" name="submit" disabled>
                             <i class="fas fa-chevron-right"></i>
                         </button>
                     </div>
