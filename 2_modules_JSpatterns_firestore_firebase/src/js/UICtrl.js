@@ -3,6 +3,7 @@
 // 
 import DnDCtrl from './DnDCtrl';
 import { format, isToday, subDays, parse, addWeeks, eachDayOfInterval, getDate } from 'date-fns';
+import $ from 'jquery';
 // 
 const UICtrl = (function(DnDCtrl) {
     // Initialize global variables
@@ -136,7 +137,14 @@ const UICtrl = (function(DnDCtrl) {
         addTaskInput: '#add-task-input',
         addTaskSubmit: '#add-task-submit',
         searchTaskInput: '#search-task-input',
-        mainDivMsg: '#main-div-msg'
+        mainDivMsg: '#main-div-msg',
+        taskDivMsg: '#task-div-msg',
+        settingsDivMsg: '#settings-div-msg',
+        pastTasksDivMsg: '#past-tasks-div-msg',
+        deleteDivMsg: '#delete-div-msg',
+        focusguard: '.focusguard',
+        focusguard1: '#focusguard-1',
+        focusguard2: '#focusguard-2'
     }
     const createHeading = function(cssClass, headingTitle) {
         let heading = document.createElement('h2');
@@ -658,21 +666,32 @@ const UICtrl = (function(DnDCtrl) {
             document.querySelector(UISelectors.notifications).lastElementChild.textContent = 1;
             document.querySelector(UISelectors.navNotifications).textContent = 1;
             document.querySelector(UISelectors.notifications).classList.remove('disabled');
+            // Add tabindex
+            handleTabindex(UISelectors.focusguard, "0", '');
+            // Set focus
+            document.querySelector(UISelectors.focusguard1).focus();
         }
         return pastTasks;
     }
-    const addToast = function(text, id, selector, autohide = false) {
+    const addToast = function(selector, id, text, role = 'status', ariaLive = 'polite', autohide = false, delay = 500, msgClass = '') {
         document.querySelector(UISelectors[selector]).innerHTML += 
         `
-            <div class="toast m-0" id="${id}" role="status" aria-live="polite" aria-atomic="true" data-autohide="${autohide}" data-animation="true" data-delay="500">
+            <div class="toast m-0" id="${id}" role="${role}" aria-live="${ariaLive}" aria-atomic="true" data-autohide="${autohide}" data-animation="true" data-delay="${delay}">
                 <div class="toast-header p-1 pr-0">
-                    <span>${text}</span>
+                    <span class="${msgClass}">${text}</span>
                     <button type="button" class="ml-auto mb-1 close" data-dismiss="toast" aria-label="Close">
                         <span class="x p-0" aria-hidden="true">&times;</span>
                     </button>
                 </div>
             </div>
         `;
+        $(`${UISelectors[selector]} .toast`).toast('show');
+    }
+    const addMsgToast = function(selector, id, text, role = 'status', ariaLive = 'polite', autohide = false, delay = 500, msgClass = '') {
+        // Clear messages first
+        document.querySelector(UISelectors[selector]).innerHTML = '';
+        // Show message toast
+        addToast(selector, id, text, role, ariaLive, autohide, delay, msgClass);
     }
     const addBadge = function(td, number) {
         let span = document.createElement('span');
@@ -956,8 +975,8 @@ const UICtrl = (function(DnDCtrl) {
                 break;
         }
     }
-    const handleTabindex = function(selector, tabindexValue) {
-        const buttons = document.querySelectorAll(`${selector} button`);
+    const handleTabindex = function(selector, tabindexValue, tagTarget = 'button') {
+        const buttons = document.querySelectorAll(`${selector} ${tagTarget}`);
         Array.from(buttons).forEach(button =>{
             button.setAttribute("tabindex", tabindexValue);
         });
@@ -992,6 +1011,7 @@ const UICtrl = (function(DnDCtrl) {
         createMsg,
         checkPastOngoingTasks,
         addToast,
+        addMsgToast,
         addBadge,
         chooseTheme,
         chooseAvatar,

@@ -295,7 +295,11 @@ div.lead {
 	margin: 0;
 }
 
-#main-div-msg .toast {
+#main-div-msg .toast,
+#task-div-msg .toast,
+#past-tasks-div-msg .toast,
+#delete-div-msg .toast,
+#settings-div-msg .toast {
 	flex-basis: 100%;
 	max-width: none !important;
 }
