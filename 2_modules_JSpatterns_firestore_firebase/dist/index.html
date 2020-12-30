@@ -17,7 +17,7 @@
         </h1>
         <div class="login-inner-wrapper">
             <div class="login-main-div px-4 pt-3 pb-4">
-                <h2 class="display-4 welcome-heading text-center">Welcome</h2>
+                <h2 class="display-4 welcome-heading text-center">What would you like to do?</h2>
                 <div class="btn-group d-flex pt-4">
                     <button id="add-user-btn" type="button" name="add-new-user" class="btn btn-outline-light">
                         <i class="fas fa-user-plus mr-1"></i>
@@ -31,7 +31,7 @@
             </div>
         </div>
     </div>
-    <div class="container" id="main-navbar" style="display: none;">
+    <div class="container p-0" id="main-navbar" style="display: none;">
         <nav class="navbar navbar-expand-lg p-3">
             <div class="navbar-brand">
                 <h1 class="h1 m-0 text-white">
@@ -62,25 +62,25 @@
             </div>
         </nav>
     </div>
-    <div class="container pb-5" id="main-body" style="display: none;">
-        <div class="row">
-            <div class="col col-sm-12">
+    <div class="container p-0 pb-5" id="main-body" style="display: none;">
+        <div class="row m-0">
+            <div class="col col-sm-12 m-0 p-0">
                 <h1 class="text-center main-header p-3 pt-5">Hello <span id="welcome-header"></span>!<br>How are you today?</h1>
             </div>
         </div>
-        <div class="row">
-            <div class="col col-sm-12">
+        <div class="row m-0">
+            <div class="col col-sm-12 m-0 p-0">
                 <p class="lead text-center px-3">Today is <span id="lead-today-date"></span></p>
             </div>
         </div>
-        <div class="row justify-content-between align-items-center py-2 px-3 mx-0">
-            <div id="main-div-msg" class="col-12 p-0 d-flex flex-wrap justify-content-center align-items-center p-0">
+        <div class="row justify-content-between align-items-center py-0 px-3 m-0">
+            <div id="main-div-msg" class="col-12 d-flex flex-wrap justify-content-center align-items-center m-0 p-0">
             </div>
         </div>
-        <div class="row justify-content-between align-items-center py-2 px-3 mx-0">
-            <div class="month-mode-wrapper col-12 p-0">
-                <div class="row justify-content-between align-items-center">
-                    <div class="month-mode-arrow col-2 order-1 py-2">
+        <div class="row justify-content-between align-items-center py-0 px-3 m-0">
+            <div class="month-mode-wrapper col-12 m-0 p-0">
+                <div class="row justify-content-between align-items-center m-0">
+                    <div class="month-mode-arrow col-2 order-1 m-0 p-0 py-2">
                         <div class="d-flex justify-content-start">
                             <button id="l-month-arrow" type="button" class="btn btn-outline-light d-flex align-items-baseline" disabled>
                                 <i class="fas fa-chevron-left"></i>
@@ -89,9 +89,9 @@
                             </button>
                         </div>
                     </div>
-                    <div class="d-flex justify-content-center col-12 col-sm-7 order-3 order-sm-2 py-2">
-                        <div class="row w-100 align-items-baseline">
-                            <select class="custom-select col-9 lead" id="month-mode-month" disabled>
+                    <div class="d-flex justify-content-center col-12 col-sm-7 order-3 order-sm-2 m-0 p-0 py-2">
+                        <div class="row w-100 align-items-baseline m-0">
+                            <select class="custom-select col-9 m-0 p-0 lead" id="month-mode-month" disabled>
                                 <option value="0">January</option>
                                 <option value="1">February</option>
                                 <option value="2">March</option>
@@ -105,10 +105,10 @@
                                 <option value="10">November</option>
                                 <option value="11">December</option>
                             </select>
-                            <span id="month-mode-year" class="text-center pl-2 col-3 lead"></span>
+                            <span id="month-mode-year" class="text-center pl-2 col-3 m-0 p-0 lead"></span>
                         </div>
                     </div>
-                    <div class="month-mode-arrow col-2 order-2 order-sm-3 py-2">
+                    <div class="month-mode-arrow col-2 order-2 order-sm-3 m-0 p-0 py-2">
                         <div class="d-flex justify-content-end">
                             <button id="r-month-arrow" type="button" class="btn btn-outline-light d-flex align-items-baseline" disabled>
                                 <span class="float-left"></span>
@@ -119,9 +119,9 @@
                     </div>
                 </div>
             </div>
-            <div class="week-mode-wrapper col-12 p-0">
-                <div class="row justify-content-between align-items-center">
-                    <div class="week-mode-arrow col-2 order-1 py-2">
+            <div class="week-mode-wrapper col-12 m-0 p-0">
+                <div class="row justify-content-between align-items-center m-0">
+                    <div class="week-mode-arrow col-2 order-1 m-0 p-0 py-2">
                         <div class="d-flex justify-content-start">
                             <button id="l-week-arrow" type="button" class="btn btn-outline-light d-flex align-items-center" disabled>
                                 <i class="fas fa-chevron-left"></i>
@@ -130,8 +130,8 @@
                         </div>
                     </div>
                     <span id="week-mode-content"
-                        class="text-center w-100 col-12 col-sm-8 order-3 order-sm-2 py-2 lead"></span>
-                    <div class="week-mode-arrow col-2 order-2 order-sm-3 py-2">
+                        class="text-center w-100 col-12 col-sm-8 order-3 order-sm-2 m-0 p-0 py-2 lead"></span>
+                    <div class="week-mode-arrow col-2 order-2 order-sm-3 m-0 p-0 py-2">
                         <div class="d-flex justify-content-end">
                             <button id="r-week-arrow" type="button" class="btn btn-outline-light d-flex align-items-center" disabled>
                                 <i class="fas fa-chevron-right"></i>
@@ -141,9 +141,9 @@
                     </div>
                 </div>
             </div>
-            <div class="day-mode-wrapper col-12 p-0">
-                <div class="row justify-content-between align-items-center">
-                    <div class="day-mode-arrow col-2 order-1 py-2">
+            <div class="day-mode-wrapper col-12 m-0 p-0">
+                <div class="row justify-content-between align-items-center m-0">
+                    <div class="day-mode-arrow col-2 order-1 m-0 p-0 py-2">
                         <div class="d-flex justify-content-start">
                             <button id="l-day-arrow" type="button" class="btn btn-outline-light d-flex align-items-center" disabled>
                                 <i class="fas fa-chevron-left"></i>
@@ -152,8 +152,8 @@
                         </div>
                     </div>
                     <span id="day-mode-content"
-                        class="text-center w-100 col-12 col-sm-8 order-3 order-sm-2 py-2 lead"></span>
-                    <div class="day-mode-arrow col-2 order-2 order-sm-3 py-2">
+                        class="text-center w-100 col-12 col-sm-8 order-3 order-sm-2 m-0 p-0 py-2 lead"></span>
+                    <div class="day-mode-arrow col-2 order-2 order-sm-3 m-0 p-0 py-2">
                         <div class="d-flex justify-content-end">
                             <button id="r-day-arrow" type="button" class="btn btn-outline-light d-flex align-items-center" disabled>
                                 <i class="fas fa-chevron-right"></i>
@@ -164,24 +164,25 @@
                 </div>
             </div>
         </div>
-        <div class="row mx-0">
-            <div class="col-12">
-                <p class="lead text-center px-3">You have <span id="lead-task-number"></span> task(s) scheduled</p>
+        <div id="task-progress-wrapper" class="row m-0">
+            <div class="col-12 m-0 p-0">
+                <p class="lead text-center px-3 my-2">You have <span id="lead-task-number"></span> task(s) scheduled</p>
             </div>
-            <div class="col-12 hide">
-                <p class="lead text-center px-3">You have <span id="lead-task-completed"></span> task(s) completed</p>
+            <div class="col-12 m-0 p-0 hide">
+                <p class="lead text-center px-3 my-2">You have <span id="lead-task-completed"></span> task(s) completed</p>
             </div>
-            <div class="col-12 px-3 mb-2" id="task-progress">
+            <div class="col-12 m-0 p-0 px-3" id="task-progress">
                 <div class="d-flex">
                     <div class="progress w-100">
                         <div class="progress-bar progress-bar-striped progress-bar-animated position-relative" role="progressbar" aria-valuemin="0"
                             aria-valuemax="100"><small class="px-1"></small></div>
                     </div>
                 </div>
+                <p class="lead my-2 text-center">Progress: <span id="day-progress">0%</span></p>
             </div>
         </div>
-        <div class="row py-2 px-3 mx-0" id="mode-btns">
-            <div class="btn-group col-12 p-0 d-flex justify-content-center" role="group">
+        <div class="row py-2 px-3 m-0" id="mode-btns">
+            <div class="btn-group col-12 d-flex justify-content-center m-0 p-0" role="group">
                 <button id="day-mode-btn" type="button" class="btn btn-outline-light" disabled>
                     Day Mode
                 </button>
@@ -193,8 +194,8 @@
                 </button>
             </div>
         </div>
-        <div class="row py-2 px-3 mx-0" id="main-options-btn">
-            <div class="btn-group col-12 p-0 d-flex justify-content-center" role="group">
+        <div class="row py-2 px-3 m-0" id="main-options-btn">
+            <div class="btn-group col-12 d-flex justify-content-center m-0 p-0" role="group">
                 <button type="button" class="btn btn-outline-light" id="search-icon-primary" disabled>
                     <i class="fas fa-search"></i>
                 </button>
@@ -233,14 +234,14 @@
                 </div>
             </form>
             <div class="error-task py-2 px-3 hide">
-                <p class="lead text-center error-task-msg invalid"></p>
+                <p class="lead text-center error-task-msg invalid m-0"></p>
             </div>
         </div>
-        <div id="pick-date-form-wrapper" class="row py-2 px-3 mx-0">
-            <div class="calendar col-12 text-center input-group d-flex justify-content-center align-items-center p-0">
+        <div id="pick-date-form-wrapper" class="row py-2 px-3 m-0">
+            <div class="calendar col-12 text-center input-group d-flex justify-content-center align-items-center m-0 p-0">
                 <div class="date-toasts d-flex flex-wrap justify-content-center align-items-center p-0"></div>
             </div>
-            <div class="col-12 d-flex justify-content-center align-items-center p-0 pt-3">
+            <div class="col-12 d-flex justify-content-center align-items-center m-0 p-0 pt-3">
                 <div class="btn-group" role="group">
                     <button id="pick-date-today-btn" type="button" class="btn btn-outline-light btn-sm" disabled>
                         Today
@@ -251,8 +252,8 @@
                 </div>
             </div>
         </div>
-        <div id="select-all-options" class="mx-0 py-2 px-3 row">
-            <div class="btn-group col-12 p-0 d-flex justify-content-center" role="group">
+        <div id="select-all-options" class="row py-2 px-3 m-0">
+            <div class="btn-group col-12 d-flex justify-content-center m-0 p-0" role="group">
                 <button type="button" class="btn btn-outline-light col-12 col-sm-4" id="mark-as-btn" disabled></button>
                 <button type="button" class="btn btn-outline-light col-12 col-sm-4" id="delete-btn" disabled>
                     Delete
@@ -262,7 +263,7 @@
                 </button>
             </div>
         </div>
-        <div class="m-0 py-2 px-3 row" id="task-tabs">
+        <div class="row pt-2 pb-0 px-3 m-0" id="task-tabs">
             <div class="btn-group col-12 p-0 d-flex justify-content-center" role="group">
                 <button type="button" class="btn btn-outline-light col-12 col-sm-6 active" id="task-tabs-ongoing" disabled>
                     Scheduled
@@ -272,11 +273,11 @@
                 </button>
             </div>
         </div>
-        <div class="row justify-content-between align-items-center py-2 px-3 mx-0">
-            <div id="task-div-msg" class="col-12 p-0 d-flex flex-wrap justify-content-center align-items-center p-0">
+        <div class="row justify-content-between align-items-center py-2 px-3 m-0">
+            <div id="task-div-msg" class="col-12 d-flex flex-wrap justify-content-center align-items-center m-0 p-0">
             </div>
         </div>
-        <table class="table table-hover px-3">
+        <table class="table table-hover px-3 m-0">
             <thead id="table-head" class="text-center">
             </thead>
             <tbody class="" id="table-body">
@@ -285,11 +286,11 @@
     </div>
     <div id="alert-message-wrapper" style="opacity: 0;">
         <div class="alert-message text-center p-3">
-            <div id="focusguard-1" class="focusguard" tabindex="-1"></div>
-            <span id="alert-close-btn" class="focusguard" tabindex="-1"><i class="fas fa-window-close"></i></span>
+            <div id="focusguard-past-task-1" class="focusguard-past-task" tabindex="-1"></div>
+            <span id="alert-close-btn" class="focusguard-past-task" tabindex="-1"><i class="fas fa-window-close"></i></span>
             <h2 class="display-4 px-5">Heads-Up!</h2>
-            <div class="row justify-content-between align-items-center p-0 mx-0">
-                <div id="past-tasks-div-msg" class="col-12 p-0 d-flex flex-wrap justify-content-center align-items-center p-0">
+            <div class="row justify-content-between align-items-center p-0 m-0">
+                <div id="past-tasks-div-msg" class="col-12 d-flex flex-wrap justify-content-center align-items-center m-0 p-0">
                 </div>
             </div>
             <p class="lead">You have past incomplete tasks</p>
@@ -297,23 +298,25 @@
             </ul>
             <p class="lead">What do you want me to do with them?</p>
             <div class="d-flex flex-column">
-                <button id="alert-append-btn" type="button" class="btn btn-outline-dark focusguard" tabindex="-1">
+                <button id="alert-append-btn" type="button" class="btn btn-outline-dark focusguard-past-task" tabindex="-1">
                     Append to today's tasks
                 </button>
-                <button id="alert-complete-btn" type="button" class="btn btn-outline-dark focusguard" tabindex="-1">
+                <button id="alert-complete-btn" type="button" class="btn btn-outline-dark focusguard-past-task" tabindex="-1">
                     Mark as completed
                 </button>
-                <button id="alert-dispose-btn" type="button" class="btn btn-outline-dark focusguard" tabindex="-1">
+                <button id="alert-dispose-btn" type="button" class="btn btn-outline-dark focusguard-past-task" tabindex="-1">
                     Dispose of them
                 </button>
             </div>
-            <div id="focusguard-2" class="focusguard" tabindex="-1"></div>
+            <div id="focusguard-past-task-2" class="focusguard-past-task" tabindex="-1"></div>
             <small class="text-muted">NOTE: Tasks older than 30 days will be automatically deleted!</small>
         </div>
     </div>
     <div id="toast-message-wrapper" style="opacity: 0;">
         <div class="toast-message text-center p-3">
-            <span id="toast-close-btn"><i class="fas fa-window-close"></i></span>
+            <div id="focusguard-toast-1" class="focusguard-toast" tabindex="-1"></div>
+            <span id="toast-close-btn" class="focusguard-toast" tabindex="-1"><i class="fas fa-window-close"></i></span>
+            <div id="focusguard-toast-2" class="focusguard-toast" tabindex="-1"></div>
             <h2 class="display-4 px-5">Day Toast Alert!</h2>
             <div class="dropdown-divider"></div>
             <p class="lead">Maximum number of day toasts has been reached!</p>
@@ -323,87 +326,91 @@
     </div>
     <div id="settings-wrapper" style="opacity: 0;">
         <div class="settings text-center p-3">
-            <span id="settings-close-btn"><i class="fas fa-window-close"></i></span>
+            <div id="focusguard-settings-1" class="focusguard-settings" tabindex="-1"></div>
+            <span id="settings-close-btn" class="focusguard-settings" tabindex="-1"><i class="fas fa-window-close"></i></span>
             <h2 class="display-4 px-5">General Settings</h2>
             <div class="dropdown-divider"></div>
-            <div class="row justify-content-between align-items-center p-0 mx-0">
-                <div id="settings-div-msg" class="col-12 p-0 d-flex flex-wrap justify-content-center align-items-center p-0">
+            <div class="row justify-content-between align-items-center p-0 m-0">
+                <div id="settings-div-msg" class="col-12 d-flex flex-wrap justify-content-center align-items-center m-0 p-0">
                 </div>
             </div>
             <p class="lead">Theme</p>
             <div id="theme-btns-wrapper">
                 <div class="btn-group" role="group">
-                    <button type="button" id="theme-1" class="btn btn-outline-dark theme">1</button>
-                    <button type="button" id="theme-2" class="btn btn-outline-dark theme">2</button>
-                    <button type="button" id="theme-3" class="btn btn-outline-dark theme">3</button>
-                    <button type="button" id="theme-4" class="btn btn-outline-dark theme">4</button>
-                    <button type="button" id="theme-5" class="btn btn-outline-dark theme">5</button>
-                    <button type="button" id="theme-6" class="btn btn-outline-dark theme">6</button>
+                    <button type="button" id="theme-1" class="btn btn-outline-dark theme focusguard-settings" tabindex="-1">1</button>
+                    <button type="button" id="theme-2" class="btn btn-outline-dark theme focusguard-settings" tabindex="-1">2</button>
+                    <button type="button" id="theme-3" class="btn btn-outline-dark theme focusguard-settings" tabindex="-1">3</button>
+                    <button type="button" id="theme-4" class="btn btn-outline-dark theme focusguard-settings" tabindex="-1">4</button>
+                    <button type="button" id="theme-5" class="btn btn-outline-dark theme focusguard-settings" tabindex="-1">5</button>
+                    <button type="button" id="theme-6" class="btn btn-outline-dark theme focusguard-settings" tabindex="-1">6</button>
                 </div>
             </div>
             <div class="dropdown-divider"></div>
             <p class="lead">Avatar</p>
             <div id="avatar-btns-wrapper">
                 <div class="btn-group" role="group">
-                    <button type="button" id="avatar-1" class="btn btn-outline-dark avatar"><i class="fas fa-user fa-2x"></i></button>
-                    <button type="button" id="avatar-2" class="btn btn-outline-dark avatar"><i class="fas fa-user-tie fa-2x"></i></button>
-                    <button type="button" id="avatar-3" class="btn btn-outline-dark avatar"><i class="fas fa-user-secret fa-2x"></i></button>
-                    <button type="button" id="avatar-4" class="btn btn-outline-dark avatar"><i class="fas fa-user-nurse fa-2x"></i></button>
-                    <button type="button" id="avatar-5" class="btn btn-outline-dark avatar"><i class="fas fa-user-ninja fa-2x"></i></button>
-                    <button type="button" id="avatar-6" class="btn btn-outline-dark avatar"><i class="fas fa-user-md fa-2x"></i></button>
-                    <button type="button" id="avatar-7" class="btn btn-outline-dark avatar"><i class="fas fa-user-injured fa-2x"></i></button>
+                    <button type="button" id="avatar-1" class="btn btn-outline-dark avatar focusguard-settings" tabindex="-1"><i class="fas fa-user fa-2x"></i></button>
+                    <button type="button" id="avatar-2" class="btn btn-outline-dark avatar focusguard-settings" tabindex="-1"><i class="fas fa-user-tie fa-2x"></i></button>
+                    <button type="button" id="avatar-3" class="btn btn-outline-dark avatar focusguard-settings" tabindex="-1"><i class="fas fa-user-secret fa-2x"></i></button>
+                    <button type="button" id="avatar-4" class="btn btn-outline-dark avatar focusguard-settings" tabindex="-1"><i class="fas fa-user-nurse fa-2x"></i></button>
+                    <button type="button" id="avatar-5" class="btn btn-outline-dark avatar focusguard-settings" tabindex="-1"><i class="fas fa-user-ninja fa-2x"></i></button>
+                    <button type="button" id="avatar-6" class="btn btn-outline-dark avatar focusguard-settings" tabindex="-1"><i class="fas fa-user-md fa-2x"></i></button>
+                    <button type="button" id="avatar-7" class="btn btn-outline-dark avatar focusguard-settings" tabindex="-1"><i class="fas fa-user-injured fa-2x"></i></button>
                 </div>
                 <br>
                 <div class="btn-group" role="group">
-                    <button type="button" id="avatar-8" class="btn btn-outline-dark avatar"><i class="fas fa-user-graduate fa-2x"></i></button>
-                    <button type="button" id="avatar-9" class="btn btn-outline-dark avatar"><i class="fas fa-user-astronaut fa-2x"></i></button>
-                    <button type="button" id="avatar-10" class="btn btn-outline-dark avatar"><i class="fas fa-female fa-2x"></i></button>
-                    <button type="button" id="avatar-11" class="btn btn-outline-dark avatar"><i class="fas fa-male fa-2x"></i></button>
-                    <button type="button" id="avatar-12" class="btn btn-outline-dark avatar"><i class="fas fa-poo fa-2x"></i></button>
-                    <button type="button" id="avatar-13" class="btn btn-outline-dark avatar"><i class="fas fa-viruses fa-2x"></i></button>
-                    <button type="button" id="avatar-14" class="btn btn-outline-dark avatar"><i class="fas fa-cat fa-2x"></i></button>
+                    <button type="button" id="avatar-8" class="btn btn-outline-dark avatar focusguard-settings" tabindex="-1"><i class="fas fa-user-graduate fa-2x"></i></button>
+                    <button type="button" id="avatar-9" class="btn btn-outline-dark avatar focusguard-settings" tabindex="-1"><i class="fas fa-user-astronaut fa-2x"></i></button>
+                    <button type="button" id="avatar-10" class="btn btn-outline-dark avatar focusguard-settings" tabindex="-1"><i class="fas fa-female fa-2x"></i></button>
+                    <button type="button" id="avatar-11" class="btn btn-outline-dark avatar focusguard-settings" tabindex="-1"><i class="fas fa-male fa-2x"></i></button>
+                    <button type="button" id="avatar-12" class="btn btn-outline-dark avatar focusguard-settings" tabindex="-1"><i class="fas fa-poo fa-2x"></i></button>
+                    <button type="button" id="avatar-13" class="btn btn-outline-dark avatar focusguard-settings" tabindex="-1"><i class="fas fa-viruses fa-2x"></i></button>
+                    <button type="button" id="avatar-14" class="btn btn-outline-dark avatar focusguard-settings" tabindex="-1"><i class="fas fa-cat fa-2x"></i></button>
                 </div>
             </div>
             <div class="dropdown-divider"></div>
             <p class="lead">Day Toasts</p>
             <div id="toast-btns-wrapper">
                 <div class="btn-group" role="group">
-                    <button type="button" id="toast-change-1" class="btn btn-outline-dark toast-change">5</button>
-                    <button type="button" id="toast-change-2" class="btn btn-outline-dark toast-change">7</button>
-                    <button type="button" id="toast-change-3" class="btn btn-outline-dark toast-change">10</button>
-                    <button type="button" id="toast-change-4" class="btn btn-outline-dark toast-change">14</button>
+                    <button type="button" id="toast-change-1" class="btn btn-outline-dark toast-change focusguard-settings" tabindex="-1">5</button>
+                    <button type="button" id="toast-change-2" class="btn btn-outline-dark toast-change focusguard-settings" tabindex="-1">7</button>
+                    <button type="button" id="toast-change-3" class="btn btn-outline-dark toast-change focusguard-settings" tabindex="-1">10</button>
+                    <button type="button" id="toast-change-4" class="btn btn-outline-dark toast-change focusguard-settings" tabindex="-1">14</button>
                 </div>
             </div>
+            <div id="focusguard-settings-2" class="focusguard-settings" tabindex="-1"></div>
             <div class="dropdown-divider"></div>
             <small class="text-muted">NOTE: Tasks older than 30 days will be automatically deleted!</small>
         </div>
     </div>
     <div id="delete-account-wrapper" style="opacity: 0;">
         <div class="delete-account text-center p-3">
-            <span id="delete-account-close-btn"><i class="fas fa-window-close"></i></span>
+            <div id="focusguard-delete-account-1" class="focusguard-delete-account" tabindex="-1"></div>
+            <span id="delete-account-close-btn" class="focusguard-delete-account" tabindex="-1"><i class="fas fa-window-close"></i></span>
             <h2 class="display-4 px-5">Delete Account</h2>
             <div class="dropdown-divider"></div>
-            <div class="row justify-content-between align-items-center p-0 mx-0">
-                <div id="delete-div-msg" class="col-12 p-0 d-flex flex-wrap justify-content-center align-items-center p-0">
+            <div class="row justify-content-between align-items-center p-0 m-0">
+                <div id="delete-div-msg" class="col-12 d-flex flex-wrap justify-content-center align-items-center m-0 p-0">
                 </div>
             </div>
             <form id="delete-account-form" autocomplete="off">
                 <p class="lead">Please confirm your user credentials</p>
                 <div class="input-group form-group mb-0 delete-account-email">
-                    <input id="delete-email" type="text" class="validate form-control text-center" name="delete-email" placeholder="confirm email" tabindex="-1">
+                    <input id="delete-email" type="text" class="validate form-control text-center focusguard-delete-account" name="delete-email" placeholder="confirm email" tabindex="-1">
                 </div>
                 <div class="input-group form-group mb-0 delete-account-password">
-                    <input id="delete-password" type="password" class="validate form-control text-center" name="delete-password" placeholder="confirm password" tabindex="-1">
+                    <input id="delete-password" type="password" class="validate form-control text-center focusguard-delete-account" name="delete-password" placeholder="confirm password" tabindex="-1">
                 </div>
                 <p class="lead text-center error invalid hide mb-0"></p>
                 <div class="dropdown-divider"></div>
                 <p class="lead">Are you sure you want to permanently delete the current account and every entry related to it from the database?</p>
                 <div id="delete-account-btns-wrapper">
                     <div class="btn-group d-flex" role="group">
-                        <button type="submit" id="delete-account-confirm-btn" class="btn btn-outline-dark" tabindex="-1">Delete</button>
+                        <button type="submit" id="delete-account-confirm-btn" class="btn btn-outline-dark focusguard-delete-account" tabindex="-1">Delete</button>
                     </div>
                 </div>
             </form>
+            <div id="focusguard-delete-account-2" class="focusguard-delete-account" tabindex="-1"></div>
         </div>
     </div>
     <script src="assets/bundle.js"></script>

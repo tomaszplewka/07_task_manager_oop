@@ -8,20 +8,7 @@ import $ from 'jquery';
 const UICtrl = (function(DnDCtrl) {
     // Initialize global variables
     const vars = {
-        months: {
-            0: 'Jan',
-            1: 'Feb',
-            2: 'Mar',
-            3: 'Apr',
-            4: 'May',
-            5: 'Jun',
-            6: 'Jul',
-            7: 'Aug',
-            8: 'Sep',
-            9: 'Oct',
-            10: 'Nov',
-            11: 'Dec'
-        }
+        months: { 0: 'Jan', 1: 'Feb', 2: 'Mar', 3: 'Apr', 4: 'May', 5: 'Jun', 6: 'Jul', 7: 'Aug', 8: 'Sep', 9: 'Oct', 10: 'Nov', 11: 'Dec' }
     }
     const UISelectors = {
         addUserBtn: '#add-user-btn',
@@ -35,13 +22,6 @@ const UICtrl = (function(DnDCtrl) {
         addBackBtn: '#login-add-back-btn',
         addCreateBtn: '#login-add-create-btn',
         addAccountForm: '#add-account-form',
-        loginConfirmMode: '.login-add-confirm-message',
-        confirmUser: '#confirm-username',
-        loginAccounts: '.login-accounts',
-        removeUserBtn: '#login-remove-btn',
-        loginRemoveMode: '.login-remove-choose',
-        loginRemoveAccounts: '.login-remove-accounts',
-        removeBackBtn: '#login-remove-back-btn',
         loginLoader: '#login-loader',
         loginWrapper: '.login-wrapper',
         welcomeHeader: '#welcome-header',
@@ -63,10 +43,7 @@ const UICtrl = (function(DnDCtrl) {
         tableBody: '#table-body',
         tableHead: '#table-head',
         tasks: '.tasks',
-        listItem: '.list-group-item',
-        logInConfirmBtn: '#login-confirm-login-btn',
         logInConfirmBackBtn: '#login-confirm-back-btn',
-        logInConfirmAccount: '.login-confirm-account',
         logInConfirmMode: '.login-confirm',
         logInForm: '#login-form',
         errorPara: '.error',
@@ -90,7 +67,6 @@ const UICtrl = (function(DnDCtrl) {
         taskTabsOngoing: '#task-tabs-ongoing',
         taskTabsCompleted: '#task-tabs-completed',
         leadTaskCompletedNum: '#lead-task-completed',
-        taskProgress: '#task-progress',
         settings: '#settings',
         settingsWrapper: '#settings-wrapper',
         settingsCloseBtn: '#settings-close-btn',
@@ -104,8 +80,6 @@ const UICtrl = (function(DnDCtrl) {
         deleteAccountBtn: '#delete-account',
         deleteAccountWrapper: '#delete-account-wrapper',
         deleteAccountCloseBtn: '#delete-account-close-btn',
-        deleteAccountBtnsWrapper: '#delete-account-btns-wrapper',
-        deleteAccountConfirmBtn: '#delete-account-confirm-btn',
         deleteAccountForm: '#delete-account-form',
         deleteAccountEmail: '#delete-email',
         deleteAccountPassword: '#delete-password',
@@ -142,23 +116,26 @@ const UICtrl = (function(DnDCtrl) {
         settingsDivMsg: '#settings-div-msg',
         pastTasksDivMsg: '#past-tasks-div-msg',
         deleteDivMsg: '#delete-div-msg',
-        focusguard: '.focusguard',
-        focusguard1: '#focusguard-1',
-        focusguard2: '#focusguard-2'
+        focusguardPastTask: '.focusguard-past-task',
+        focusguardPastTask1: '#focusguard-past-task-1',
+        focusguardPastTask2: '#focusguard-past-task-2',
+        focusguardSettings: '.focusguard-settings',
+        focusguardSettings1: '#focusguard-settings-1',
+        focusguardSettings2: '#focusguard-settings-2',
+        focusguardDeleteAccount: '.focusguard-delete-account',
+        focusguardDeleteAccount1: '#focusguard-delete-account-1',
+        focusguardDeleteAccount2: '#focusguard-delete-account-2',
+        focusguardToast: '.focusguard-toast',
+        focusguardToast1: '#focusguard-toast-1',
+        focusguardToast2: '#focusguard-toast-2',
+        dayProgress: '#day-progress',
+        taskProgressWrapper: '#task-progress-wrapper'
     }
     const createHeading = function(cssClass, headingTitle) {
         let heading = document.createElement('h2');
         heading.className = `display-4 text-center ${cssClass}`;
         heading.textContent = headingTitle;
         return heading;
-    }
-    const createPara = function(spanID, pText) {
-        let p = document.createElement('p');
-        p.className = 'lead text-center';
-        p.innerHTML = `
-            Account for user <span id="${spanID}" class="stand-out"></span> has been ${pText}
-        `;
-        return p;
     }
     const createErrPara = function() {
         let p = document.createElement('p');
@@ -167,7 +144,7 @@ const UICtrl = (function(DnDCtrl) {
     }
     const createUl = function(ulClass) {
         let ul = document.createElement('ul');
-        ul.className = `list-group ${ulClass} mx-auto w-100 my-4`;
+        ul.className = `list-group ${ulClass} mx-auto w-100 my-2`;
         return ul;
     }
     const createListWithMsg = function(selector, message) {
@@ -272,17 +249,7 @@ const UICtrl = (function(DnDCtrl) {
         // 
         loginMainDiv.after(div);
     }
-    const createConfirmMode = function() {
-        const loginAddMode = document.querySelector(UISelectors.loginAddMode);
-        // 
-        let div = document.createElement('div');
-        div.className = `login-add-confirm-message px-4 pt-3 pb-4`;
-        div.appendChild(createHeading('welcome-heading', 'Account Created'));
-        div.appendChild(createPara('confirm-username', 'created'));
-        // 
-        loginAddMode.after(div);
-    }
-    const createLogInMode = function(id) {
+    const createLogInMode = function() {
         const loginMainDiv = document.querySelector(UISelectors.loginMainDiv);
         // 
         let div = document.createElement('div');
@@ -364,12 +331,16 @@ const UICtrl = (function(DnDCtrl) {
         if (document.querySelector(UISelectors.mainOptionsBtns).classList.contains('hide')) {
             document.querySelector(UISelectors.mainOptionsBtns).classList.remove('hide');
             document.querySelector(UISelectors.taskTabs).classList.remove('hide');
+            document.querySelector(UISelectors.taskProgressWrapper).classList.remove('hide');
             // Handle buttons
             handleDisabledStateBtn(["lWeekArrow", "rWeekArrow", "lMonthArrow", "monthModeMonth", "rMonthArrow"]);
             handleDisabledStateBtn(["lDayArrow", "rDayArrow", "searchTasks", "addOption", "moreOptionsBtn", "taskTabsOngoing", "taskTabsCompleted"], false);
         }
         // Day mode is active
         document.querySelector('body').setAttribute('class', 'day-mode-active');
+        document.querySelector(UISelectors.dayModeView).classList.add('active');
+        document.querySelector(UISelectors.weekModeView).classList.remove('active');
+        document.querySelector(UISelectors.monthModeView).classList.remove('active');
         // Set vars on welcome screen
         document.querySelector(UISelectors.dayModeContent).textContent = `
             ${format(currToday, "d MMMM yyyy, EEEE")}
@@ -469,12 +440,16 @@ const UICtrl = (function(DnDCtrl) {
         if (!document.querySelector(UISelectors.mainOptionsBtns).classList.contains('hide')) {
             document.querySelector(UISelectors.mainOptionsBtns).classList.add('hide');
             document.querySelector(UISelectors.taskTabs).classList.add('hide');
+            document.querySelector(UISelectors.taskProgressWrapper).classList.add('hide');
         }
         // Handle buttons
         handleDisabledStateBtn(["lDayArrow", "rDayArrow", "lMonthArrow", "monthModeMonth", "rMonthArrow", "searchTasks", "addOption", "moreOptionsBtn", "taskTabsOngoing", "taskTabsCompleted"]);
         handleDisabledStateBtn(["lWeekArrow", "rWeekArrow"], false);
         // Week mode is active
         document.querySelector('body').setAttribute('class', 'week-mode-active');
+        document.querySelector(UISelectors.dayModeView).classList.remove('active');
+        document.querySelector(UISelectors.weekModeView).classList.add('active');
+        document.querySelector(UISelectors.monthModeView).classList.remove('active');
         // Generate correct week
         const firstDayNextWeek = addWeeks(currFirstDayOfWeek, 1);
         const week = eachDayOfInterval({
@@ -535,6 +510,7 @@ const UICtrl = (function(DnDCtrl) {
         if (!document.querySelector(UISelectors.mainOptionsBtns).classList.contains('hide')) {
             document.querySelector(UISelectors.mainOptionsBtns).classList.add('hide');
             document.querySelector(UISelectors.taskTabs).classList.add('hide');
+            document.querySelector(UISelectors.taskProgressWrapper).classList.add('hide');
         }
         // Handle buttons
         handleDisabledStateBtn(["lDayArrow", "rDayArrow", "lWeekArrow", "rWeekArrow", "searchTasks", "addOption", "moreOptionsBtn", "taskTabsOngoing", "taskTabsCompleted"]);
@@ -544,6 +520,9 @@ const UICtrl = (function(DnDCtrl) {
         document.querySelector(UISelectors.monthModeYear).textContent = year;
         // Month mode is active
         document.querySelector('body').setAttribute('class', 'month-mode-active');
+        document.querySelector(UISelectors.dayModeView).classList.remove('active');
+        document.querySelector(UISelectors.weekModeView).classList.remove('active');
+        document.querySelector(UISelectors.monthModeView).classList.add('active');
         // Adjust months in select
 		if (month === 0) {
 			document.querySelector(UISelectors.lMonthArrow).lastElementChild.textContent = vars.months[11];
@@ -667,9 +646,9 @@ const UICtrl = (function(DnDCtrl) {
             document.querySelector(UISelectors.navNotifications).textContent = 1;
             document.querySelector(UISelectors.notifications).classList.remove('disabled');
             // Add tabindex
-            handleTabindex(UISelectors.focusguard, "0", '');
+            handleTabindex(UISelectors.focusguardPastTask, "0", '');
             // Set focus
-            document.querySelector(UISelectors.focusguard1).focus();
+            document.querySelector(UISelectors.focusguardPastTask1).focus();
         }
         return pastTasks;
     }
@@ -980,7 +959,6 @@ const UICtrl = (function(DnDCtrl) {
         Array.from(buttons).forEach(button =>{
             button.setAttribute("tabindex", tabindexValue);
         });
-        // Add focus to the first button
     }
     const handleDisabledStateBtn = function(keys, disable = true) {
         keys.forEach(key => {
@@ -997,7 +975,6 @@ const UICtrl = (function(DnDCtrl) {
             return UISelectors;
         },
         createAddMode,
-        createConfirmMode,
         createLogInMode,
         createLoginLoader,
         setTableBodyHead,
@@ -1023,7 +1000,8 @@ const UICtrl = (function(DnDCtrl) {
         errorLogInAll,
         handleTabindex,
         handleDisabledStateBtn,
-        retrieveDayDate
+        retrieveDayDate,
+        createListWithMsg
     }
 })(DnDCtrl);
 export default UICtrl;
