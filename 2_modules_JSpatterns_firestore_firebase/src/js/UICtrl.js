@@ -51,8 +51,6 @@ const UICtrl = (function(DnDCtrl) {
         addForm: '.add',
         addFormWrapper: '#add-form-wrapper',
         addFormInputs: '.add input',
-        errorTask: '.error-task',
-        errorTaskMsg: '.error-task-msg',
         searchTasks: '#search-icon-primary',
         searchForm: '.search-form',
         searchFormWrapper: '#search-form-wrapper',
@@ -409,8 +407,8 @@ const UICtrl = (function(DnDCtrl) {
         li.appendChild(divIconComplete);
         // Create div with text node (task name)
         let divText = document.createElement('div');
-		divText.className = 'lead';
-		divText.appendChild(document.createTextNode(task));
+        divText.appendChild(document.createTextNode(task));
+        divText.className = 'p-1';
         li.appendChild(divText);
         // Create div with edit & delete icons
         let divIcon = document.createElement('div');
@@ -471,7 +469,7 @@ const UICtrl = (function(DnDCtrl) {
         let row = document.createElement('tr');
         week.forEach(day => {
             let td = document.createElement('td');
-            td.innerHTML = `${format(day, "d MMM yyyy")}`;
+            td.innerHTML = `${format(day, "d MMM")}`;
             if (isToday(day)) {
                 td.classList.add('current-day');
                 row.classList.add('current-week');
@@ -566,8 +564,9 @@ const UICtrl = (function(DnDCtrl) {
 		// Render calendar
 		let i = 0;
 		while (flag >= 0) {
-			let row = document.createElement('tr');
-			for (let j = 0; j < 7; j++) {
+            let row = document.createElement('tr');
+            let j;
+			for (j = 0; j < 7; j++) {
 				if (i === 0 && j < startOfCurrMonth) {
                     let td = document.createElement('td');
                     td.classList.add('disabled');
@@ -606,9 +605,11 @@ const UICtrl = (function(DnDCtrl) {
 					renderDaysNumCurrMonth++;
 				}
             }
-            // Append week
-            document.querySelector(UISelectors.tableBody).append(row);
-			i++;
+            if (j !== 0) {
+                // Append week
+                document.querySelector(UISelectors.tableBody).append(row);
+                i++;
+            }
 		}
     }
     const createMsg = function(text) {
@@ -643,6 +644,7 @@ const UICtrl = (function(DnDCtrl) {
             document.querySelector(UISelectors.alertMsgWrapper).style.opacity = 1;
             document.querySelector('body').style.overflow = 'hidden';
             document.querySelector(UISelectors.notifications).lastElementChild.textContent = 1;
+            document.querySelector(UISelectors.navNotifications).style.display = 'inline-flex';
             document.querySelector(UISelectors.navNotifications).textContent = 1;
             document.querySelector(UISelectors.notifications).classList.remove('disabled');
             // Add tabindex
@@ -656,8 +658,8 @@ const UICtrl = (function(DnDCtrl) {
         document.querySelector(UISelectors[selector]).innerHTML += 
         `
             <div class="toast m-0" id="${id}" role="${role}" aria-live="${ariaLive}" aria-atomic="true" data-autohide="${autohide}" data-animation="true" data-delay="${delay}">
-                <div class="toast-header p-1 pr-0">
-                    <span class="${msgClass}">${text}</span>
+                <div class="${msgClass} toast-header justify-content-center p-2 pr-0 position-relative text-center">
+                    <span>${text}</span>
                     <button type="button" class="ml-auto mb-1 close" data-dismiss="toast" aria-label="Close">
                         <span class="x p-0" aria-hidden="true">&times;</span>
                     </button>
@@ -674,13 +676,12 @@ const UICtrl = (function(DnDCtrl) {
     }
     const addBadge = function(td, number) {
         let span = document.createElement('span');
-        td.classList.add('task-marker-td');
-        span.className = 'badge badge-pill task-marker';
+        span.className = 'badge badge-pill custom-badge';
         span.textContent = number;
         td.appendChild(span);
         return td
     }
-    const setTheme = function(main, secondary, td, currWeekHover, rowHover, currDay, badge, bg, text) {
+    const setTheme = function(main, secondary, td, currWeekHover, rowHover, currDay, badge, bg) {
 		const root = document.documentElement;
 		root.style.setProperty('--theme1-main-color', main);
 		root.style.setProperty('--theme1-secondary-color', secondary);
@@ -690,32 +691,39 @@ const UICtrl = (function(DnDCtrl) {
 		root.style.setProperty('--theme1-currday-color', currDay);
 		root.style.setProperty('--theme1-badge-color', badge);
 		root.style.setProperty('--theme1-bg-color', bg);
-		root.style.setProperty('--theme1-text-color', text);
     }
     const chooseTheme = function(theme) {
 		switch (theme) {
 			case 'theme-1':
-				setTheme('#343a40', '#6c757d', '#454d55', '#dee2e6', '#dee2e6', '#000000', '#007bff', '#000000', '#ffffff');
+				setTheme('#343a40', '#6c757d', '#454d55', '#dee2e6', '#dee2e6', '#000000', '#007bff', '#000000');
                 document.querySelector('#' + theme).classList.add('theme-active');
 				break;
 			case 'theme-2':
-				setTheme('#666a86', '#788aa3', '#ffc800', '#b2c9ab', '#b2c9ab', '#788aa3', '#ff8427', '#92b6b1', '#e8ddb5');
+				setTheme('#666a86', '#788aa3', '#ffc800', '#b2c9ab', '#b2c9ab', '#788aa3', '#ff8427', '#92b6b1');
 				document.querySelector('#' + theme).classList.add('theme-active');
 				break;
 			case 'theme-3':
-				setTheme('#507dbc', '#a1c6ea', '#bbd1ea', '#ffa62b', '#ffa62b', '#a1c6ea', '#dae3e5', '#be6e46', '#04080f');
+				setTheme('#221E22', '#876327', '#EE5622', '#44355B', '#31263E', '#ECA72C', '#F06536', '#554125');
 				document.querySelector('#' + theme).classList.add('theme-active');
 				break;
 			case 'theme-4':
-				setTheme('#291528', '#9e829c', '#3a3e3b', '#9e829c', '#9e829c', '#93b7be', '#000000', '#93b7be', '#f1fffa');
+				setTheme('#291528', '#9e829c', '#3a3e3b', '#9e829c', '#9e829c', '#93b7be', '#000000', '#93b7be');
 				document.querySelector('#' + theme).classList.add('theme-active');
 				break;
 			case 'theme-5':
-				setTheme('#f7a9a8', '#ef798a', '#087ca7', '#05b2dc', '#988b8e', '#05b2dc', '#e5c3d1', '#988b8e', '#613f75');
+				setTheme('#f7a9a8', '#ef798a', '#087ca7', '#05b2dc', '#988b8e', '#05b2dc', '#e5c3d1', '#988b8e');
 				document.querySelector('#' + theme).classList.add('theme-active');
 				break;
 			case 'theme-6':
-				setTheme('#3d315b', '#444b6e', '#708b75', '#eee5e5', '#9ab87a', '#ddcecd', '#444b6e', '#ddcecd', '#f8f991');
+				setTheme('#3d315b', '#444b6e', '#708b75', '#eee5e5', '#9ab87a', '#ddcecd', '#444b6e', '#ddcecd');
+				document.querySelector('#' + theme).classList.add('theme-active');
+                break;
+			case 'theme-7':
+				setTheme('#A37A74', '#607466', '#CAD5CA', '#E49273', '#F8F0FB', '#6320EE', '#211A1D', '#8075FF');
+				document.querySelector('#' + theme).classList.add('theme-active');
+                break;
+			case 'theme-8':
+				setTheme('#426A5A', '#B7B5B3', '#0FA3B1', '#0FA3B1', '#394053', '#E5E7E6', '#B80C09', '#6B2B06');
 				document.querySelector('#' + theme).classList.add('theme-active');
 				break;
 		}
@@ -791,19 +799,6 @@ const UICtrl = (function(DnDCtrl) {
             document.querySelector(UISelectors.addCreateBtn).disabled = true;
         }
     }
-    const errorTasks = function(text) {
-        document.querySelector(UISelectors.addForm).add.disabled = true;
-        document.querySelector(UISelectors.addForm).add.classList.toggle('invalid');
-        document.querySelector(UISelectors.errorTaskMsg).innerText = `${text}`;
-        document.querySelector(UISelectors.errorTask).classList.toggle('hide');
-        setTimeout(() => {
-            document.querySelector(UISelectors.addForm).add.disabled = false;
-            document.querySelector(UISelectors.errorTask).classList.toggle('hide');
-            document.querySelector(UISelectors.addForm).add.classList.toggle('invalid');
-        }, 1500);
-        return true;
-    }
-
     const errorSignUpAll = function(error, errorHandler, data) {
         const { errorMsg, errorUsername, errorEmail, errorPass } = errorHandler(error.code);
         switch (true) {
@@ -994,7 +989,6 @@ const UICtrl = (function(DnDCtrl) {
         chooseAvatar,
         chooseToast,
         enableDisableCreateBtn,
-        errorTasks,
         errorSignUpAll,
         errorSignUpSingleInput,
         errorLogInAll,

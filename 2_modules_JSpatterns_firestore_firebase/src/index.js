@@ -316,7 +316,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                     if (!e.target.classList.contains('disabled') && !e.target.classList.contains('invalid-day')) {
                         // Get current date
                         const day = e.target.childNodes[0].nodeValue;
-                        const currToday = parse(day, "d MMM yyyy", new Date())
+                        const currToday = parse(day, "d MMM", new Date());
                         // Render day mode
                         UICtrl.renderDayModeCalendar(currToday, vars.globalTasksOngoing, FirebaseCtrl.updateAllTasks);
                         // Calculate progress
@@ -440,7 +440,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                                 // Notifications - check if pastTasksKeys is empty
                                 if (!vars.globalPastTaskKeys.length) {
                                     document.querySelector(UISelectors.notifications).lastElementChild.textContent = '';
-                                    document.querySelector(UISelectors.navNotifications).textContent = '';
+                                    document.querySelector(UISelectors.navNotifications).textContent = '';document.querySelector(UISelectors.navNotifications).style.display = 'none';
                                     document.querySelector(UISelectors.notifications).classList.add('disabled');
                                 }
                                 // Render day mode
@@ -610,6 +610,8 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                         setTimeout(() => {
                             // Remove task from UI
                             e.target.parentElement.parentElement.remove();
+                            // Adjust UI display
+                            document.querySelector(UISelectors.pickDateFormWrapper).classList.remove('pick-date-form-open');
                             // Get current tasks & reassign task ids
                             const tasks = document.querySelectorAll('.tasks li');
                             [].forEach.call(tasks, (li, index) => {
@@ -625,6 +627,9 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                             }
                             // Update ongoing / completed tasks
                             vars.globalTasksOngoing[currToday] = allTasks;
+                            if (vars.globalTasksCompleted === undefined) {
+                                vars.globalTasksCompleted = [];
+                            }
                             if (vars.globalTasksCompleted[currToday] === undefined) {
                                 vars.globalTasksCompleted[currToday] = [];
                             }
@@ -737,9 +742,9 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                     .forEach((taskItem) => { taskItem.classList.add('selected') });
                     // Render mark as button
                     if (document.querySelector(UISelectors.taskTabsOngoing).classList.contains('active')) {
-                        document.querySelector(UISelectors.markAsBtn).textContent = 'Mark As Completed';
+                        document.querySelector(UISelectors.markAsBtn).textContent = 'MARK AS COMPLETED';
                     } else {
-                        document.querySelector(UISelectors.markAsBtn).textContent = 'Mark As Scheduled';
+                        document.querySelector(UISelectors.markAsBtn).textContent = 'MARK AS SCHEDULED';
                     }
                     // Handle buttons
                     UICtrl.handleDisabledStateBtn(["userNavbar", "lDayArrow", "rDayArrow", "dayModeView", "weekModeView", "monthModeView", "searchTasks", "addOption", "moreOptionsBtn", "taskTabsOngoing", "taskTabsCompleted"]);
@@ -1027,7 +1032,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                     const id = format(new Date(), "d'-'MMM'-'yyyy");
                     if (!Array.from(document.querySelector(UISelectors.dateToasts).children).filter(todayToast => todayToast.id === id).length) {
                         // Add day toast
-                        UICtrl.addToast("dateToasts", id, format(new Date(), "d'-'MMM'-'yyyy"));
+                        UICtrl.addToast("dateToasts", id, format(new Date(), "d'-'MMM'-'yy"));
                     }
                 }
             }
@@ -1052,7 +1057,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                     // Check the current day toast is unique
                     if (!Array.from(document.querySelector(UISelectors.dateToasts).children).filter(todayToast => todayToast.id === id).length) {
                         // Add day toast
-                        UICtrl.addToast("dateToasts", id, format(new Date(year, month, day), "d'-'MMM'-'yyyy"));
+                        UICtrl.addToast("dateToasts", id, format(new Date(year, month, day), "d'-'MMM'-'yy"));
                     }
                 }
             }
@@ -1166,6 +1171,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                             // Update notifications
                             document.querySelector(UISelectors.notifications).lastElementChild.textContent = '';
                             document.querySelector(UISelectors.navNotifications).textContent = '';
+                            document.querySelector(UISelectors.navNotifications).style.display = 'none';
                             document.querySelector(UISelectors.notifications).classList.add('disabled');
                             // Close alert wrapper
                             document.querySelector(UISelectors.alertMsgWrapper).style.display = 'none';
@@ -1220,6 +1226,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                                 // Update notifications
                                 document.querySelector(UISelectors.notifications).lastElementChild.textContent = '';
                                 document.querySelector(UISelectors.navNotifications).textContent = '';
+                                document.querySelector(UISelectors.navNotifications).style.display = 'none';
                                 document.querySelector(UISelectors.notifications).classList.add('disabled');
                                 // Adjust UI display
                                 document.querySelector(UISelectors.alertMsgWrapper).style.display = 'none';
@@ -1273,6 +1280,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                                 // Update notifications
                                 document.querySelector(UISelectors.notifications).lastElementChild.textContent = '';
                                 document.querySelector(UISelectors.navNotifications).textContent = '';
+                                document.querySelector(UISelectors.navNotifications).style.display = 'none';
                                 document.querySelector(UISelectors.notifications).classList.add('disabled');
                                 // Adjust UI display
                                 document.querySelector(UISelectors.alertMsgWrapper).style.display = 'none';
@@ -1566,8 +1574,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                 // Update firestore
                 FirebaseCtrl.addTask({
                     currToday,
-                    task,
-                    errorHandler: UICtrl.errorTasks
+                    task
                 })
                 .then(response => {
                     // Show message toast
@@ -1580,15 +1587,30 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                         task.classList.remove('disabled-li');
                     });
                     // Adjust UI display
+                    document.querySelector(UISelectors.dateToasts).innerHTML = '';
                     document.querySelector(UISelectors.addForm).reset();
                     // Calculate progress
                     calculateProgress(date);
                     // Notifications
                     checkNotifications(date, currToday, false);
+                    // Handle buttons
+                    UICtrl.handleDisabledStateBtn(["userNavbar", "weekModeView", "monthModeView", "searchTasks", "moreOptionsBtn", "taskTabsOngoing", "taskTabsCompleted"], false);
+                    UICtrl.handleDisabledStateBtn(["pickDate", "addTaskInput", "addTaskSubmit", "pickDateTodayBtn", "pickDatePickMode"]);
+                    document.querySelector(UISelectors.addFormWrapper).classList.remove('add-form-open');
+                    document.querySelector(UISelectors.pickDateFormWrapper).classList.remove('pick-date-form-open');
+                    document.querySelector(UISelectors.addOption).classList.remove('active');
                 })
                 .catch(error => {
+                    // Unlock tasks
+                    Array.from(tasks).forEach(task => {
+                        task.classList.remove('disabled-li');
+                    });
                     // Show message toast
-                    UICtrl.addMsgToast("taskDivMsg", '', 'Error: ' + error.code + '. Could not add task. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
+                    if (error.name !== undefined && error.name === "Error") {
+                        UICtrl.addMsgToast("taskDivMsg", '', error.message, 'alert', 'assertive', true, 2000, 'toast-alert');
+                    } else {
+                        UICtrl.addMsgToast("taskDivMsg", '', 'Error: ' + error + '. Could not add task. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
+                    }
                 });
             } else if (task.length && document.querySelector(UISelectors.tableBody).classList.contains('pick-date-mode') && !document.querySelector(UISelectors.taskTabsCompleted).classList.contains('active')) {
                 // Add task when pick mode and ongoing tasks are active
@@ -1630,8 +1652,11 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                                 document.querySelector(UISelectors.pickDatePickMode).classList.add('btn-outline-light');
                                 document.querySelector(UISelectors.pickDatePickMode).classList.remove('btn-outline-danger');
                                 // Handle buttons
-                                UICtrl.handleDisabledStateBtn(["searchTasks", "moreOptionsBtn", "taskTabsOngoing", "taskTabsCompleted"]);
-                                UICtrl.handleDisabledStateBtn(["dayModeView", "pickDate"], false);
+                                UICtrl.handleDisabledStateBtn(["userNavbar", "dayModeView", "weekModeView", "monthModeView", "searchTasks", "moreOptionsBtn", "taskTabsOngoing", "taskTabsCompleted"], false);
+                                UICtrl.handleDisabledStateBtn(["pickDate", "addTaskInput", "addTaskSubmit", "pickDateTodayBtn", "pickDatePickMode"]);
+                                document.querySelector(UISelectors.addFormWrapper).classList.remove('add-form-open');
+                                document.querySelector(UISelectors.pickDateFormWrapper).classList.remove('pick-date-form-open');
+                                document.querySelector(UISelectors.addOption).classList.remove('active');
                             })
                             .catch(error => {
                                 // Show message toast
@@ -1685,6 +1710,8 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
             const email = document.querySelector(UISelectors.deleteAccountEmail);
             const pass = document.querySelector(UISelectors.deleteAccountPassword);
             const errorPara = document.querySelector(UISelectors.deleteAccountErrorPara);
+            // Adjust UI display
+            document.querySelector(UISelectors.deleteAccountForm)["account-delete"].disabled = true;
             // Reauthenticate
             FirebaseCtrl.reauthenticate(email.value, pass.value)
             .then(() => {
@@ -1704,11 +1731,16 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                     document.querySelector(UISelectors.deleteAccountWrapper).style.display = 'none';
                     document.querySelector(UISelectors.deleteAccountWrapper).style.opacity = 0;
                     setTimeout(() => {
+                        // Adjust UI display
+                        document.querySelector(UISelectors.deleteAccountForm)["account-delete"].disabled = false;
                         document.querySelector(UISelectors.loginMainDiv).classList.remove('move-x-left');
                     }, 2000);
                 }, 2000);
             })
             .catch(error => {
+                // Adjust UI display
+                document.querySelector(UISelectors.deleteAccountForm)["account-delete"].disabled = false;
+                // Show message
                 UICtrl.errorLogInAll(error, DataCtrl.errorHandlingLogIn, {
                     email, pass, errorPara
                 });
@@ -1813,6 +1845,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
             if (!vars.globalPastTaskKeys.length) {
                 document.querySelector(UISelectors.notifications).lastElementChild.textContent = '';
                 document.querySelector(UISelectors.navNotifications).textContent = '';
+                document.querySelector(UISelectors.navNotifications).style.display = 'none';
                 document.querySelector(UISelectors.notifications).classList.add('disabled');
             }
         } else {
@@ -1826,6 +1859,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
             if (vars.globalPastTaskKeys.length) {
                 document.querySelector(UISelectors.notifications).lastElementChild.textContent = 1;
                 document.querySelector(UISelectors.navNotifications).textContent = 1;
+                document.querySelector(UISelectors.navNotifications).style.display = 'inline-flex';
                 document.querySelector(UISelectors.notifications).classList.remove('disabled');
             }
         }
@@ -1859,7 +1893,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
     }
 	return {
 		init: function() {
-            console.log('Initializing App...');
+            // console.log('Initializing App...');
             // Initialize firebase app
             FirebaseCtrl.firebaseInit();
             // Set listener for authentication change

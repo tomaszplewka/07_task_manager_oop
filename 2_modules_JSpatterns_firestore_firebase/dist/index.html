@@ -11,13 +11,13 @@
 </head>
 <body>
     <div class="login-wrapper" style="display: none;">
-        <h1 class="display-3 mb-4 mx-2 brand-header">
+        <h1 class="display-3 mb-2 mx-2 brand-header text-center">
             <i class="fas fa-tasks"></i>
             Task Manager
         </h1>
         <div class="login-inner-wrapper">
             <div class="login-main-div px-4 pt-3 pb-4">
-                <h2 class="display-4 welcome-heading text-center">What would you like to do?</h2>
+                <h2 class="display-4 welcome-heading text-center">What next?</h2>
                 <div class="btn-group d-flex pt-4">
                     <button id="add-user-btn" type="button" name="add-new-user" class="btn btn-outline-light">
                         <i class="fas fa-user-plus mr-1"></i>
@@ -31,10 +31,10 @@
             </div>
         </div>
     </div>
-    <div class="container p-0" id="main-navbar" style="display: none;">
+    <div class="container p-0 mt-5" id="main-navbar" style="display: none;">
         <nav class="navbar navbar-expand-lg p-3">
             <div class="navbar-brand">
-                <h1 class="h1 m-0 text-white">
+                <h1 class="display-4 m-0 text-white">
                     <i class="fas fa-tasks"></i>
                     Task Manager
                 </h1>
@@ -43,29 +43,29 @@
                 <button id="user-btn" type="button" class="btn btn-outline-light dropdown-toggle"
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>
                     <i class="fas fa-user fa-2x position-relative" id="user-avatar"><span
-                            class="badge badge-pill nav-notifications"></span></i>
+                            class="badge badge-pill nav-notifications custom-badge" style="display: none;"></span></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right nav-menu" aria-labelledby="user-btn" id="main-drop-menu">
                     <a class="dropdown-item d-flex justify-content-between align-items-center disabled" id="notifications" href="#">
-                        Notifications<span class="badge badge-pill"></span>
+                        NOTIFICATIONS<span class="badge badge-pill custom-badge"></span>
                     </a>
                     <a class="dropdown-item" id="settings" href="#">
-                        Settings
+                        SETTINGS
                     </a>
                     <a class="dropdown-item" id="log-out" href="#">
-                        Log Out
+                        LOG OUT
                     </a>
                     <a class="dropdown-item" id="delete-account" href="#">
-                        Delete Account
+                        DELETE ACCOUNT
                     </a>
                 </div>
             </div>
         </nav>
     </div>
-    <div class="container p-0 pb-5" id="main-body" style="display: none;">
+    <div class="container p-0 pb-5 mb-5" id="main-body" style="display: none;">
         <div class="row m-0">
             <div class="col col-sm-12 m-0 p-0">
-                <h1 class="text-center main-header p-3 pt-5">Hello <span id="welcome-header"></span>!<br>How are you today?</h1>
+                <h1 class="display-4 text-center main-header p-3 pt-5">Hello <span id="welcome-header"></span>!<br>How are you today?</h1>
             </div>
         </div>
         <div class="row m-0">
@@ -78,7 +78,7 @@
             </div>
         </div>
         <div class="row justify-content-between align-items-center py-0 px-3 m-0">
-            <div class="month-mode-wrapper col-12 m-0 p-0">
+            <div class="month-mode-wrapper col-12 m-0 p-0 pt-2">
                 <div class="row justify-content-between align-items-center m-0">
                     <div class="month-mode-arrow col-2 order-1 m-0 p-0 py-2">
                         <div class="d-flex justify-content-start">
@@ -119,7 +119,7 @@
                     </div>
                 </div>
             </div>
-            <div class="week-mode-wrapper col-12 m-0 p-0">
+            <div class="week-mode-wrapper col-12 m-0 p-0 pt-2">
                 <div class="row justify-content-between align-items-center m-0">
                     <div class="week-mode-arrow col-2 order-1 m-0 p-0 py-2">
                         <div class="d-flex justify-content-start">
@@ -141,7 +141,7 @@
                     </div>
                 </div>
             </div>
-            <div class="day-mode-wrapper col-12 m-0 p-0">
+            <div class="day-mode-wrapper col-12 m-0 p-0 pt-2">
                 <div class="row justify-content-between align-items-center m-0">
                     <div class="day-mode-arrow col-2 order-1 m-0 p-0 py-2">
                         <div class="d-flex justify-content-start">
@@ -183,44 +183,48 @@
         </div>
         <div class="row py-2 px-3 m-0" id="mode-btns">
             <div class="btn-group col-12 d-flex justify-content-center m-0 p-0" role="group">
-                <button id="day-mode-btn" type="button" class="btn btn-outline-light" disabled>
-                    Day Mode
-                </button>
-                <button id="week-mode-btn" type="button" class="btn btn-outline-light" disabled>
-                    Week Mode
-                </button>
-                <button id="month-mode-btn" type="button" class="btn btn-outline-light" disabled>
-                    Month Mode
-                </button>
+                <div class="row m-0 p-0 w-100">
+                    <button id="day-mode-btn" type="button" class="btn btn-outline-light col-12 col-sm-4 m-0" disabled>
+                        DAY MODE
+                    </button>
+                    <button id="week-mode-btn" type="button" class="btn btn-outline-light col-12 col-sm-4 m-0" disabled>
+                        WEEK MODE
+                    </button>
+                    <button id="month-mode-btn" type="button" class="btn btn-outline-light col-12 col-sm-4 m-0" disabled>
+                        MONTH MODE
+                    </button>
+                </div>
             </div>
         </div>
         <div class="row py-2 px-3 m-0" id="main-options-btn">
             <div class="btn-group col-12 d-flex justify-content-center m-0 p-0" role="group">
-                <button type="button" class="btn btn-outline-light" id="search-icon-primary" disabled>
-                    <i class="fas fa-search"></i>
-                </button>
-                <button type="button" class="btn btn-outline-light" id="add-icon-primary" disabled>
-                    <i class="fas fa-plus"></i>
-                </button>
-                <div class="btn-group" role="group">
-                    <button id="more-options-btn" type="button" class="btn btn-outline-light dropdown-toggle py-1" data-toggle="dropdown" disabled>
-                        <i class="fas fa-ellipsis-v"></i>
+                <div class="row p-0 m-0 w-100">
+                    <button type="button" class="btn btn-outline-light col-12 col-sm-4 m-0" id="search-icon-primary" disabled>
+                        <i class="fas fa-search"></i>
                     </button>
-                    <div class="dropdown-menu dropdown-menu-lg-right w-100">
-                        <a class="dropdown-item" tabindex="-1" id="select-all-btn">Select All</a>
+                    <button type="button" class="btn btn-outline-light col-12 col-sm-4 m-0" id="add-icon-primary" disabled>
+                        <i class="fas fa-plus"></i>
+                    </button>
+                    <div class="btn-group col-12 col-sm-4 m-0 p-0" role="group">
+                        <button id="more-options-btn" type="button" class="btn btn-outline-light dropdown-toggle py-1" data-toggle="dropdown" disabled>
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-lg-right w-100">
+                            <a class="dropdown-item" tabindex="-1" id="select-all-btn">SELECT ALL TODAY'S TASK</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <div id="search-form-wrapper">
-            <form class="search-form py-2" autocomplete="off">
+            <form class="search-form" autocomplete="off">
                 <div class="input-group">
                     <input id="search-task-input" class="form-control m-auto" type="text" name="searchInput" placeholder="search tasks..." disabled/>
                 </div>
             </form>
         </div>
         <div id="add-form-wrapper">
-            <form class="add text-center py-2" autocomplete="off">
+            <form class="add text-center" autocomplete="off">
                 <div class="input-group d-flex">
                     <input id="add-task-input" class="form-control m-auto" type="text" name="add" placeholder="add a new task..." maxlength = "100" disabled />
                     <div class="input-group-append">
@@ -233,9 +237,6 @@
                     </div>
                 </div>
             </form>
-            <div class="error-task py-2 px-3 hide">
-                <p class="lead text-center error-task-msg invalid m-0"></p>
-            </div>
         </div>
         <div id="pick-date-form-wrapper" class="row py-2 px-3 m-0">
             <div class="calendar col-12 text-center input-group d-flex justify-content-center align-items-center m-0 p-0">
@@ -244,33 +245,37 @@
             <div class="col-12 d-flex justify-content-center align-items-center m-0 p-0 pt-3">
                 <div class="btn-group" role="group">
                     <button id="pick-date-today-btn" type="button" class="btn btn-outline-light btn-sm" disabled>
-                        Today
+                        TODAY
                     </button>
                     <button id="pick-date-pick-mode" type="button" class="btn btn-outline-light btn-sm" disabled>
-                        Pick Mode
+                        PICK DATE
                     </button>
                 </div>
             </div>
         </div>
         <div id="select-all-options" class="row py-2 px-3 m-0">
             <div class="btn-group col-12 d-flex justify-content-center m-0 p-0" role="group">
-                <button type="button" class="btn btn-outline-light col-12 col-sm-4" id="mark-as-btn" disabled></button>
-                <button type="button" class="btn btn-outline-light col-12 col-sm-4" id="delete-btn" disabled>
-                    Delete
-                </button>
-                <button type="button" class="btn btn-outline-light col-12 col-sm-4" id="deselect-btn" disabled>
-                    Deselect
-                </button>
+                <div class="row m-0 p-0 w-100">
+                    <button type="button" class="btn btn-outline-light col-12 col-sm-4 m-0" id="mark-as-btn" disabled></button>
+                    <button type="button" class="btn btn-outline-light col-12 col-sm-4 m-0" id="delete-btn" disabled>
+                        DELETE
+                    </button>
+                    <button type="button" class="btn btn-outline-light col-12 col-sm-4 m-0" id="deselect-btn" disabled>
+                        DESELECT
+                    </button>
+                </div>
             </div>
         </div>
-        <div class="row pt-2 pb-0 px-3 m-0" id="task-tabs">
+        <div class="row py-2 px-3 m-0" id="task-tabs">
             <div class="btn-group col-12 p-0 d-flex justify-content-center" role="group">
-                <button type="button" class="btn btn-outline-light col-12 col-sm-6 active" id="task-tabs-ongoing" disabled>
-                    Scheduled
-                </button>
-                <button type="button" class="btn btn-outline-light col-12 col-sm-6" id="task-tabs-completed" disabled>
-                    Completed
-                </button>
+                <div class="row m-0 p-0 w-100">
+                    <button type="button" class="btn btn-outline-light col-12 col-sm-6 m-0 active" id="task-tabs-ongoing" disabled>
+                        SCHEDULED
+                    </button>
+                    <button type="button" class="btn btn-outline-light col-12 col-sm-6 m-0" id="task-tabs-completed" disabled>
+                        COMPLETED
+                    </button>
+                </div>
             </div>
         </div>
         <div class="row justify-content-between align-items-center py-2 px-3 m-0">
@@ -285,7 +290,7 @@
         </table>
     </div>
     <div id="alert-message-wrapper" style="opacity: 0;">
-        <div class="alert-message text-center p-3">
+        <div class="alert-message text-center p-3 pb-4">
             <div id="focusguard-past-task-1" class="focusguard-past-task" tabindex="-1"></div>
             <span id="alert-close-btn" class="focusguard-past-task" tabindex="-1"><i class="fas fa-window-close"></i></span>
             <h2 class="display-4 px-5">Heads-Up!</h2>
@@ -313,7 +318,7 @@
         </div>
     </div>
     <div id="toast-message-wrapper" style="opacity: 0;">
-        <div class="toast-message text-center p-3">
+        <div class="toast-message text-center p-3 pb-4">
             <div id="focusguard-toast-1" class="focusguard-toast" tabindex="-1"></div>
             <span id="toast-close-btn" class="focusguard-toast" tabindex="-1"><i class="fas fa-window-close"></i></span>
             <div id="focusguard-toast-2" class="focusguard-toast" tabindex="-1"></div>
@@ -325,7 +330,7 @@
         </div>
     </div>
     <div id="settings-wrapper" style="opacity: 0;">
-        <div class="settings text-center p-3">
+        <div class="settings text-center p-3 pb-4">
             <div id="focusguard-settings-1" class="focusguard-settings" tabindex="-1"></div>
             <span id="settings-close-btn" class="focusguard-settings" tabindex="-1"><i class="fas fa-window-close"></i></span>
             <h2 class="display-4 px-5">General Settings</h2>
@@ -343,6 +348,8 @@
                     <button type="button" id="theme-4" class="btn btn-outline-dark theme focusguard-settings" tabindex="-1">4</button>
                     <button type="button" id="theme-5" class="btn btn-outline-dark theme focusguard-settings" tabindex="-1">5</button>
                     <button type="button" id="theme-6" class="btn btn-outline-dark theme focusguard-settings" tabindex="-1">6</button>
+                    <button type="button" id="theme-7" class="btn btn-outline-dark theme focusguard-settings" tabindex="-1">7</button>
+                    <button type="button" id="theme-8" class="btn btn-outline-dark theme focusguard-settings" tabindex="-1">8</button>
                 </div>
             </div>
             <div class="dropdown-divider"></div>
@@ -384,7 +391,7 @@
         </div>
     </div>
     <div id="delete-account-wrapper" style="opacity: 0;">
-        <div class="delete-account text-center p-3">
+        <div class="delete-account text-center p-3 pb-4">
             <div id="focusguard-delete-account-1" class="focusguard-delete-account" tabindex="-1"></div>
             <span id="delete-account-close-btn" class="focusguard-delete-account" tabindex="-1"><i class="fas fa-window-close"></i></span>
             <h2 class="display-4 px-5">Delete Account</h2>
@@ -406,7 +413,7 @@
                 <p class="lead">Are you sure you want to permanently delete the current account and every entry related to it from the database?</p>
                 <div id="delete-account-btns-wrapper">
                     <div class="btn-group d-flex" role="group">
-                        <button type="submit" id="delete-account-confirm-btn" class="btn btn-outline-dark focusguard-delete-account" tabindex="-1">Delete</button>
+                        <button type="submit" id="delete-account-confirm-btn" class="btn btn-outline-dark focusguard-delete-account" name="account-delete" tabindex="-1">Delete</button>
                     </div>
                 </div>
             </form>
