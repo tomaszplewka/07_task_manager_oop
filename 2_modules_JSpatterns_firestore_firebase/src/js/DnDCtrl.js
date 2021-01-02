@@ -43,17 +43,19 @@ const DnDCtrl = (function() {
 			return false;
 		}
 	}
-	const handleDragEnd = function(currToday, updateAllTasks) {
+	const handleDragEnd = function(currToday, setGlobalTasks, updateAllTasks) {
 		let taskList = [];
 		[].forEach.call(document.querySelectorAll('.tasks .task-item'), (li) => {
 			li.classList.remove('over');
 			li.style.opacity = '1';
 			taskList.push(li.textContent);
 		});
+		// Update ongoing / completed tasks
+		setGlobalTasks(taskList, false, currToday);
 		// Update firestore
 		updateAllTasks(currToday, taskList);
 	};
-	const enableDnD = function(li, currToday, updateAllTasks) {
+	const enableDnD = function(li, currToday, setGlobalTasks, updateAllTasks) {
 		li.draggable = true;
 		li.addEventListener('dragstart', handleDragStart, false);
 		li.addEventListener('dragenter', handleDragEnter, false);
@@ -62,7 +64,7 @@ const DnDCtrl = (function() {
 		li.addEventListener('drop', handleDrop, false);
 		li.addEventListener(
 			'dragend',
-			() => { handleDragEnd(currToday, updateAllTasks) },
+			() => { handleDragEnd(currToday, setGlobalTasks, updateAllTasks) },
 			false
 		);
 	}

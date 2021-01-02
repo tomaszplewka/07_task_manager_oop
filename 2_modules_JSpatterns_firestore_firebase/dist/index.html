@@ -11,20 +11,26 @@
 </head>
 <body>
     <div class="login-wrapper" style="display: none;">
-        <h1 class="display-3 mb-2 mx-2 brand-header text-center">
+        <h1 class="display-3 my-2 mx-2 brand-header text-center">
             <i class="fas fa-tasks"></i>
             Task Manager
         </h1>
+        <div class="container">
+            <div class="row justify-content-between align-items-center p-0 m-0">
+                <div id="offline-div-msg" class="col-12 d-flex flex-wrap justify-content-center align-items-center m-0 p-0">
+                </div>
+            </div>
+        </div>
         <div class="login-inner-wrapper">
             <div class="login-main-div px-4 pt-3 pb-4">
                 <h2 class="display-4 welcome-heading text-center">What next?</h2>
                 <div class="btn-group d-flex pt-4">
                     <button id="add-user-btn" type="button" name="add-new-user" class="btn btn-outline-light">
                         <i class="fas fa-user-plus mr-1"></i>
-                        Add User
+                        ADD USER
                     </button>
                     <button id="login-btn" type="button" name="log-in" class="btn btn-outline-light">
-                        Log In
+                        LOG IN
                         <i class="fas fa-user-check ml-1"></i>
                     </button>
                 </div>
@@ -46,18 +52,18 @@
                             class="badge badge-pill nav-notifications custom-badge" style="display: none;"></span></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-right nav-menu" aria-labelledby="user-btn" id="main-drop-menu">
-                    <a class="dropdown-item d-flex justify-content-between align-items-center disabled" id="notifications" href="#">
+                    <button class="dropdown-item d-flex justify-content-between align-items-center disabled" id="notifications">
                         NOTIFICATIONS<span class="badge badge-pill custom-badge"></span>
-                    </a>
-                    <a class="dropdown-item" id="settings" href="#">
+                    </button>
+                    <button class="dropdown-item" id="settings">
                         SETTINGS
-                    </a>
-                    <a class="dropdown-item" id="log-out" href="#">
+                    </button>
+                    <button class="dropdown-item" id="log-out">
                         LOG OUT
-                    </a>
-                    <a class="dropdown-item" id="delete-account" href="#">
+                    </button>
+                    <button class="dropdown-item" id="delete-account">
                         DELETE ACCOUNT
-                    </a>
+                    </button>
                 </div>
             </div>
         </nav>
@@ -173,7 +179,7 @@
             </div>
             <div class="col-12 m-0 p-0 px-3" id="task-progress">
                 <div class="d-flex">
-                    <div class="progress w-100">
+                    <div class="progress w-100 my-1">
                         <div class="progress-bar progress-bar-striped progress-bar-animated position-relative" role="progressbar" aria-valuemin="0"
                             aria-valuemax="100"><small class="px-1"></small></div>
                     </div>
@@ -210,7 +216,7 @@
                             <i class="fas fa-ellipsis-v"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-lg-right w-100">
-                            <a class="dropdown-item" tabindex="-1" id="select-all-btn">SELECT ALL TODAY'S TASK</a>
+                            <button class="dropdown-item" tabindex="-1" id="select-all-btn">SELECT ALL TODAY'S TASK</button>
                         </div>
                     </div>
                 </div>

@@ -114,6 +114,7 @@ const UICtrl = (function(DnDCtrl) {
         settingsDivMsg: '#settings-div-msg',
         pastTasksDivMsg: '#past-tasks-div-msg',
         deleteDivMsg: '#delete-div-msg',
+        offlineDivMsg: '#offline-div-msg',
         focusguardPastTask: '.focusguard-past-task',
         focusguardPastTask1: '#focusguard-past-task-1',
         focusguardPastTask2: '#focusguard-past-task-2',
@@ -315,7 +316,7 @@ const UICtrl = (function(DnDCtrl) {
 		});
 		password.type === 'password' ? (password.type = 'text') : (password.type = 'password');
     }
-    const renderDayModeCalendar = function(currToday, tasks, updateAllTasks, ongoing = true) {
+    const renderDayModeCalendar = function(currToday, setGlobalTasks, tasks, updateAllTasks, ongoing = true) {
         // Adjust UI display
         document.querySelector(UISelectors.monthModeWrapper).setAttribute('style', 'display: none !important');
 		document.querySelector(UISelectors.weekModeWrapper).setAttribute('style', 'display: none !important');
@@ -347,7 +348,7 @@ const UICtrl = (function(DnDCtrl) {
         renderTableUI();
         // Display tasks
         if (ongoing) {
-            const taskNum = displayTasks(currToday, tasks, updateAllTasks, DnDCtrl.enableDnD);
+            const taskNum = displayTasks(currToday, setGlobalTasks, tasks, updateAllTasks, DnDCtrl.enableDnD);
             if (taskNum) {
                 document.querySelector(UISelectors.leadTaskNum).textContent = taskNum;
             } else {
@@ -362,7 +363,7 @@ const UICtrl = (function(DnDCtrl) {
                 }
             }
         } else {
-            const taskNum = displayTasks(currToday, tasks, updateAllTasks, DnDCtrl.enableDnD, false);
+            const taskNum = displayTasks(currToday, setGlobalTasks, tasks, updateAllTasks, DnDCtrl.enableDnD, false);
             if (taskNum) {
                 document.querySelector(UISelectors.leadTaskCompletedNum).textContent = taskNum;
             } else {
@@ -375,13 +376,13 @@ const UICtrl = (function(DnDCtrl) {
 			document.querySelector(UISelectors.lDayArrow).disabled = true;
 		} else { document.querySelector(UISelectors.lDayArrow).disabled = false }
     }
-    const displayTasks = function(currToday, tasks, updateAllTasks, enableDnD, ongoing = true) {
+    const displayTasks = function(currToday, setGlobalTasks, tasks, updateAllTasks, enableDnD, ongoing = true) {
         // Format current day
         currToday = format(currToday, "d'-'MMM'-'yyyy");
         // Check tasks
         if (!(tasks === undefined) && (tasks[currToday] !== undefined) && (tasks[currToday].length !== 0)) {
             Array.from(tasks[currToday]).forEach((task, index) => {
-                generateDayTemplate(task, index, enableDnD, currToday, updateAllTasks, ongoing);
+                generateDayTemplate(task, index, enableDnD, currToday, setGlobalTasks, updateAllTasks, ongoing);
             });
             return tasks[currToday].length;
         } else {
@@ -390,7 +391,7 @@ const UICtrl = (function(DnDCtrl) {
             return 0;
         }
     }
-    const generateDayTemplate = function(task, index, enableDnD, currToday, updateAllTasks, ongoing = true) {
+    const generateDayTemplate = function(task, index, enableDnD, currToday, setGlobalTasks, updateAllTasks, ongoing = true) {
         // Create list item
         let list = document.querySelector(UISelectors.tasks);
         let li = createLi('list-group-item d-flex justify-content-between align-items-center task-item', `task${index}`);
@@ -420,7 +421,7 @@ const UICtrl = (function(DnDCtrl) {
 		divIcon.appendChild(createIcon('far fa-trash-alt delete'));
         li.appendChild(divIcon);
         // Enable DnD feature
-        enableDnD(li, currToday, updateAllTasks);
+        enableDnD(li, currToday, setGlobalTasks, updateAllTasks);
 		// Append task item
 		list.appendChild(li);
     }
@@ -531,23 +532,23 @@ const UICtrl = (function(DnDCtrl) {
 		} else {
 			document.querySelector(UISelectors.lMonthArrow).lastElementChild.textContent = vars.months[month - 1];
 			document.querySelector(UISelectors.rMonthArrow).firstElementChild.textContent = vars.months[month + 1];
-		}
-		if (Number(document.querySelector(UISelectors.monthModeYear).textContent) === today.getFullYear()) {
-			Array.from(document.querySelector(UISelectors.monthModeMonth).options)
-            .filter(month => month.index < subDays(today, 30).getMonth())
-            .forEach(month => { month.classList.add('hide') });
-		} else {
+        }
+        if ((today.getMonth() === 0 && (Number(document.querySelector(UISelectors.monthModeYear).textContent) === (today.getFullYear() - 1))) || (today.getMonth() !== 0 && (Number(document.querySelector(UISelectors.monthModeYear).textContent) === today.getFullYear()))) {
+            Array.from(document.querySelector(UISelectors.monthModeMonth).options)
+                .filter(month => month.index < subDays(today, 30).getMonth())
+                .forEach(month => month.classList.add('hide'));
+        } else {
             Array.from(document.querySelector(UISelectors.monthModeMonth).options)
             .forEach(curr => { curr.classList.remove('hide') });
-		}
+        }
         // Adjust table body & header
         setTableBodyHead(false);
         // Generate month template
         generateMonthTemplate(year, month, today, tasks);
-		// Enable/disable left month arrow
-		if (document.querySelector(UISelectors.monthModeMonth).selectedIndex === subDays(today, 30).getMonth() && (new Date()).getFullYear() === Number(document.querySelector(UISelectors.monthModeYear).textContent.trim())) {
-			document.querySelector(UISelectors.lMonthArrow).disabled = true;
-		} else { document.querySelector(UISelectors.lMonthArrow).disabled = false }
+        // Enable/disable left month arrow
+        if ((today.getMonth() === 0 && (document.querySelector(UISelectors.monthModeMonth).selectedIndex === subDays(today, 30).getMonth() && ((new Date()).getFullYear() - 1) === Number(document.querySelector(UISelectors.monthModeYear).textContent.trim()))) || (today.getMonth() !== 0 && (document.querySelector(UISelectors.monthModeMonth).selectedIndex === subDays(today, 30).getMonth() && (new Date()).getFullYear() === Number(document.querySelector(UISelectors.monthModeYear).textContent.trim())))) {
+            document.querySelector(UISelectors.lMonthArrow).disabled = true;
+        } else { document.querySelector(UISelectors.lMonthArrow).disabled = false }
     }
     const generateMonthTemplate = function(year, month, today, tasks) {
         // Set local vars
@@ -965,6 +966,25 @@ const UICtrl = (function(DnDCtrl) {
         let today = parse(todayContent, "d MMMM yyyy, EEEE", new Date());
         return today;
     }
+    const filterTasks = function(term, selector) {
+        // Get list reference
+        const list = document.querySelector(selector);
+        // Filter
+        let flag = 0;
+		Array.from(list.children)
+        .filter(task => !task.textContent.toLowerCase().includes(term))
+        .forEach(task => {
+            task.classList.add('filtered')
+            flag++;
+        });
+        if (flag === list.children.length) {
+            // Show message toast
+            addMsgToast("taskDivMsg", '', 'No tasks to display.', 'status', 'polite', true, 1500, 'toast-status');
+        }
+        Array.from(list.children)
+        .filter(task => task.textContent.toLowerCase().includes(term))
+        .forEach(task => { task.classList.remove('filtered') });
+    }
     return {
         getSelectors: function() {
             return UISelectors;
@@ -995,7 +1015,8 @@ const UICtrl = (function(DnDCtrl) {
         handleTabindex,
         handleDisabledStateBtn,
         retrieveDayDate,
-        createListWithMsg
+        createListWithMsg,
+        filterTasks
     }
 })(DnDCtrl);
 export default UICtrl;

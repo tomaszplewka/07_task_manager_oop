@@ -111,22 +111,10 @@ const DataCtrl = (function() {
                 };
             }
     }
-    const filterTasks = function(term, selector) {
-        // Get list reference
-        const list = document.querySelector(selector);
-        // Filter
-		Array.from(list.children)
-			.filter(task => !task.textContent.toLowerCase().includes(term))
-			.forEach(task => { task.classList.add('filtered') });
-        Array.from(list.children)
-        .filter(task => task.textContent.toLowerCase().includes(term))
-        .forEach(task => { task.classList.remove('filtered') });
-    }
     return {
         validate,
         errorHandlingLogIn,
-        errorHandlingSignUp,
-        filterTasks
+        errorHandlingSignUp
     }
 })();
 export default DataCtrl;

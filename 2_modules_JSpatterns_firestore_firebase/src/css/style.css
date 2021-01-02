@@ -135,14 +135,6 @@
 /*  */
 /* Fonts */
 /*  */
-/* @font-face {
-  font-family: 'caveat';
-  src: url('../fonts/Caveat/static/Caveat-Medium.ttf')  format('truetype');
-}
-@font-face {
-  font-family: 'roboto-mono';
-  src: url('../fonts/Roboto_Mono/static/RobotoMono-Medium.ttf')  format('truetype');
-} */
 @font-face {
   font-family: 'caveat';
   src:
@@ -169,13 +161,24 @@ a {
 	color: var(--text-dark) !important;
 	cursor: pointer;
 }
-a:hover {
+a:hover,
+.dropdown-menu button:hover {
 	color: var(--theme1-row-hover-color) !important;
 	background-color: var(--theme1-secondary-color) !important;
+	outline: none !important;
 }
-a:active {
+a:active,
+.dropdown-menu button:active {
 	color: var(--theme1-secondary-color) !important;
 	background-color: var(--theme1-row-hover-color) !important;
+	outline: none !important;
+}
+.dropdown-menu button:focus {
+	outline: none !important;
+}
+#main-body {
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
 }
 /*  */
 /* Utility classes */
@@ -254,6 +257,9 @@ a:active {
 #task-tabs .btn.active {
 	z-index: 0 !important;
 }
+.login-wrapper .container {
+	background-color: transparent;
+}
 /* DnD classes */
 .over {
 	border: 2px dashed var(--theme1-bg-color) !important;
@@ -303,8 +309,9 @@ h1.main-header,
 #main-div-msg .toast,
 #task-div-msg .toast,
 #past-tasks-div-msg .toast,
-#delete-div-msg .toast,
-#settings-div-msg .toast {
+#offline-div-msg .toast,
+#settings-div-msg .toast,
+#delete-div-msg .toast {
 	flex-basis: 100%;
 }
 .date-toasts {
@@ -316,6 +323,7 @@ h1.main-header,
 button.close {
 	position: absolute;
 	right: 5px;
+	top: 5px;
 }
 .toast-status,
 .toast-alert {
@@ -395,8 +403,8 @@ td:hover {
 	background-color: var(--theme1-secondary-color);
 }
 .current-day {
-	background-color: var(--theme1-currday-color);
-	color: var(--text-light);
+	background-color: var(--theme1-currday-color) !important;
+	color: var(--text-dark) !important;
 }
 td.disabled {
 	cursor: auto;
@@ -456,7 +464,7 @@ ul.tasks li:hover div.lead {
 .login-inner-wrapper {
 	position: relative;
 	margin: 0 2rem;
-	height: 400px;
+	height: 500px;
 	overflow: hidden;
 }
 .login-confirm,
@@ -510,6 +518,12 @@ ul.tasks li:hover div.lead {
 nav {
 	background-color: var(--theme1-main-color);
 	border-bottom: 2px solid var(--theme1-currweek-hover-color);
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+}
+#main-navbar {
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
 }
 /*  */
 /* Search, add, pick date, select all */
@@ -602,13 +616,20 @@ nav {
 /* Input, select */
 /*  */
 .custom-select {
-	background-color: var(--theme1-secondary-color);
+	color: var(--text-dark) !important;
+	background-color: var(--theme1-secondary-color) !important;
+	transition: all 0.25s ease !important;
+}
+.custom-select:hover {
+	color: var(--text-light) !important;
+	background-color: var(--theme1-row-hover-color) !important;
+	transition: all 0.25s ease !important;
 }
 input[type="text"].valid,
 input[type="password"].valid,
 span.valid {
 	border-color: var(--valid);
-	border-width: 2px;
+	border-width: 1px;
 	box-shadow: 0 1px 0 0 var(--valid);
 	color: var(--valid);
 	background-color: var(--valid-background);
@@ -617,7 +638,7 @@ input[type="text"]:focus.valid,
 input[type="password"]:focus.valid,
 span:focus.valid {
 	border-color: var(--valid) !important;
-	border-width: 2px;
+	border-width: 1px;
 	box-shadow: 0 1px 0 0 var(--valid) !important;
 	color: var(--valid);
 }
@@ -625,7 +646,7 @@ input[type="text"].invalid,
 input[type="password"].invalid,
 span.invalid {
 	border-color: var(--invalid);
-	border-width: 2px;
+	border-width: 1px;
 	box-shadow: 0 1px 0 0 var(--invalid);
 	color: var(--invalid);
 	background-color: var(--invalid-background);
@@ -634,7 +655,7 @@ input[type="text"]:focus.invalid,
 input[type="password"]:focus.invalid,
 span:focus.invalid {
 	border-color: var(--invalid) !important;
-	border-width: 2px;
+	border-width: 1px;
 	box-shadow: 0 1px 0 0 var(--invalid) !important;
 	color: var(--invalid);
 }
@@ -645,12 +666,13 @@ span:focus.invalid {
 #password.form-control:focus,
 #email.form-control:focus,
 .add .form-control:focus,
-#delete-account-form .form-control:focus {
+#delete-account-form .form-control:focus,
+.month-mode-wrapper .custom-select:focus {
 	border-color: var(--theme1-row-hover-color);
 	box-shadow: 0 0 0 .2rem var(--theme1-row-hover-color);
 }
 p.invalid {
-	color: var(--invalid);
+	color: var(--invalid) !important;
 }
 /* MQs */
 @media screen and (max-width: 1500px) {
@@ -720,6 +742,12 @@ p.invalid {
 	#main-navbar {
 		margin-top: 0rem !important;
 	}
+	nav {
+		border-radius: 0;
+	}
+	#main-navbar {
+		border-radius: 0;
+	}
 	.lead {
 		font-size: 1.1rem !important;
 	}
@@ -769,7 +797,10 @@ p.invalid {
 		max-width: 100%;
 	}
 	td {
-		padding: 0.75rem !important;
+		padding: 0.75rem!important;
+	}
+	td .custom-badge {
+		right: 0;
 	}
 	.week-mode-active td {
 		padding: 0.75rem !important;
@@ -799,10 +830,10 @@ p.invalid {
 		width: 66.66%;
 	}
 	.month-mode-active thead {
-		width: 15%;
+		width: 13%;
 	}
 	.month-mode-active tbody {
-		width: 85%;
+		width: 87%;
 		display: flex;
 	}
 	.month-mode-active tbody tr {
@@ -842,8 +873,11 @@ p.invalid {
 	}
 }
 @media screen and (max-width: 400px) {
+	#lead-today-date {
+		display: block;
+	}
 	td {
-		padding: 0.75rem !important;
+		padding: 0.75rem 0.5rem !important;
 	}
 	th {
 		padding: 0.75rem 0.25rem !important;
@@ -879,6 +913,9 @@ p.invalid {
 	}
 	.display-4 {
 		font-size: 2rem !important;
+	}
+	#main-body .display-4 {
+		font-size: 1.6rem !important;
 	}
 	.alert-message,
 	.toast-message,
