@@ -296,8 +296,8 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
             // Left arrow in week mode clicked
             if (`#${e.target.id}` === UISelectors.lWeekArrow || document.querySelector(UISelectors.lWeekArrow).contains(e.target)) {
                 // Get correct week
-                const currWeekContent = document.querySelector(UISelectors.weekModeContent).textContent.trim().split(' - ');
-                let today = parse(currWeekContent[0], "d MMMM yyyy", new Date());
+                const currWeekContent = document.querySelector(UISelectors.weekModeContent).textContent.trim().split('\n');
+                let today = parse(currWeekContent[0], "'from' do 'of' MMMM yyyy", new Date());
                 const currFirstDayOfWeek = subDays(startOfWeek(today), 7);
                 // Render week mode
                 if (vars.globalTasksOngoing === undefined) {
@@ -309,8 +309,8 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
             // Right arrow in week mode clicked
             if (`#${e.target.id}` === UISelectors.rWeekArrow || document.querySelector(UISelectors.rWeekArrow).contains(e.target)) {
                 // Get correct week
-                const currWeekContent = document.querySelector(UISelectors.weekModeContent).textContent.trim().split(' - ');
-                let today = parse(currWeekContent[0], "d MMMM yyyy", new Date());
+                const currWeekContent = document.querySelector(UISelectors.weekModeContent).textContent.trim().split('\n');
+                let today = parse(currWeekContent[0], "'from' do 'of' MMMM yyyy", new Date());
                 const currFirstDayOfWeek = addDays(startOfWeek(today), 7);
                 // Render week mode
                 if (vars.globalTasksOngoing === undefined) {
@@ -1214,8 +1214,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                 }
                 // Update firestore
                 let allPastTasks = [];
-                let flag = false;
-                vars.globalPastTaskKeys.some(key => {
+                vars.globalPastTaskKeys.some((key, index) => {
                     // Make sure there is no duplicates
                     if (todaysTasks.length) {
                         vars.globalTasksOngoing[key].forEach(task => {
@@ -1223,54 +1222,61 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                                 allPastTasks.push(task);
                             }
                         });
+                    } else {
+                        vars.globalTasksOngoing[key].forEach(task => {
+                            allPastTasks.push(task);
+                        });
                     }
-                    // Delete from ongoing collection
-                    FirebaseCtrl.deleteAllTasks(key, 'ongoing')
-                    .then(() => {
-                        // Update globalTasks
-                        vars.globalTasksOngoing[key] = [];
-                        // Update globalPastTasks
-                        vars.globalPastTaskKeys = [];
-                    })
-                    .catch(error => {
-                        // Show message toast
-                        UICtrl.addMsgToast("pastTasksDivMsg", '', 'Error: ' + error.message + '. Could not append tasks. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
-                        flag = true;
-                        return flag;
-                    });
+                    if (index === (vars.globalPastTaskKeys.length - 1)) {
+                        // Delete from ongoing collection
+                        FirebaseCtrl.deleteAllTasks(key, 'ongoing')
+                        .then(() => {
+                            // Update globalTasks
+                            vars.globalTasksOngoing[key] = [];
+                            // Update globalPastTasks
+                            vars.globalPastTaskKeys = [];
+                            if (vars.globalTasksOngoing[today] !== undefined && vars.globalTasksOngoing[today].length) {
+                                allPastTasks = vars.globalTasksOngoing[today].concat(allPastTasks);
+                            }
+                            FirebaseCtrl.updateAllOngoingTasks(today, allPastTasks);
+                        })
+                        .then(() => {
+                            // Show message toast
+                            UICtrl.addMsgToast("pastTasksDivMsg", '', 'Past tasks have been appended.', 'status', 'polite', true, 2000, 'toast-status');
+                            // Update globaltasks
+                            vars.globalTasksOngoing[today] = allPastTasks;
+                            setTimeout(() => {
+                                // Update notifications
+                                document.querySelector(UISelectors.notifications).lastElementChild.textContent = '';
+                                document.querySelector(UISelectors.navNotifications).textContent = '';
+                                document.querySelector(UISelectors.navNotifications).style.display = 'none';
+                                document.querySelector(UISelectors.notifications).classList.add('disabled');
+                                // Close alert wrapper
+                                document.querySelector(UISelectors.alertMsgWrapper).style.display = 'none';
+                                document.querySelector(UISelectors.alertMsgWrapper).style.opacity = 0;
+                                document.querySelector('body').style.overflow = 'auto';
+                                document.querySelector(UISelectors.listPastTasks).innerHTML = '';
+                                // Render day mode
+                                UICtrl.renderDayModeCalendar(new Date(), setOngoingTasks, vars.globalTasksOngoing, FirebaseCtrl.updateAllOngoingTasks);
+                                // Calculate progress
+                                calculateProgress(new Date());
+                            }, 2000);
+                        })
+                        .catch(error => {
+                            // Show message toast
+                            UICtrl.addMsgToast("pastTasksDivMsg", '', 'Error: ' + error.message + '. Could not append tasks. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
+                        });
+                    } else {
+                        // Delete from ongoing collection
+                        FirebaseCtrl.deleteAllTasks(key, 'ongoing')
+                        .then(() => {
+                            // Update globalTasks
+                            vars.globalTasksOngoing[key] = [];
+                            // Update globalPastTasks
+                            vars.globalPastTaskKeys = [];
+                        });
+                    }
                 });
-                if (!flag) {
-                    if (vars.globalTasksOngoing[today] !== undefined && vars.globalTasksOngoing[today].length) {
-                        allPastTasks = vars.globalTasksOngoing[today].concat(allPastTasks);
-                    }
-                    FirebaseCtrl.updateAllOngoingTasks(today, allPastTasks)
-                    .then(() => {
-                        // Show message toast
-                        UICtrl.addMsgToast("pastTasksDivMsg", '', 'Past tasks have been appended.', 'status', 'polite', true, 2000, 'toast-status');
-                        // Update globaltasks
-                        vars.globalTasksOngoing[today] = allPastTasks;
-                        setTimeout(() => {
-                            // Update notifications
-                            document.querySelector(UISelectors.notifications).lastElementChild.textContent = '';
-                            document.querySelector(UISelectors.navNotifications).textContent = '';
-                            document.querySelector(UISelectors.navNotifications).style.display = 'none';
-                            document.querySelector(UISelectors.notifications).classList.add('disabled');
-                            // Close alert wrapper
-                            document.querySelector(UISelectors.alertMsgWrapper).style.display = 'none';
-                            document.querySelector(UISelectors.alertMsgWrapper).style.opacity = 0;
-                            document.querySelector('body').style.overflow = 'auto';
-                            document.querySelector(UISelectors.listPastTasks).innerHTML = '';
-                            // Render day mode
-                            UICtrl.renderDayModeCalendar(new Date(), setOngoingTasks, vars.globalTasksOngoing, FirebaseCtrl.updateAllOngoingTasks);
-                            // Calculate progress
-                            calculateProgress(new Date());
-                        }, 2000);
-                    })
-                    .catch(error => {
-                        // Show message toast
-                        UICtrl.addMsgToast("pastTasksDivMsg", '', 'Error: ' + error.message + '. Could not append tasks. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
-                    });
-                }
             }
                 // Past tasks wrapper - complete tasks
             if (`#${e.target.id}` === UISelectors.alertCompleteBtn) {

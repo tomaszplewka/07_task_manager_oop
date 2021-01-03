@@ -493,6 +493,7 @@ ul.tasks li:hover div.lead {
 	width: 40vw;
 	background-color: var(--theme1-main-color);
 	margin: 1rem;
+	transition: all 0.25s ease;
 }
 #login-loader {
 	margin: 1rem;
@@ -741,11 +742,13 @@ p.invalid {
 	}
 	#main-navbar {
 		margin-top: 0rem !important;
-	}
-	nav {
 		border-radius: 0;
 	}
-	#main-navbar {
+	#main-body {
+		margin-bottom: 0rem !important;
+		border-radius: 0;
+	}
+	nav {
 		border-radius: 0;
 	}
 	.lead {
@@ -757,15 +760,22 @@ p.invalid {
 	.week-mode-active td {
 		padding: 1rem 0.5rem !important;
 	}
-	c
 	.display-4 {
 		font-size: 2.5rem !important;
 	}
+	.display-3 {
+		font-size: 4rem !important;
+	}
+	.day-mode-arrow > div,
+	.day-mode-arrow > div button,
+	.week-mode-arrow > div,
+	.week-mode-arrow > div button,
+	.month-mode-arrow > div,
+	.month-mode-arrow > div button {
+		width: 100% !important;
+	}
 }
 @media screen and (max-width: 575.98px) {
-	#main-body {
-		margin-bottom: 0rem !important;
-	}
 	td {
 		padding: 1rem !important;
 	}
@@ -784,11 +794,16 @@ p.invalid {
 	}
 }
 @media screen and (max-width: 450px) {
-	#login-loader,
-	.login-main-div,
-	.login-add-mode,
-	.login-confirm {
+	.lead {
+		font-size: 1rem !important;
+	}
+	.login-wrapper #login-loader,
+	.login-wrapper .login-main-div,
+	.login-wrapper .login-add-mode,
+	.login-wrapper .login-confirm {
 		width: 100vw;
+		padding-right: 0.75rem !important;
+		padding-left: 0.75rem !important;
 	}
 	.alert-message,
 	.toast-message,
@@ -810,6 +825,10 @@ p.invalid {
 	}
 	.display-4 {
 		font-size: 1.75rem !important;
+	}
+	#main-body .display-4 {
+		padding-top: 1rem !important;
+		padding-bottom: 0rem !important;
 	}
 	.week-mode-active table,
 	.month-mode-active table,
@@ -871,6 +890,29 @@ p.invalid {
 		overflow: scroll;
 		height: 100%;
 	}
+	#lead-today-date-p {
+		margin: 0 !important;
+	}
+	#main-body .month-mode-wrapper,
+	#main-body .week-mode-wrapper,
+	#main-body .day-mode-wrapper,
+	#main-body #day-mode-content,
+	#main-body #week-mode-content,
+	#main-body .month-mode-arrow + div,
+	#main-body #main-options-btn {
+		padding-top: 0 !important;
+		padding-bottom: 0 !important;
+	}
+	#main-body #task-tabs,
+	#main-body #task-tabs + div {
+		padding-bottom: 0 !important;
+	}
+	#task-progress-wrapper p.lead {
+		margin: 0 !important;
+	}
+	#task-progress-wrapper .progress {
+		padding: 0.25rem 0;
+	}
 }
 @media screen and (max-width: 400px) {
 	#lead-today-date {
@@ -885,13 +927,13 @@ p.invalid {
 	.week-mode-active td {
 		padding: 0.75rem !important;
 	}
-	nav {
+	nav.navbar {
 		display: flex;
 		flex-direction: column;
+		padding-top: 0rem !important;
 	}
 	div.dropdown {
 		width: 100%;
-		padding-top: 1rem;
 		margin: 0 !important;
 	}
 	nav .dropdown-toggle::after {
@@ -925,6 +967,13 @@ p.invalid {
 	}
 }
 @media screen and (max-height: 450px) and (orientation: landscape) {
+	.login-wrapper .brand-header {
+		margin-top: 1.5rem !important;
+		font-size: 2.5rem !important;
+	}
+	.login-wrapper .display-4 {
+		font-size: 1.75rem !important;
+	}
 	#alert-message-wrapper,
 	#toast-message-wrapper,
 	#settings-wrapper,

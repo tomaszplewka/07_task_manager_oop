@@ -196,7 +196,7 @@ const UICtrl = (function(DnDCtrl) {
     }
     const createShowHidePassword = function(wrapperClass) {
         let div = document.createElement('div');
-        div.className = `d-flex justify-content-end align-items-center ${wrapperClass}`;
+        div.className = `d-flex justify-content-end align-items-center mt-2 ${wrapperClass}`;
         div.innerHTML = `
             <i class="far fa-circle mr-1 show-password"></i>
             <i class="far fa-check-circle mr-1 show-password hide"></i>
@@ -243,7 +243,7 @@ const UICtrl = (function(DnDCtrl) {
         div.lastElementChild.appendChild(createInputGroup('add-password', 'fa-key', 'password', 'password', 'password'));
         div.lastElementChild.appendChild(createShowHidePassword('create-account-show-password-wrapper'));
         div.lastElementChild.appendChild(createErrPara());
-        div.lastElementChild.appendChild(createBtnGroup(createBtn('login-add-back-btn', 'button', 'Go Back', 'fa-chevron-left'), createBtn('login-add-create-btn', 'submit', 'Create', 'fa-chevron-right', false)));
+        div.lastElementChild.appendChild(createBtnGroup(createBtn('login-add-back-btn', 'button', 'GO BACK', 'fa-chevron-left'), createBtn('login-add-create-btn', 'submit', 'CREATE', 'fa-chevron-right', false)));
         div.querySelector(UISelectors.addCreateBtn).setAttribute('disabled', true);
         // 
         loginMainDiv.after(div);
@@ -259,7 +259,7 @@ const UICtrl = (function(DnDCtrl) {
         div.lastElementChild.appendChild(createInputGroup('login-password', 'fa-key', 'password', 'password', 'password'));
         div.lastElementChild.appendChild(createShowHidePassword('login-show-password-wrapper'));
         div.lastElementChild.appendChild(createErrPara());
-        div.lastElementChild.appendChild(createBtnGroup(createBtn('login-confirm-back-btn', 'button', 'Go Back', 'fa-chevron-left'), createBtn('login-confirm-login-btn', 'submit', 'Log In', 'fa-chevron-right', false)));
+        div.lastElementChild.appendChild(createBtnGroup(createBtn('login-confirm-back-btn', 'button', 'GO BACK', 'fa-chevron-left'), createBtn('login-confirm-login-btn', 'submit', 'LOG IN', 'fa-chevron-right', false)));
         // 
         loginMainDiv.after(div);
     }
@@ -458,11 +458,10 @@ const UICtrl = (function(DnDCtrl) {
         // Adjust table body & header
         setTableBodyHead(false);
         // Generate week template
-        document.querySelector(UISelectors.weekModeContent).textContent = 
-        `
-            ${getDate(currFirstDayOfWeek)} ${format(currFirstDayOfWeek, 'MMMM yyyy')} - 
-            ${getDate(subDays(firstDayNextWeek, 1))} ${format(subDays(firstDayNextWeek, 1), 'MMMM yyyy')}
-        `;
+        document.querySelector(UISelectors.weekModeContent).innerHTML = 
+        `from ${format(currFirstDayOfWeek, "do")} of ${format(currFirstDayOfWeek, 'MMMM yyyy')}
+        <br>
+        to ${format(subDays(firstDayNextWeek, 1), "do")} of ${format(subDays(firstDayNextWeek, 1), 'MMMM yyyy')}`;
         generateWeekTemplate(week, tasks);
     }
     const generateWeekTemplate = function(week, taskList) {

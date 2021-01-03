@@ -11,7 +11,7 @@
 </head>
 <body>
     <div class="login-wrapper" style="display: none;">
-        <h1 class="display-3 my-2 mx-2 brand-header text-center">
+        <h1 class="display-3 m-2 mt-5 brand-header text-center">
             <i class="fas fa-tasks"></i>
             Task Manager
         </h1>
@@ -76,7 +76,7 @@
         </div>
         <div class="row m-0">
             <div class="col col-sm-12 m-0 p-0">
-                <p class="lead text-center px-3">Today is <span id="lead-today-date"></span></p>
+                <p id="lead-today-date-p" class="lead text-center px-3">Today is <span id="lead-today-date"></span></p>
             </div>
         </div>
         <div class="row justify-content-between align-items-center py-0 px-3 m-0">
@@ -86,9 +86,9 @@
         <div class="row justify-content-between align-items-center py-0 px-3 m-0">
             <div class="month-mode-wrapper col-12 m-0 p-0 pt-2">
                 <div class="row justify-content-between align-items-center m-0">
-                    <div class="month-mode-arrow col-2 order-1 m-0 p-0 py-2">
+                    <div class="month-mode-arrow col-6 col-sm-2 order-1 m-0 p-0 py-2">
                         <div class="d-flex justify-content-start">
-                            <button id="l-month-arrow" type="button" class="btn btn-outline-light d-flex align-items-baseline" disabled>
+                            <button id="l-month-arrow" type="button" class="btn btn-outline-light d-flex align-items-baseline justify-content-center" disabled>
                                 <i class="fas fa-chevron-left"></i>
                                 <i class="fas fa-chevron-left"></i>
                                 <span class="float-right"></span>
@@ -114,9 +114,9 @@
                             <span id="month-mode-year" class="text-center pl-2 col-3 m-0 p-0 lead"></span>
                         </div>
                     </div>
-                    <div class="month-mode-arrow col-2 order-2 order-sm-3 m-0 p-0 py-2">
+                    <div class="month-mode-arrow col-6 col-sm-2 order-2 order-sm-3 m-0 p-0 py-2">
                         <div class="d-flex justify-content-end">
-                            <button id="r-month-arrow" type="button" class="btn btn-outline-light d-flex align-items-baseline" disabled>
+                            <button id="r-month-arrow" type="button" class="btn btn-outline-light d-flex align-items-baseline justify-content-center" disabled>
                                 <span class="float-left"></span>
                                 <i class="fas fa-chevron-right"></i>
                                 <i class="fas fa-chevron-right"></i>
@@ -127,9 +127,9 @@
             </div>
             <div class="week-mode-wrapper col-12 m-0 p-0 pt-2">
                 <div class="row justify-content-between align-items-center m-0">
-                    <div class="week-mode-arrow col-2 order-1 m-0 p-0 py-2">
+                    <div class="week-mode-arrow col-6 col-sm-2 order-1 m-0 p-0 py-2">
                         <div class="d-flex justify-content-start">
-                            <button id="l-week-arrow" type="button" class="btn btn-outline-light d-flex align-items-center" disabled>
+                            <button id="l-week-arrow" type="button" class="btn btn-outline-light d-flex align-items-center justify-content-center" disabled>
                                 <i class="fas fa-chevron-left"></i>
                                 <i class="fas fa-chevron-left"></i>
                             </button>
@@ -137,9 +137,9 @@
                     </div>
                     <span id="week-mode-content"
                         class="text-center w-100 col-12 col-sm-8 order-3 order-sm-2 m-0 p-0 py-2 lead"></span>
-                    <div class="week-mode-arrow col-2 order-2 order-sm-3 m-0 p-0 py-2">
+                    <div class="week-mode-arrow col-6 col-sm-2 order-2 order-sm-3 m-0 p-0 py-2">
                         <div class="d-flex justify-content-end">
-                            <button id="r-week-arrow" type="button" class="btn btn-outline-light d-flex align-items-center" disabled>
+                            <button id="r-week-arrow" type="button" class="btn btn-outline-light d-flex align-items-center justify-content-center" disabled>
                                 <i class="fas fa-chevron-right"></i>
                                 <i class="fas fa-chevron-right"></i>
                             </button>
@@ -149,9 +149,9 @@
             </div>
             <div class="day-mode-wrapper col-12 m-0 p-0 pt-2">
                 <div class="row justify-content-between align-items-center m-0">
-                    <div class="day-mode-arrow col-2 order-1 m-0 p-0 py-2">
+                    <div class="day-mode-arrow col-6 col-sm-2 order-1 m-0 p-0 py-2">
                         <div class="d-flex justify-content-start">
-                            <button id="l-day-arrow" type="button" class="btn btn-outline-light d-flex align-items-center" disabled>
+                            <button id="l-day-arrow" type="button" class="btn btn-outline-light d-flex align-items-center justify-content-center" disabled>
                                 <i class="fas fa-chevron-left"></i>
                                 <i class="fas fa-chevron-left"></i>
                             </button>
@@ -159,9 +159,9 @@
                     </div>
                     <span id="day-mode-content"
                         class="text-center w-100 col-12 col-sm-8 order-3 order-sm-2 m-0 p-0 py-2 lead"></span>
-                    <div class="day-mode-arrow col-2 order-2 order-sm-3 m-0 p-0 py-2">
+                    <div class="day-mode-arrow col-6 col-sm-2 order-2 order-sm-3 m-0 p-0 py-2">
                         <div class="d-flex justify-content-end">
-                            <button id="r-day-arrow" type="button" class="btn btn-outline-light d-flex align-items-center" disabled>
+                            <button id="r-day-arrow" type="button" class="btn btn-outline-light d-flex align-items-center justify-content-center" disabled>
                                 <i class="fas fa-chevron-right"></i>
                                 <i class="fas fa-chevron-right"></i>
                             </button>
@@ -339,7 +339,7 @@
         <div class="settings text-center p-3 pb-4">
             <div id="focusguard-settings-1" class="focusguard-settings" tabindex="-1"></div>
             <span id="settings-close-btn" class="focusguard-settings" tabindex="-1"><i class="fas fa-window-close"></i></span>
-            <h2 class="display-4 px-5">General Settings</h2>
+            <h2 class="display-4 px-5">Settings</h2>
             <div class="dropdown-divider"></div>
             <div class="row justify-content-between align-items-center p-0 m-0">
                 <div id="settings-div-msg" class="col-12 d-flex flex-wrap justify-content-center align-items-center m-0 p-0">
