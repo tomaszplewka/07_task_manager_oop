@@ -52,7 +52,10 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                         DataCtrl.validate(e.target);
                         if (input.id === 'password' && input.classList.contains('invalid')) {
                             errorPara.classList.remove('hide');
-                            errorPara.innerHTML = 'Include at least one capital letter, one number and one special character.'
+                            errorPara.innerHTML = 'Must be at least 8 chars long (include at least one capital letter, one number and one special char).'
+                        } else if (input.id === 'email' && input.classList.contains('invalid')) {
+                            errorPara.classList.remove('hide');
+                            errorPara.innerHTML = 'Must be a valid email format'
                         } else {
                             errorPara.classList.add('hide');
                             errorPara.innerHTML = '';
@@ -91,6 +94,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                     const username = document.querySelector(UISelectors.username);
                     const email = document.querySelector(UISelectors.email);
                     const pass = document.querySelector(UISelectors.password);
+                    const currToday = format(new Date(), "d'-'MMM'-'yyyy");
                     if (DataCtrl.validate(username) && DataCtrl.validate(email) && DataCtrl.validate(pass)) { // YES
                         // Create and store new user in Firebase
                         const user = {
@@ -99,7 +103,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                             theme: 'theme-1',
                             toast: 'toast-change-1'
                         }
-                        FirebaseCtrl.signUp(email.value, pass.value, user)
+                        FirebaseCtrl.signUp(currToday, email.value, pass.value, user)
                         .then(() => {
                             // Adjust UI display
                             document.querySelector(UISelectors.loginAddMode).classList.remove('move-y-zero'); 
@@ -224,7 +228,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                     })
                     .catch(error => {
                         // Show message toast
-                        UICtrl.addMsgToast("mainDivMsg", '', 'Error: ' + error.code + '. Could not log you out. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
+                        UICtrl.addMsgToast("mainDivMsg", '', 'Error: ' + error.message + '. Could not log you out. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
                     });
             }
             // Switch to day mode
@@ -283,7 +287,11 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                 // Get correct week
                 const currFirstDayOfWeek = startOfWeek(UICtrl.retrieveDayDate());
                 // Render week mode
-                UICtrl.renderWeekModeCalendar(currFirstDayOfWeek, vars.globalTasksOngoing);
+                if (vars.globalTasksOngoing === undefined) {
+                    UICtrl.renderWeekModeCalendar(currFirstDayOfWeek, []);
+                } else {
+                    UICtrl.renderWeekModeCalendar(currFirstDayOfWeek, vars.globalTasksOngoing);
+                }
             }
             // Left arrow in week mode clicked
             if (`#${e.target.id}` === UISelectors.lWeekArrow || document.querySelector(UISelectors.lWeekArrow).contains(e.target)) {
@@ -292,7 +300,11 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                 let today = parse(currWeekContent[0], "d MMMM yyyy", new Date());
                 const currFirstDayOfWeek = subDays(startOfWeek(today), 7);
                 // Render week mode
-                UICtrl.renderWeekModeCalendar(currFirstDayOfWeek, vars.globalTasksOngoing);
+                if (vars.globalTasksOngoing === undefined) {
+                    UICtrl.renderWeekModeCalendar(currFirstDayOfWeek, []);
+                } else {
+                    UICtrl.renderWeekModeCalendar(currFirstDayOfWeek, vars.globalTasksOngoing);
+                }
             }
             // Right arrow in week mode clicked
             if (`#${e.target.id}` === UISelectors.rWeekArrow || document.querySelector(UISelectors.rWeekArrow).contains(e.target)) {
@@ -301,18 +313,30 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                 let today = parse(currWeekContent[0], "d MMMM yyyy", new Date());
                 const currFirstDayOfWeek = addDays(startOfWeek(today), 7);
                 // Render week mode
-                UICtrl.renderWeekModeCalendar(currFirstDayOfWeek, vars.globalTasksOngoing);
+                if (vars.globalTasksOngoing === undefined) {
+                    UICtrl.renderWeekModeCalendar(currFirstDayOfWeek, []);
+                } else {
+                    UICtrl.renderWeekModeCalendar(currFirstDayOfWeek, vars.globalTasksOngoing);
+                }
             }
             // Switch to month mode
             if (`#${e.target.id}` === UISelectors.monthModeView) {
                 // Get current today
                 const today = new Date();
                 // Render month mode
-                UICtrl.renderMonthModeCalendar(today.getFullYear(), today.getMonth(), today, vars.globalTasksOngoing);
+                if (vars.globalTasksOngoing === undefined) {
+                    UICtrl.renderMonthModeCalendar(today.getFullYear(), today.getMonth(), today, []);
+                } else {
+                    UICtrl.renderMonthModeCalendar(today.getFullYear(), today.getMonth(), today, vars.globalTasksOngoing);
+                }
                 // Change month in month mode
                 document.querySelector(UISelectors.monthModeMonth).addEventListener('change', e => {
                     // Render month mode
-                    UICtrl.renderMonthModeCalendar(Number(document.querySelector(UISelectors.monthModeYear).textContent), e.target.selectedIndex, today, vars.globalTasksOngoing);
+                    if (vars.globalTasksOngoing === undefined) {
+                        UICtrl.renderMonthModeCalendar(Number(document.querySelector(UISelectors.monthModeYear).textContent), e.target.selectedIndex, today, []);
+                    } else {
+                        UICtrl.renderMonthModeCalendar(Number(document.querySelector(UISelectors.monthModeYear).textContent), e.target.selectedIndex, today, vars.globalTasksOngoing);
+                    }
                 });
             }
             // Left arrow in month mode clicked
@@ -325,7 +349,11 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                     year--;
                 }
                 // Render month mode
-                UICtrl.renderMonthModeCalendar(year, month, new Date(), vars.globalTasksOngoing);
+                if (vars.globalTasksOngoing === undefined) {
+                    UICtrl.renderMonthModeCalendar(year, month, new Date(), []);
+                } else {
+                    UICtrl.renderMonthModeCalendar(year, month, new Date(), vars.globalTasksOngoing);
+                }
             }
             // Right arrow in month mode clicked
             if (`#${e.target.id}` === UISelectors.rMonthArrow || document.querySelector(UISelectors.rMonthArrow).contains(e.target)) {
@@ -337,7 +365,11 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                     year++;
                 }
                 // Render month mode
-                UICtrl.renderMonthModeCalendar(year, month, new Date(), vars.globalTasksOngoing);
+                if (vars.globalTasksOngoing === undefined) {
+                    UICtrl.renderMonthModeCalendar(year, month, new Date(), []);
+                } else {
+                    UICtrl.renderMonthModeCalendar(year, month, new Date(), vars.globalTasksOngoing);
+                }
             }
             // Choose day td when in week / month mode
             if (!document.querySelector(UISelectors.tableBody).classList.contains('pick-date-mode') && e.target.tagName.toLowerCase() === 'td') {
@@ -492,7 +524,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                         })
                         .catch(error => {
                             // Show message toast
-                            UICtrl.addMsgToast("taskDivMsg", '', 'Error: ' + error.code + '. Could not delete task. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
+                            UICtrl.addMsgToast("taskDivMsg", '', 'Error: ' + error.message + '. Could not delete task. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
                         });
                     } else if (document.querySelector(UISelectors.taskTabsCompleted).classList.contains('active')) {
                         // Delete from firestore
@@ -528,7 +560,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                         })
                         .catch(error => {
                             // Show message toast
-                            UICtrl.addMsgToast("taskDivMsg", '', 'Error: ' + error.code + '. Could not delete task. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
+                            UICtrl.addMsgToast("taskDivMsg", '', 'Error: ' + error.message + '. Could not delete task. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
                         });
                     }
                 }
@@ -608,7 +640,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                 })
                 .catch(error => {
                     // Show message toast
-                    UICtrl.addMsgToast("taskDivMsg", '', 'Error: ' + error.code + '. Could not save changes. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
+                    UICtrl.addMsgToast("taskDivMsg", '', 'Error: ' + error.message + '. Could not save changes. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
                 });
             }
                 // Complete task
@@ -689,7 +721,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                     })
                     .catch(error => {
                         // Show message toast
-                        UICtrl.addMsgToast("taskDivMsg", '', 'Error: ' + error.code + '. Could not complete task. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
+                        UICtrl.addMsgToast("taskDivMsg", '', 'Error: ' + error.message + '. Could not complete task. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
                     });
                 }
             }
@@ -762,7 +794,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                     })
                     .catch(error => {
                         // Show message toast
-                        UICtrl.addMsgToast("taskDivMsg", '', 'Error: ' + error.code + '. Could not move task. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
+                        UICtrl.addMsgToast("taskDivMsg", '', 'Error: ' + error.message + '. Could not move task. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
                     });
                 }
             }
@@ -874,7 +906,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                     })
                     .catch(error => {
                         // Show message toast
-                        UICtrl.addMsgToast("taskDivMsg", '', 'Error: ' + error.code + '. Could not complete selected tasks. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
+                        UICtrl.addMsgToast("taskDivMsg", '', 'Error: ' + error.message + '. Could not complete selected tasks. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
                     });
                 } else {
                     // Get current tasks
@@ -928,7 +960,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                     })
                     .catch(error => {
                         // Show message toast
-                        UICtrl.addMsgToast("taskDivMsg", '', 'Error: ' + error.code + '. Could not move tasks. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
+                        UICtrl.addMsgToast("taskDivMsg", '', 'Error: ' + error.message + '. Could not move tasks. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
                     });
                 }
             }
@@ -973,7 +1005,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                     })
                     .catch(error => {
                         // Show message toast
-                        UICtrl.addMsgToast("taskDivMsg", '', 'Error: ' + error.code + '. Could not delete tasks. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
+                        UICtrl.addMsgToast("taskDivMsg", '', 'Error: ' + error.message + '. Could not delete tasks. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
                     });
                 } else {
                     // Update firestore
@@ -1006,7 +1038,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                     })
                     .catch(error => {
                         // Show message toast
-                        UICtrl.addMsgToast("taskDivMsg", '', 'Error: ' + error.code + '. Could not delete tasks. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
+                        UICtrl.addMsgToast("taskDivMsg", '', 'Error: ' + error.message + '. Could not delete tasks. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
                     });
                 }
             }
@@ -1042,10 +1074,19 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                         const year = Number(document.querySelector(UISelectors.
                             monthModeYear).textContent.trim());
                         const currToday = new Date(year, month, day);
-                        // 
-                        UICtrl.renderMonthModeCalendar(year, month, currToday, vars.globalTasksOngoing);
+                        // Render month mode
+                        if (vars.globalTasksOngoing === undefined) {
+                            UICtrl.renderMonthModeCalendar(year, month, currToday, []);
+                        } else {
+                            UICtrl.renderMonthModeCalendar(year, month, currToday, vars.globalTasksOngoing);
+                        }
                     } else {
-                        UICtrl.renderMonthModeCalendar((new Date()).getFullYear(), (new Date()).getMonth(), new Date(), vars.globalTasksOngoing);
+                        // Render month mode
+                        if (vars.globalTasksOngoing === undefined) {
+                            UICtrl.renderMonthModeCalendar((new Date()).getFullYear(), (new Date()).getMonth(), new Date(), []);
+                        } else {
+                            UICtrl.renderMonthModeCalendar((new Date()).getFullYear(), (new Date()).getMonth(), new Date(), vars.globalTasksOngoing);
+                        }
                     }
                     // Disable buttons (consider writing function for this!!!)
                     document.querySelector(UISelectors.dayModeView).disabled = true;
@@ -1193,7 +1234,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                     })
                     .catch(error => {
                         // Show message toast
-                        UICtrl.addMsgToast("pastTasksDivMsg", '', 'Error: ' + error.code + '. Could not append tasks. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
+                        UICtrl.addMsgToast("pastTasksDivMsg", '', 'Error: ' + error.message + '. Could not append tasks. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
                         flag = true;
                         return flag;
                     });
@@ -1227,7 +1268,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                     })
                     .catch(error => {
                         // Show message toast
-                        UICtrl.addMsgToast("pastTasksDivMsg", '', 'Error: ' + error.code + '. Could not append tasks. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
+                        UICtrl.addMsgToast("pastTasksDivMsg", '', 'Error: ' + error.message + '. Could not append tasks. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
                     });
                 }
             }
@@ -1282,8 +1323,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                         })
                         .catch(error => {
                             // Show message toast
-                            UICtrl.addMsgToast("pastTasksDivMsg", '', 'Error: ' + error.code + '. Could not complete tasks. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
-                            return true;
+                            UICtrl.addMsgToast("pastTasksDivMsg", '', 'Error: ' + error.message + '. Could not complete tasks. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
                         });
                     } else {
                         FirebaseCtrl.markAs(key, [], tasksToComplete, ['ongoing', 'completed'], false)
@@ -1294,11 +1334,6 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                             // Update globalPastTasks
                             const index = vars.globalPastTaskKeys.indexOf(key);
                             vars.globalPastTaskKeys.splice(index, 1);
-                        })
-                        .catch(error => {
-                            // Show message toast
-                            UICtrl.addMsgToast("pastTasksDivMsg", '', 'Error: ' + error.code + '. Could not complete tasks. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
-                            return true;
                         });
                     }
                 });
@@ -1336,8 +1371,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                         })
                         .catch(error => {
                             // Show message toast
-                            UICtrl.addMsgToast("pastTasksDivMsg", '', 'Error: ' + error.code + '. Could not delete tasks. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
-                            return true;
+                            UICtrl.addMsgToast("pastTasksDivMsg", '', 'Error: ' + error.message + '. Could not delete tasks. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
                         });
                     } else {
                         FirebaseCtrl.deleteAllTasks(key, 'ongoing')
@@ -1347,11 +1381,6 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                             // Update globalPastTasks
                             const index = vars.globalPastTaskKeys.indexOf(key);
                             vars.globalPastTaskKeys.splice(index, 1);
-                        })
-                        .catch(error => {
-                            // Show message toast
-                            UICtrl.addMsgToast("pastTasksDivMsg", '', 'Error: ' + error.code + '. Could not delete tasks. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
-                            return true;
                         });
                     }
                 });
@@ -1396,7 +1425,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                 })
                 .catch(error => {
                     // Show message toast
-                    UICtrl.addMsgToast("settingsDivMsg", '', 'Error: ' + error.code + '. Could not change theme. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
+                    UICtrl.addMsgToast("settingsDivMsg", '', 'Error: ' + error.message + '. Could not change theme. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
                 });
             }
                 // Change avatar event listener
@@ -1430,7 +1459,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                 })
                 .catch(error => {
                     // Show message toast
-                    UICtrl.addMsgToast("settingsDivMsg", '', 'Error: ' + error.code + '. Could not change avatar. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
+                    UICtrl.addMsgToast("settingsDivMsg", '', 'Error: ' + error.message + '. Could not change avatar. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
                 });
             }
                 // Change toast event listener
@@ -1452,7 +1481,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                 })
                 .catch(error => {
                     // Show message toast
-                    UICtrl.addMsgToast("settingsDivMsg", '', 'Error: ' + error.code + '. Could not change toasts. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
+                    UICtrl.addMsgToast("settingsDivMsg", '', 'Error: ' + error.message + '. Could not change toasts. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
                 });
             }
             // Delete account
@@ -1548,7 +1577,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                 })
                 .catch(error => {
                     // Show message toast
-                    UICtrl.addMsgToast("taskDivMsg", '', 'Error: ' + error.code + '. Could not save changes. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
+                    UICtrl.addMsgToast("taskDivMsg", '', 'Error: ' + error.message + '. Could not save changes. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
                 });
             }
             // Close past task message wrapper
@@ -1701,8 +1730,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                             })
                             .catch(error => {
                                 // Show message toast
-                                UICtrl.addMsgToast("taskDivMsg", '', 'Error: ' + error.code + '. Could not add task. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
-                                return true;
+                                UICtrl.addMsgToast("taskDivMsg", '', 'Error: ' + error.message + '. Could not add task. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
                             });
                         } else {
                             FirebaseCtrl.updateSingleTask(dayToast.id, task)
@@ -1723,11 +1751,6 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                                 // Notifications
                                 const date = parse(dayToast.id, "d'-'MMM'-'yyyy", new Date());
                                 checkNotifications(date, dayToast.id, false);
-                            })
-                            .catch(error => {
-                                // Show message toast
-                                UICtrl.addMsgToast("taskDivMsg", '', 'Error: ' + error.code + '. Could not add task. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
-                                return true;
                             });
                         }
                     });
@@ -1969,7 +1992,7 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                 })
                 .catch(error => {
                     // Show message toast
-                    UICtrl.addMsgToast("mainDivMsg", '', 'Error: ' + error.code + '. Could not delete tasks older than 30 days. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
+                    UICtrl.addMsgToast("mainDivMsg", '', 'Error: ' + error.message + '. Could not delete tasks older than 30 days. Try again later.', 'alert', 'assertive', true, 2000, 'toast-alert');
                 });
             }
         }

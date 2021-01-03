@@ -387,7 +387,7 @@ td {
 	padding: 2rem 1.5rem !important;
 }
 td:hover {
-	color: var(--text-dark);
+	color: var(--text-dark) !important;
 	background-color: var(--theme1-currweek-hover-color) !important;
 }
 .table-hover tbody tr:hover {
@@ -404,7 +404,7 @@ td:hover {
 }
 .current-day {
 	background-color: var(--theme1-currday-color) !important;
-	color: var(--text-dark) !important;
+	color: var(--text-light) !important;
 }
 td.disabled {
 	cursor: auto;
