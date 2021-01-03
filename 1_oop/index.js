@@ -1356,7 +1356,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		password.removeAttribute('tabindex');
 		//
 	});
-	//
 	// Show/Hide Password
 	document.querySelector('.create-account-show-password-wrapper').addEventListener('click', (e) => {
 		//
@@ -1367,7 +1366,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 		//
 	});
-	//
 	// Go Back from Add Account Screen
 	loginAddBackBtn.addEventListener('click', () => {
 		//
@@ -3305,7 +3303,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	(function() {
 		// 
 		const idleDurationSecs = 900; // X number of seconds - 15 minutes of user inactivity
-		const redirectUrl = 'http://127.0.0.1:5500/FILES/000_github/07_task_manager_oop/index.html'; // Redirect idle users to this URL
+		const redirectUrl = 'YOUR_DESTINATION'; // Redirect idle users to this URL
 		let idleTimeout; // variable to hold the timeout, do not modify
 		// 
 		const resetIdleTimeout = function() {
