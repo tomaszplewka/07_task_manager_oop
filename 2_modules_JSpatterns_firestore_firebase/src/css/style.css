@@ -711,7 +711,7 @@ p.invalid {
 	.toast-message,
 	.settings,
 	.delete-account {
-		max-width: 80%;
+		max-width: 70%;
 	}
 	ul.tasks li, ul.past-tasks li {
 		font-size: 1rem;

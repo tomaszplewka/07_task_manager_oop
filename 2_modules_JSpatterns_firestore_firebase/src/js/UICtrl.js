@@ -694,6 +694,14 @@ const UICtrl = (function(DnDCtrl) {
 		root.style.setProperty('--theme1-bg-color', bg);
     }
     const chooseTheme = function(theme) {
+        // Update UI
+        const themeBtns = document.querySelectorAll(UISelectors.themeBtns);
+        Array.from(themeBtns).some(themeBtn => {
+            if (themeBtn.classList.contains('theme-active')) {
+                themeBtn.classList.remove('theme-active');
+                return true;
+            }
+        });
 		switch (theme) {
 			case 'theme-1':
 				setTheme('#343a40', '#6c757d', '#454d55', '#dee2e6', '#dee2e6', '#000000', '#007bff', '#000000');

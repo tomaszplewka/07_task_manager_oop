@@ -1412,14 +1412,6 @@ const AppCtrl = (function(UICtrl, DataCtrl, FirebaseCtrl) {
                 .then(() => {
                     // Show message toast
                     UICtrl.addMsgToast("settingsDivMsg", '', 'Theme has been changed.', 'status', 'polite', true, 2000, 'toast-status');
-                    // Update UI
-                    const themeBtns = document.querySelectorAll(UISelectors.themeBtns);
-                    Array.from(themeBtns).some(themeBtn => {
-                        if (themeBtn.classList.contains('theme-active')) {
-                            themeBtn.classList.remove('theme-active');
-                            return true;
-                        }
-                    });
                     // Set theme
                     UICtrl.chooseTheme(e.target.id);
                 })

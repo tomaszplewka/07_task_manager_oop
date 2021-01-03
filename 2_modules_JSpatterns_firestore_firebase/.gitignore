@@ -10,8 +10,8 @@ npm-debug.log*
 .npm
 
 # Misc
-functions/node_modules
+functions/
 public/
 
 # Firebase config
-src/js/FirebaseCtrl.js
+src/js/FirebaseConfig.js
