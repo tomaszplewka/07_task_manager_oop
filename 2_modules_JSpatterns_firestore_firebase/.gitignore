@@ -12,6 +12,7 @@ npm-debug.log*
 # Misc
 functions/
 public/
+.firebase/
 
 # Firebase config
 src/js/FirebaseConfig.js
