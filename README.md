@@ -40,6 +40,14 @@
 # Toolbox
 
 <p align="">
+    <img src="https://github.com/tomaszplewka/08_task_manager_oop/blob/master/icons/html5.svg" width="100" alt="html5" >
+    <img src="https://github.com/tomaszplewka/08_task_manager_oop/blob/master/icons/css3.svg" width="72" alt="css3" >
+    <img src="https://github.com/tomaszplewka/08_task_manager_oop/blob/master/icons/bootstrap.svg" width="83" alt="bootstrap" >
+    <img src="https://github.com/tomaszplewka/08_task_manager_oop/blob/master/icons/javascript.svg" width="72" alt="js" >
+    <img src="https://github.com/tomaszplewka/08_task_manager_oop/blob/master/icons/babel.png" width="90" alt="babel" >
+    <img src="https://github.com/tomaszplewka/08_task_manager_oop/blob/master/icons/firebase.svg" width="60" alt="firebase" >
+    <img src="https://github.com/tomaszplewka/08_task_manager_oop/blob/master/icons/npm.png" width="90" alt="npm" >
+    <img src="https://github.com/tomaszplewka/08_task_manager_oop/blob/master/icons/webpack.svg" width="80" alt="webpack" >
 </p>
 
 # Usage
