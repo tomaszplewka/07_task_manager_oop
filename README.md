@@ -27,9 +27,10 @@
 - [x] Implements custom-made calendar view
 - [x] Takes advantage of date-fns JavaScript library
 - [x] Comes in two different flavours:
-  - [x] OOP
-  - [x] Full-Stack app
-- [x] Full-Stack version implemented using Firebase and its features: Firebase Authentication, Cloud Firestore
+  - [x] OOP desktop app
+  - [x] Full-Stack mobile & desktop app
+- [x] Full-Stack app implemented using Firebase and its features: Firebase Authentication, Cloud Firestore
+- [x] Full-Stack app built using modern workflow with Babel & Webpack
 - [x] It is now live thanks to Firebase Hosting service!
 
 # Demo
